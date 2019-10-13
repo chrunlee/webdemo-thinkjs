@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+	<title>文章检索 | {{site.sitename.value}}</title>
+	<link rel="stylesheet" href="/static/plugins/byy/css/default/byy.css">
+	<link rel="stylesheet" href="/static/css/index/index.css">
+	<link rel="stylesheet" href="/static/css/article/article.css">
+	<link rel="stylesheet" href="/static/css/article/detail.css">
+</head>
+<body class="grey-bg fixed">
+	{% include '../tpl/header.html'%}
+	<div class="grey-bg">
+		<div class="detail-wrap recommand light" style="min-height:600px;">
+			<div class="title">
+				<h6>检索</h6>	
+			</div>
+			<div class="recommand-list">
+				{%if d.data.length ==0%}
+				<div class="empty-comment">
+					没有检索到关于"{{d.q}}"的相关文章哦.. 要不去<a href="/article">文章</a>列表看看?
+				</div>
+				{%endif%}|
+				{%for value in d.data%}
+				<div class="command-article">
+					<a href="{{value.link}}" style="background-image:url({{value.postpath}});"></a>
+					<div class="title">
+						<a href="{{value.link}}">{{value.title}}</a>
+					</div>
+					<div class="des">
+						{{value.zhaiyao}}
+					</div>
+				</div>
+				{%endfor%}
+			</div>
+		</div>
+	</div>
+	{% include '../tpl/footer.html'%}
+</body>
+</html>
+{% include '../tpl/commonjs.html'%}
+<script type="text/javascript" src="/static/plugins/highlight/highlight.pack.js"></script>
+<script type="text/javascript" src="/static/js/article/detail.js"></script>
+<script type="text/javascript" src="/static/js/article/canvas.js"></script>

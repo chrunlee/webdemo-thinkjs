@@ -1,0 +1,134 @@
+<!-- 存储pdf 电子书籍，仅限pdf文档，可以在线预览查看。-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>电子书 - {{site.sitename.value}}</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<meta http-equiv="Cache-Control" content="no-siteapp">
+	<meta name="keywords" content="BUG集散地,迅哥博客,chrunlee.cn">
+	<meta name="description" content="{{site.sitedes.value}}">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+	<link rel="stylesheet" href="/static/plugins/byy/css/default/byy.css">
+	<link rel="stylesheet" href="/static/css/index/index.css">
+</head>
+<body>
+	{% include '../tpl/header.html'%}
+	<!--内容区域-->
+	<div class="byy-body grey-bg">
+		
+		<!--文章区域-->
+		<section class=" pdf-content">
+			<!--左侧各种系列-->
+			<div class="byy-side">
+				<div class="byy-side-scroll">
+					<ul class="byy-nav byy-nav-side dark byy-nav-tree">
+						<li class="text-center">PDF 电子书籍</li>
+						{%if user%}
+						<li class="byy-nav-item">
+							<a href="javascript:;" filter="addPdf">新增PDF书籍</a>
+						</li>
+						{%endif%}
+						{%for value in categoryList%}
+						<li class="byy-nav-item {{'byy-this' if value.id ==categoryId else ''}}">
+							<a href="/pdf?c={{value.id}}">{{value.name}} ({{value.num}})</a>
+						</li>
+						{%endfor%}
+					</ul>
+				</div>
+			</div>
+			<div class="byy-body">
+				{% if user %}
+				<div class="addpdf-form hide">
+					<form action="" class="byy-form">
+						<div class="byy-form-item">
+							<label for="" class="byy-label">上传PDF文件</label>
+							<div class="byy-block">
+								<input type="hidden" name="pdfpath">
+								<div class="byy-btn" id="addPdfUploader">选择PDF并上传</div>
+								<span id="pdfPathShow"></span>
+							</div>
+						</div>
+						<div class="byy-form-item">
+							<label for="" class="byy-label">配图上传</label>
+							<div class="byy-block">
+								<input type="hidden" name="postpath">
+								<span class="byy-btn" id="addPdfPost">选择配图并上传</span>
+								<span id="postPathShow"></span>
+							</div>
+						</div>
+						<div class="byy-form-item">
+							<label for="" class="byy-label">PDF名称</label>
+							<div class="byy-block">
+								<input type="text" name="title" class="byy-form-input" placeholder="请输入书籍名称">
+								<input type="hidden" name="filesize">
+							</div>
+						</div>
+						<div class="byy-form-item">
+							<label for="" class="byy-label">选择书籍类别</label>
+							<div class="byy-block">
+								<span>
+									<select name="categoryid" class="byy-form-select" style="width:300px;" multiple="true">
+										{%for value in optionList%}
+										<option value="{{value.id}}">{{value.name}}</option>
+										{%endfor%}
+									</select>	
+								</span>
+								<span>
+									<span class="byy-btn mini" filter="addCategory">添加类别</span>
+								</span>
+
+							</div>
+						</div>
+						<div class="byy-form-item">
+							<label for="" class="byy-label">PDF书籍作者</label>
+							<div class="byy-block">
+								<input type="text" name="author" class="byy-form-input" placeholder="请输入作者">
+							</div>
+						</div>
+						<div class="byy-form-item">
+							<label for="" class="byy-label">简单描述</label>
+							<div class="byy-block">
+								<textarea name="description" placeholder="请简单写下该书籍的描述... "></textarea>
+							</div>
+						</div>
+						<div class="byy-form-item text-center">
+							<span class="byy-btn warm" filter="savePdf">保存PDF</span>
+						</div>
+					</form>
+				</div>
+				{%endif%}
+				<div class="pdf-list">
+					{% for value in pdf%}
+					<div class="pdf-block">
+						<div class="pdf-block-left">
+							<img src="{{value.postpath}}" alt="">	
+						</div>
+						<div class="pdf-block-content">
+							<p class="pdf-block-title">{{value.title}}</p>
+							<p class="pdf-block-content">
+								{{value.description}}
+							</p>
+							<p class="pdf-block-info">
+								<span class="author"><i class="byyicon icon-user"></i>{{value.author}}</span>
+								<span class="author"><i class="byyicon icon-attachment"></i>{{value.filesize}}</span>
+								<span class="author"><i class="byyicon icon-time"></i>{{value.createtime }}</span>
+								<span class="pull-right">
+									<span class="byy-btn mini preview-btn" data-href="{{value.pdfpath}}"><a href="/plugins/pdfjs/web/viewer.html?file={{value.pdfpath}}">PDF预览</a></span>
+									{%if user%}
+									<span class="byy-btn mini" data-id="{{value.id}}" filter="delete">删除</span>
+									{%endif%}
+								</span>
+							</p>
+						</div>
+					</div>
+					{%endfor%}
+				</div>
+			</div>
+		</section>
+		{% include '../tpl/footer.html'%}
+	</div>
+</body>
+</html>
+{% include '../tpl/commonjs.html'%}
+<script type="text/javascript" src="/static/js/index/pdf.js"></script>

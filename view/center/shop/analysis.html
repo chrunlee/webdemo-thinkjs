@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>数据统计</title>
+    {% include '../hometpl/css.html' %}
+    <style>
+        .price-block{
+            height:100px;
+            padding:10px;
+            text-align:center;
+        }
+        .num{
+            font : 24px/1.5 Titillium,'Lucida Sans Typewriter','Helvetica Neue',Helvetica,Arial,'\5FAE\8F6F\96C5\9ED1','Microsoft YaHei','\5B8B\4F53';
+
+        }
+        .des{
+            font : 18px/1.5 Titillium,'Lucida Sans Typewriter','Helvetica Neue',Helvetica,Arial,'\5FAE\8F6F\96C5\9ED1','Microsoft YaHei','\5B8B\4F53';
+        }
+    </style>
+</head>
+<body class="grey-bg frame-body">
+    <div class="byy-panel list-panel">
+        <div class="byy-panel-title">
+            <span class="byy-breadcrumb">
+                <a href="/center/index" target="_parent">首页</a>
+                <a><cite>数据统计分析</cite></a>
+            </span>
+        </div>
+        <div class="byy-panel-content byy-clear">
+            <div class="col-xs-4 price-block ">
+                <div class="green-bg">
+                    <p class="num">￥{{total}}</p>
+                    <p class="des">总计成交金额</p>
+                </div>
+            </div>
+            <div class="col-xs-4 price-block ">
+                <div class="yellow-bg">
+                    <p class="num">{{countSuccess}}条</p>
+                    <p class="des">总计成交记录</p>
+                </div>
+            </div>
+            <div class="col-xs-4 price-block ">
+                <div class="blue-bg">
+                    <p class="num">{{countAll}}条</p>
+                    <p class="des">总计意愿记录</p>
+                </div>
+            </div>
+            
+            <div class="col-xs-4 price-block ">
+                <div class="blue-bg2">
+                    <p class="num">￥{{totalYestory}}</p>
+                    <p class="des">昨日成交金额</p>
+                </div>
+            </div>
+            <div class="col-xs-4 price-block ">
+                <div class="cyan-bg">
+                    <p class="num">{{countSuccessYestory}}条</p>
+                    <p class="des">昨日成交记录</p>
+                </div>
+            </div>
+            <div class="col-xs-4 price-block ">
+                <div class="orange-bg">
+                    <p class="num">{{countAllYestory}}条</p>
+                    <p class="des">昨日意愿记录</p>
+                </div>
+            </div>
+            <div class="col-xs-4 price-block ">
+                <div class="lightgreen-bg">
+                    <p class="num">￥{{totalWeek}}</p>
+                    <p class="des">上周成交金额</p>
+                </div>
+            </div>
+            <div class="col-xs-4 price-block ">
+                <div class="blue-bg">
+                    <p class="num">{{countSuccessWeek}}条</p>
+                    <p class="des">上周成交记录</p>
+                </div>
+            </div>
+            <div class="col-xs-4 price-block ">
+                <div class="red-bg">
+                    <p class="num">{{countAllWeek}}条</p>
+                    <p class="des">上周意愿记录</p>
+                </div>
+            </div>
+            <div class="col-xs-4 price-block ">
+                <div class="yellow-bg">
+                    <p class="num">￥{{totalMonth}}</p>
+                    <p class="des">上月成交金额</p>
+                </div>
+            </div>
+            <div class="col-xs-4 price-block ">
+                <div class="orange-bg">
+                    <p class="num">{{countSuccessMonth}}条</p>
+                    <p class="des">上月成交记录</p>
+                </div>
+            </div>
+            <div class="col-xs-4 price-block ">
+                <div class="blue-bg">
+                    <p class="num">{{countAllMonth}}条</p>
+                    <p class="des">上月意愿记录</p>
+                </div>
+            </div>
+            <div class="num" style="border-bottom:1px solid #ddd;">
+                分类统计
+            </div>
+            {% for value in list%}
+            <div class="num" style="height:40px;line-height:40px;border-bottom:1px dashed #333;">￥{{value.total}} , 【{{value.name}}】</div>
+            {%endfor%}
+        </div>
+    </div>
+</body>
+</html>
+{% include '../hometpl/js.html' %}

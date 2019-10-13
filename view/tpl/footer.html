@@ -1,0 +1,40 @@
+<!--底部信息-->
+<section class="black-bg byy-clear footer">
+	<div class="footer-block">
+		<div class="footer-block-title">
+			<img src="{{site.logo.value}}" alt=""> &nbsp; {{site.sitename.value}}
+		</div>
+		<div class="footer-block-content">
+			{{site.sitename.value}} : {{site.sitedes.value}}
+		</div>
+	</div>
+	<div class="footer-block">
+		<div class="footer-block-title">
+			联系我
+		</div>
+		<div class="footer-block-content">
+			<p>QQ群 : {{site.qqgroup.value}}</p>
+			<p>Email : {{site.email.value}}</p>
+			<p>Github : <a href="{{site.github.value}}" target="_blank">{{site.github.value}}</a></p>
+		</div>
+	</div>
+	<div class="footer-block">
+		<div class="footer-block-title">
+			友情链接
+		</div>
+		<div class="footer-block-content">
+			{% for  value in links %}
+			<span class="link-block"><a href="{{value.href}}" target="_blank">{{value.name}}</a></span>
+			{% endfor %}
+		</div>
+	</div>
+	<p class="footer-copy">Copyright &copy; 2018 Theme by {{site.authorname.value}}
+		<span><a href="http://www.miitbeian.gov.cn" target="_blank">{{site.icp.value}}</a></span>
+		<span><a href="/article/public.html">免责声明</a></span>
+		<span><a href="/index/about.html">关于</a></span>
+		<span><a href="/article/friend-support.html">打赏记录</a></span>
+		<span><a href="/shop.html">采然小店</a></span>
+		<!-- <span><a href="/picture" target="_blank">图库</a></span> -->
+		<!-- <span><a href="/caipu/home" target="_blank">菜谱</a></span> -->
+	</p>
+</section>

@@ -1,0 +1,32 @@
+<header class="index-header">
+	<ul class="byy-nav black-bg" id="topHeader">
+		<span class="pull-left logo"><a href="/"><img src="{{site.logo.value}}" />{{site.sitename.value}}</a></span>
+		<li id="home" class="byy-nav-item {{ 'byy-this' if d.header=='home' else '' }}"><a href="/index.html">首页</a></li>
+		<li id="article" class="byy-nav-item {{ 'byy-this' if d.header=='article' else ''}}">
+			<a href="/index/article.html">博文 &nbsp;<span class="byy-badge-dot"></span></a>
+		</li>
+		<li id="demo" class="byy-nav-item {{'byy-this' if d.header == 'demo' else ''}}"><a href="/index/demo.html">Demo </a></li>
+		<li id="pdf" class="byy-nav-item {{ 'byy-this' if d.header == 'pdf' else ''}}"><a href="/index/pdf.html">电子书</a></li>
+		<li id="about" class="byy-nav-item {{ 'byy-this' if d.header == 'about' else ''}}"><a href="/index/about.html">关于</a></li>
+		<!--<li id="tuku" class="byy-nav-item"><a href="/picture">图库</a></li>
+		<li id="caipu" class="byy-nav-item"><a href="/caipu/home">食谱</a></li>-->
+		<li class="pull-right user">
+			{% if github == null %}
+			<div class="unlogin" title="点击登录" filter="login">
+				<a href="javascript:;"><img src="/static/images/login-logo.png" /></a>
+			</div>
+			{% else %}
+			<div class="login">
+				<img src="{{github.avatar_url}}" title="{{github.name}}" alt="Avatar" />
+			</div>
+			{% endif %}
+		</li>
+		<li class=" pull-right">
+			<form action="/index/search" method="GET" id="queryForm">
+				<input type="text" class="index-search" value="{{d.q}}" name="q" id="bdMsmain" autocomplete="off" onkeyup="javascript:if(this.event.keyCode() == 13){document.getElementById('queryForm').submit();}">
+				<i class="byyicon icon-search" onclick="javascript:document.getElementById('queryForm').submit()"></i>
+			</form>
+		</li>
+
+	</ul>
+</header>

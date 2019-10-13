@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Banner 设置</title>
+	{% include '../hometpl/css.html' %}
+</head>
+<body class="grey-bg frame-body">
+	<!-- 顶部工具栏 -->
+	<div class="byy-panel list-panel">
+		<div class="byy-panel-title">
+			<span class="byy-breadcrumb">
+                <a href="/center/index" target="_parent">首页</a>
+                <a><cite>Banner 设置</cite></a>
+            </span>
+            <span class="byy-btn-group pull-right">
+            	<span class="byy-btn small danger" filter="openAdd"><i class="byyicon icon-plus"></i>新增</span>
+            </span>
+		</div>
+		<div class="byy-panel-content byy-clear">
+			<table class="byy-table">
+				
+			</table>
+			<div class="page">
+				<div class="pagination pull-right"></div>	
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+{% include '../hometpl/js.html' %}
+<script type="text/javascript">
+	byy.require(['jquery','win','table'],function(){
+
+		byy.bindEvents({
+			openAdd : function(){
+				byy.win.open({
+					type : 2,
+					title : '新增banner',
+					content : '/center/bannerAdd',
+					area :['70%','80%']
+				});
+			},
+			edit : function(data,ev){
+				var id = data.id;
+				byy.win.open({
+					type : 2,
+					title : '编辑banner',
+					content : '/center/bannerAdd?id='+id,
+					area :['70%','80%']
+				});
+			},
+			delete : function(data,ev){
+				var id= data.id;
+				$.ajax({
+					url : '/center/bannerDelete',
+					type : 'post',
+					data : {id : id},
+					success : function(res){
+						if(res.success){
+							byy.win.msg('删除成功')
+							window.location.reload();
+						}else{
+							byy.win.msg('删除失败')
+						}
+					}
+				});
+			}
+		});
+
+		//渲染数据
+		byy.table.render({
+			elem : '.byy-table',
+			method : 'post',
+			url : '/center/banner',
+			page : false,
+			cols : [[
+				{field : 'id',title : 'ID'},
+				{field : 'title',title : 'banner标题'},
+				{field : 'bannerpath',title : '图片路径'},
+				{field : 'bannerstyle',title : 'banner 样式'},
+				{field : 'bannerheight',title : 'banner高度'},
+				{field : 'type',title : '位置',templet : function(data){
+					return ['首页','文章页面','Demo页面'][data.type -1 ]
+				}},
+				{field : 'isenable',title : '是否启用',templet : function(data){
+					return ['<span style="color:#f60;">未启用</span>','<span style="color:#25ca92;">启用</span>'][data.isenable]
+				}},
+				{field : 'tool',tool : true,title : '操作',templet : function(data){
+					return '<span class="byy-btn mini" filter="edit" data-id="'+data.id+'">编辑</span><span class="byy-btn mini" filter="delete" data-id="'+data.id+'">删除</span>';
+				}}
+			]]
+
+		});
+	})
+</script>

@@ -1,0 +1,318 @@
+const Base = require('./base.js');
+let path = require('path');
+let fs = require('fs');
+let datConvert = require('../util/getBase64');
+/***
+ * 前台展示
+ **/
+module.exports = class extends Base {
+    /***
+     * 首页：获取对应的文章和banner
+     **/
+    async indexAction() {
+        let banner = await this.model('user_banner').where({ type: '1', isenable: '1' }).select();
+        let articles = await this.model('user_article').where({ ispublish: '1', type: '0', recommend: 1 }).order('ctime desc').limit(8).select();
+        let github = await this.session('github');
+        this.assign('github', github);
+        this.assign('banners', banner);
+        this.assign('articles', articles);
+        this.assign('site', this.config('site'));
+        this.assign('links', this.config('links'));
+        this.assign('d', {
+            header: 'home'
+        })
+        return this.display('home/index');
+    }
+    //dat count
+    async datCountAction(){
+        let obj = await this.model('site_set').where({name : 'datcount'}).find();
+        let c = 0;
+        if(!think.isEmpty(obj)){
+            c = obj.intval;
+        }
+        return this.json({
+            count : c,
+            msg : '已为<span style="color:red;font-weigth:bold;">'+c+'</span>个dat文件提供转化服务'
+        });
+    }
+    /***
+     * dat文件上传处理。
+     ***/
+    async uploadDatAction(){
+        //1.文件大小超过20M 且不是dat的即刻删除;
+        //2.转码完成后删除;
+        //3.解码完成后生成base64,删除；
+        var file = this.file('file');
+        var maxSize = 1 * 1024 * 1024;
+        var extName = '.dat';
+        try{
+            if(file.size == 0 || file.size > maxSize || path.extname(file.name).toLowerCase() != extName){
+                try{
+                    fs.unlinkSync(file.path);
+                }catch(e){}
+                return this.json({success : false,msg : '文件不符合规范，已经删除'});
+            }else{
+                await this.model('site_set').where({name : 'datcount'}).increment('intval',1);
+                let base64 = await datConvert(file.path);
+                fs.unlinkSync(file.path);
+                return this.json({success : true,base64 : base64});
+            }
+        }catch(e){
+            return this.json({success : false,msg : '数据不规范'});   
+        }
+    }
+    /***
+     * 跳转关于
+     ***/
+    async aboutAction() {
+        let github = await this.session('github');
+        this.assign({
+            site: this.config('site'),
+            links: this.config('links'),
+            github: github,
+            d: {
+                header: 'about'
+            }
+        });
+        return this.display('home/about');
+    }
+    /***
+     * 登录
+     ***/
+    async loginAction() {
+        let user = await this.session('user');
+        if (user) {
+            return this.redirect('/center/index');
+        } else {
+            //判断是get还是post
+            if (this.isPost) {
+                //这里为了方便后台修改密码，不做md5加密。
+                let data = this.post();
+                let user = data.user.trim();
+                let pwd = data.pwd.trim();
+                if (this.config('site').superaccount.value === user && this.config('site').superpwd.value === pwd) {
+                    //登录成功
+                    this.session('user', {
+                        name: this.config('site').authorname.value,
+                        email: this.config('site').email.value
+                    });
+                    return this.redirect('/center/index');
+                } else {
+                    this.assign({
+                        msg: '登录失败，用户名或密码不正确',
+                        user: user,
+                        pwd: pwd
+                    })
+                    return this.display('home/login');
+                }
+            } else {
+                return this.display('home/login');
+            }
+        }
+    }
+    /***
+     * 跳转到pdf
+     ***/
+    async pdfAction() {
+        //查询pdf
+        let user = await this.session('user');
+        let github = await this.session('github');
+        let cId = this.ctx.param('c');
+        //根据第一个类别来处理
+        let categoryList = await this.model().query('select t1.categoryid as id,t2.name,count(1) as num from user_pdf_pdf_category t1 left join user_pdf_category t2 on t1.categoryid = t2.id group by t1.categoryid order by t1.categoryid');
+        let optionList = await this.model().query('select * from user_pdf_category');
+
+        let firstCateId = cId || ((categoryList[0] || {}).id || '');
+        let list = await this.model().query('select t2.* from user_pdf_pdf_category t1 left join user_pdf t2 on t1.pdfid= t2.id where t1.categoryid="' + firstCateId + '" ');
+        this.assign({
+            pdf: list,
+            categoryId: firstCateId,
+            categoryList: categoryList,
+            optionList: optionList,
+            site: this.config('site'),
+            user: user,
+            github: github,
+            d: {
+                header: 'pdf'
+            }
+        });
+        return this.display('home/pdf');
+    }
+
+    /***
+     * 跳转到demo
+     ***/
+    async demoAction() {
+        let site = this.config('site');
+        let github = await this.session('github');
+        this.assign({
+            site: site,
+            github: github,
+            d: {
+                header: 'demo'
+            }
+        });
+        return this.display('home/demo');
+    }
+
+    //============================文章路由变更
+    async articleAction() {
+        let page = this.ctx.param('p'), //页码
+            category = this.ctx.param('c'); //类别
+
+        let github = await this.session('github');
+        try {
+            page = parseInt(page || '1', 10);
+            page = Math.max(page, 1);
+        } catch (e) {
+            page = 1;
+        }
+        var start = (page - 1) * 20;
+        let banner = await this.model('user_banner').where({ type: '1', isenable: '1' }).select();
+        let categoryList = await this.model('user_category').select();
+        let articleWhere = { ispublish: 1, type: 0 };
+        if (category) {
+            articleWhere.category = category;
+        }
+        let articles = await this.model('user_article').where(articleWhere).order('ctime DESC').limit(start, start + 20).select();
+        let counts = await this.model('user_article').where(articleWhere).count();
+        this.assign({ page:page,banner: banner, category: categoryList, c: category, article: articles, total: counts, site: this.config('site'), github: github, d: { header: 'article' } });
+
+        return this.display('home/article');
+    }
+    /***
+     * 获得评论内容
+     ***/
+    async getCommentAction() {
+        let id = this.ctx.post('id');
+        if (id) {
+            id = id.replace(/["'&;)(]/gi, '');
+            let sql = `select t1.*,t2.avatar_url,(case when(t2.blog = "" or t2.blog is null) then t2.html_url else t2.blog end) as blog from user_comment t1 left join sys_user t2 on t1.userid=t2.id where t1.articleid='${id}' order by ctime desc`;
+            let list = await this.model().query(sql);
+            this.json(list);
+        } else {
+            this.json([]);
+        }
+    }
+    /***
+     * 点赞操作
+     ***/
+    async zanAction() {
+        let id = this.ctx.post('id');
+        if (id) {
+            await this.model('user_article').where({ id: id }).increment('likenum', 1);
+            this.json({ success: true })
+        } else {
+            this.json({ success: false })
+        }
+    }
+    /***
+     * 保存评论
+     ***/
+    async saveCommentAction() {
+        let data = this.ctx.post();
+        let site = await this.session('site');
+        let user = await this.session('github');
+
+        data.name = user.name;
+        data.email = user.email || '';
+        data.userid = user.id;
+        data.toname = data.toname || '';
+        if (data.articleId && data.content.length <= 1000 && data.name.length <= 20 && data.email.length <= 50 && data.toname.length <= 50) {
+            //评论后，立刻发邮件给我...
+            //此处评论根据目标人来发送如果是评论的文章，直接发给我，如果是回复的某人，则发给某人（根据数据库的设置，是否发送。）
+            var email = site.email;
+            data.toid = data.toid.replace(/["'&;)(]/gi, '');
+            data.articleId = data.articleId.replace(/["'&;)(]/gi, '');
+            //还得查询文章的地址
+            let sqlA = 'select * from sys_user where id=(select userid from user_comment where id=%s)';
+            let sqlAopt = this.model().parseSql({ sql }, data.toid)
+            let rs1 = await this.model().query(sqlAopt)
+            let sqlB = 'select link,title from user_article where id=%s';
+            let sqlBopt = this.model().parseSql({ sql }, data.articleId);
+            let rs2 = await this.model().query(sqlBopt);
+            var email = site.email,
+                link = site.domain,
+                title = '某些文章';
+            if (rs1[0].length > 0) {
+                email = rs1[0][0].email || site.email;
+            }
+            if (rs2[0].length > 0) {
+                var temp = rs2[0][0];
+                link = site.domain + temp.link;
+                title = temp.title;
+            }
+            //此处发送邮件
+            // return tool.sendCommentEmail(obj.email,data.name,obj.title,obj.link);
+            //插入评论数据
+            let insertId = await this.model('user_comment').add({
+                articleid: data.articleId,
+                name: data.name,
+                content: data.content,
+                toid: data.toid,
+                ctime: moment(new Date()).format('YYYY-DD-MM HH:mm:ss'),
+                toname: data.toname,
+                email: data.email,
+                commentid: data.commentid,
+                userid: data.userid
+            });
+            this.json({ success: true, id: insertId });
+        } else {
+            this.json({ success: false, msg: '数据不符合规范' })
+        }
+    }
+
+    /****
+     * 增加阅读次数
+     ***/
+    async readAction() {
+        if (this.ctx.post('id')) {
+            let id = this.ctx.post('id');
+            await this.model('user_article').where({ id: id }).increment('readnum', 1);
+            this.json({ success: true })
+        } else {
+            this.json({ success: true });
+        }
+    }
+
+    /****
+     * 关键字检索
+     ***/
+    async searchAction() {
+        let referer = this.header('referer');
+        let q = this.ctx.param('q') || '';
+        let github = await this.session('github');
+        q = q.replace(/[";'&)(]/gi, '');
+        if (q.trim() == '') {
+            //重新返回来源网页
+            return this.redirect(referer);
+        } else {
+
+            let strs = q.split(' ');
+            let paramsSql = '',
+                params = [];
+            strs.forEach(a => {
+                a = a.trim();
+                paramsSql += '  title like "%s" or content like "%s" or ';
+                params.push('%' + a + '%');
+                params.push('%' + a + '%');
+            });
+            paramsSql = paramsSql.substr(0, paramsSql.length - 3);
+            //对sql进行处理，空格分开的话重新处理
+            let sql = 'select * from user_article where ispublish=1 and type=0 and (' + paramsSql + ')';
+            let sqlOpt = this.model().parseSql({ sql }, ...params);
+            let list = await this.model().query(sqlOpt);
+            this.assign({ site: this.config('site'), github: github, d: { q: q, header: 'article', data: list } });
+            return this.display('home/search');
+        }
+    }
+
+    /***
+     * 定时清理多余附件
+     ***/
+    async fileClearWeekAction(){
+        if(this.isCli){
+
+        }
+    }
+};

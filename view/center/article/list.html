@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>文章列表</title>
+	{% include '../hometpl/css.html' %}
+</head>
+<body class="grey-bg frame-body">
+	<div class="byy-panel list-panel">
+		<div class="byy-panel-title">
+			<span class="byy-breadcrumb">
+                <a href="/center/index" target="_parent">首页</a>
+                <a><cite>文章信息</cite></a>
+            </span>
+            <span class="byy-btn-group pull-right">
+            	<span class="byy-btn small danger" filter="openAdd"><i class="byyicon icon-plus"></i>去添加文章</span>
+            </span>
+		</div>
+		<div class="byy-panel-content byy-clear">
+			<table class="byy-table">
+				
+			</table>
+			<div class="page">
+				<div class="pagination pull-right"></div>	
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+{% include '../hometpl/js.html' %}
+<script type="text/javascript">
+	byy.require(['jquery','win','table'],function(){
+		var category = [];
+		byy.bindEvents({
+			baidu : function(d){
+				var id = d.id;
+				$.ajax({
+					type : 'post',
+					url : '/center/articleBaidu',
+					data : {id : id},
+					success : function(rs){
+						byy.win.msg(rs.msg);
+					}
+				})
+			},
+			openAdd : function(){
+				location.href = '/center/articleAdd';
+			},
+			edit : function(data){
+				var id = data.id;
+				location.href = '/center/articleAdd?id='+id;	
+			},
+			publish : function(data){
+				var id = data.id;
+				$.ajax({
+					url : '/center/articlePublish',
+					type : 'post',
+					data : {id : id},
+					success : function(res){
+						if(res.success){
+							byy.win.msg('发布成功',function(){
+								location.reload();	
+							});
+						}else{
+							byy.win.msg('发布失败,请检查');
+						}
+					}
+				});
+			},
+			cancel : function(data){
+				var id = data.id;
+				$.ajax({
+					url : '/center/articleCancel',
+					type : 'post',
+					data : {id : id},
+					success : function(res){
+						if(res.success){
+							byy.win.msg('取消发布成功',function(){
+								location.reload();	
+							});
+						}else{
+							byy.win.msg('取消发布失败,请检查');
+						}
+					}
+				});
+			},
+			delete : function(data){
+				var id = data.id;
+				$.ajax({
+					url : '/center/articleDelete',
+					type : 'post',
+					data : {id : id},
+					success : function(res){
+						if(res.success){
+							byy.win.msg('删除成功',function(){
+								location.reload();	
+							});
+						}else{
+							byy.win.msg('删除失败,请检查');
+						}
+					}
+				});
+			},
+			recommend : function(data){
+				$.ajax({
+					url : '/center/articleRecommend',
+					type : 'post',
+					data : {id : data.id},
+					success : function(res){
+						if(res.success){
+							byy.win.msg('置顶成功',function(){
+								location.reload();	
+							});
+						}else{
+							byy.win.msg('删除失败,请检查');
+						}
+					}
+				});
+			}
+		});
+		
+
+		var loadData = function(){
+			//渲染数据
+			byy.table.render({
+				elem : '.byy-table',
+				method : 'post',
+				url : '/center/article',
+				page : {
+					limit : 100,
+					pageArray : [100]
+				},
+				cols : [[
+					{field : 'id',title : 'ID',sort : true,width : 100},
+					{field : 'title',title : '标题'},
+					{field : 'ismy',title : '原创',width:100,templet : function(data){
+						return data.ismy == 0 ? '<span style="color:#49e;">转载</span>' : '<span style="color:#25ca92;">原创</span>'
+					}},
+					// {field : 'enname',title : '英文路径',width:250},
+					{field : 'readnum',title : '阅读',sort : true,width:100},
+					// {field : 'type',title : '类型',width:100,templet : function(data){
+					// 	return data.type == 0 ? '<span style="color:#25ca92;">文章</span>' : '<span style="color:#49e;">DEMO</span>'
+					// }},
+					{field : 'category',title : '目录',width:100,templet : function(data){
+						var str ='';
+						category.forEach(function(item){
+							if(item.id == data.category){
+								str = item.name;
+							}
+						})
+						return str;
+					}},
+					{field : 'tool',title:'操作',tool : true,width:300,templet : function( data ){
+						return ['<span class="byy-btn mini" data-id="'+data.id+'" filter="edit">去编辑</span>',
+								data.ispublish == '0' ? 
+								'<span class="byy-btn mini" data-id="'+data.id+'" filter="publish">发布</span>' : 
+								'<span class="byy-btn mini warm" data-id="'+data.id+'" filter="cancel">取消发布</span>',
+								'<span class="byy-btn mini danger" data-id="'+data.id+'" filter="delete">删除</span>',
+								data.recommend == '1' ? 
+								'<span class="byy-btn mini" data-id="'+data.id+'">已置顶</span>' 
+								: '<span class="byy-btn mini danger" data-id="'+data.id+'" filter="recommend">置顶</span>',
+								'<span class="byy-btn mini" data-id="'+data.id+'" filter="baidu">熊掌</span>'
+							].join('');
+					}}
+				]]
+
+			});
+		}
+
+		var start = function(){
+			$.ajax({
+				url : '/center/category',
+				type : 'post',data : {},
+				success : function(list){
+					category = list;
+					loadData();
+				}
+			});
+		};
+		start();
+	})
+
+</script>

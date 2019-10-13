@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>站点属性</title>
+	{% include '../hometpl/css.html' %}
+</head>
+<body class="grey-bg frame-body">
+	<!-- 顶部工具栏 -->
+	<div class="byy-panel list-panel">
+		<div class="byy-panel-title">
+			<span class="byy-breadcrumb">
+                <a href="/center/index" target="_parent">首页</a>
+                <a><cite>站点属性设置</cite></a>
+            </span>
+		</div>
+		<div class="byy-panel-content byy-clear">
+			<form action="" class="byy-form">
+				{% for value in list%}
+				<div class="byy-form-item">
+					<label for="" class="byy-label">{{value.name}}</label>
+					<div class="byy-block" style="width:60%">
+						<div>{{value.description}}</div>
+						{% if value.intval!=null %}
+						<input type="text" name="{{value.name}}" type="0" value="{{value.intval}}" > 
+						{% endif %}
+						{% if value.strval.length > 50 %}
+						<textarea name="{{value.name}}" type="1">{{value.strval}}</textarea>
+						{% elif value.strval.length > 0 %}
+						<input type="text" name="{{value.name}}" type="1" value="{{value.strval}}" >
+						{% endif %}
+					</div>
+					<span class="byy-btn small pull-left" filter="update">更新</span>
+				</div>
+				{% endfor %}
+			</form>
+		</div>
+	</div>
+</body>
+</html>
+{% include '../hometpl/js.html' %}
+<script type="text/javascript">
+	//由于是个人后台此处无校验。
+	byy.require(['jquery','uploader','win'],function(){
+		//事件绑定
+		byy.bindEvents({
+			update : function(){
+				var $span = $(this),$dom = $($span.parent().find('[name]').get(0));
+				var name = $dom.attr('name'),value = $dom.val(),type = $dom.attr('type');
+				top.byy.win.confirm('请谨慎更新数据,是否确认',function(index){
+					top.byy.win.closeAll();
+					$.ajax({
+						url : '/center/site/update',
+						type : 'post',
+						data : {
+							name : name,value : value,type : type
+						},
+						success : function(res){
+							if(res.success){
+								top.byy.win.msg('更新成功,重启系统才可生效。')
+							}else{
+								top.byy.win.msg('更新失败')
+							}
+						}
+					});
+				})
+			}
+		});
+	});
+</script>
