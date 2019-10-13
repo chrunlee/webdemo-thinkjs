@@ -36,7 +36,7 @@ exports.model = {
   },
   mysql: {
     handle: mysql,
-    database: 'webdemo',
+    database: 'items',
     prefix: '',
     encoding: 'utf8',
     host: '127.0.0.1',
