@@ -15,6 +15,7 @@ module.exports = [
     options: {
       root: path.join(think.ROOT_PATH, 'www'),
       gzip : true,
+      maxage:24*60*60*1000,//浏览器缓存
       notFoundNext : true
       // publicPath: /^\/(upload|static|favicon\.ico)/
     }
