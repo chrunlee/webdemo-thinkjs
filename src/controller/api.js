@@ -27,7 +27,7 @@ module.exports = class extends Base {
             obj.arr = await getProxyIp(obj.page);
         }
         //返回一个数据对象
-        let backData = obj.arr.splice(0,1);
+        let backData = obj.arr.splice(0,1)[0];
         ipDateMap[startDate] = obj;
         return this.json(backData);
     }
