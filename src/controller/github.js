@@ -7,8 +7,6 @@ module.exports = class extends Base {
         let code = this.query('code');
         let state = this.query('state');
         let site = this.config('site');
-        var code = req.query.code;
-        var state = req.query.state;
         var redirectURL = await this.session('loginRefer');
         let user = await superagent.post('https://github.com/login/oauth/access_token')
             .set('Accept', 'application/json')
