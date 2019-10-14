@@ -6,6 +6,7 @@ let UA = require('../util/UA');
 let path = require('path');
 let fs = require('fs');
 let wsf = require('../util/wsf');
+let moment = require('moment');
 //markdown 解析器
 var renderer = new marked.Renderer();
 //重写解析规则
@@ -115,7 +116,9 @@ module.exports = class extends Base {
             let dealPrice = price;
             await ding(this.config('site').dingding.value,'商品售卖:客户进入交易区[' + goodItem.name + ']，请保持打开支付助手并打开微信支付宝消息提醒推送消息！！！');
             //待支付，且时间不超过5分钟的。
-            let list = await this.model().query('select * from order_user where UNIX_TIMESTAMP(now()) - UNIX_TIMESTAMP(starttime) < 300 and status=0 and sid="'+uniqueId+'" and goodid="'+goodId+'"');
+            let momentStartTime = moment().subtract(300,'seconds').format('YYYY-MM-DD HH:mm:ss');
+            let list = await this.model('order_user').where({status : '0',starttime : ['>',momentStartTime],sid : uniqueId,goodid : goodId}).select();
+            // let list = await this.model().query('select * from order_user where UNIX_TIMESTAMP(now()) - UNIX_TIMESTAMP(starttime) < 300 and status=0 and sid="'+uniqueId+'" and goodid="'+goodId+'"');
             let dealId = null;
             let longtime = null;
             if (null == list || list.length == 0) {
@@ -128,11 +131,9 @@ module.exports = class extends Base {
                     let tempPrice = price - (0.01 * countTimes);
                     let checkPrice = parseFloat(tempPrice.toFixed(2));
                     //检查
-                    let existsList = await this.model().query('select * from order_user where UNIX_TIMESTAMP(now()) - UNIX_TIMESTAMP(starttime) < 300 and price="'+checkPrice+'" and status=0')
-                    // let existsList = await query.query({
-                    //     sql: 'select * from order_user where UNIX_TIMESTAMP(now()) - UNIX_TIMESTAMP(starttime) < 300 and price=? and status=?',
-                    //     params: [checkPrice, '0']
-                    // }).then(rs => rs[0]);
+                    let tempStartTime = moment().subtract(300,'seconds').format('YYYY-MM-DD HH:mm:ss');
+                    let existsList = await this.model('order_user').where({status : '0',price : checkPrice}).select();
+                    // let existsList = await this.model().query('select * from order_user where UNIX_TIMESTAMP(now()) - UNIX_TIMESTAMP(starttime) < 300 and price="'+checkPrice+'" and status=0')
                     if (null == existsList || existsList.length == 0) {
                         //不存在，可以插入
                         hasCheck = true;
@@ -143,16 +144,12 @@ module.exports = class extends Base {
                 }
                 if (!hasCheck) {
                     return this.body = '<script>alert("当前商品交易比较火爆，请稍后几分钟进行尝试")</script>';
-                    // res.writeHead(200, { 'Content-Type': 'text/html' });
-                    // res.write('<head><meta charset="utf-8"/></head>');
-                    // res.write('<script>alert("当前商品交易比较火爆，请稍后几分钟进行尝试")</script>');
-                    // res.end();
-                    // return;
                 }
                 //根据价格生成支付宝的二维码，检查有没有该二维码，没有则生成。
                 let starttime = new Date();
                 longtime = starttime.getTime() + '';
-                let insertData = { goodid: goodId, email: dealSession.email, price: finalPrice, status: '0', sid: uniqueId, starttime: starttime, startlong: longtime };
+                let timestr = moment(starttime).format('YYYY-MM-DD HH:mm:ss');
+                let insertData = { goodid: goodId, email: dealSession.email, price: finalPrice, status: '0', sid: uniqueId, starttime: timestr, startlong: longtime };
                 dealId = await this.model('order_user').add(insertData);                
                 dealPrice = finalPrice;
             } else {
@@ -177,6 +174,7 @@ module.exports = class extends Base {
             });
             return this.display('shop/deal');
         } catch (e) {
+            console.log(e);
             //有出错，直接返回列表页面并进行提示。
             return this.redirect('/shop.html');
         }
