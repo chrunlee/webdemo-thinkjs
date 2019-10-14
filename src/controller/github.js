@@ -26,7 +26,7 @@ module.exports = class extends Base {
                 return JSON.parse(res2.text);
             });
         let sysUser = await this.model('sys_user').where({ id: user.id }).find();
-        if (this.isEmpty(sysUser)) {
+        if (!think.isEmpty(sysUser)) {
             await this.model('sys_user').where({ id: sysUser.id }).update(user);
         } else {
             await this.model('sys_user').add(sysUser);

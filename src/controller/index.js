@@ -2,6 +2,8 @@ const Base = require('./base.js');
 let path = require('path');
 let fs = require('fs');
 let datConvert = require('../util/getBase64');
+let mailer = require('../util/mailer');
+let moment = require('moment');
 /***
  * 前台展示
  **/
@@ -211,39 +213,26 @@ module.exports = class extends Base {
      ***/
     async saveCommentAction() {
         let data = this.ctx.post();
-        let site = await this.session('site');
+        let site = await this.config('site');
         let user = await this.session('github');
-
         data.name = user.name;
         data.email = user.email || '';
         data.userid = user.id;
         data.toname = data.toname || '';
+        data.toid = data.toid || '';
         if (data.articleId && data.content.length <= 1000 && data.name.length <= 20 && data.email.length <= 50 && data.toname.length <= 50) {
             //评论后，立刻发邮件给我...
             //此处评论根据目标人来发送如果是评论的文章，直接发给我，如果是回复的某人，则发给某人（根据数据库的设置，是否发送。）
-            var email = site.email;
-            data.toid = data.toid.replace(/["'&;)(]/gi, '');
             data.articleId = data.articleId.replace(/["'&;)(]/gi, '');
+            let article = await this.model('user_article').where({id : data.articleId}).find();
             //还得查询文章的地址
-            let sqlA = 'select * from sys_user where id=(select userid from user_comment where id=%s)';
-            let sqlAopt = this.model().parseSql({ sql }, data.toid)
-            let rs1 = await this.model().query(sqlAopt)
-            let sqlB = 'select link,title from user_article where id=%s';
-            let sqlBopt = this.model().parseSql({ sql }, data.articleId);
-            let rs2 = await this.model().query(sqlBopt);
-            var email = site.email,
-                link = site.domain,
-                title = '某些文章';
-            if (rs1[0].length > 0) {
-                email = rs1[0][0].email || site.email;
-            }
-            if (rs2[0].length > 0) {
-                var temp = rs2[0][0];
-                link = site.domain + temp.link;
-                title = temp.title;
-            }
+            let title = article.title || '某些文章';
+            let fromName = data.name;
+            let content = data.content;
+            let link = site.domain.value+article.link;
+
             //此处发送邮件
-            // return tool.sendCommentEmail(obj.email,data.name,obj.title,obj.link);
+            await mailer.sendCommentEmail(site.email.value,site.emailpwd.value,site.email.value,fromName,title,link);
             //插入评论数据
             let insertId = await this.model('user_comment').add({
                 articleid: data.articleId,
