@@ -118,7 +118,6 @@ module.exports = class extends Base {
             //待支付，且时间不超过5分钟的。
             let momentStartTime = moment().subtract(300,'seconds').format('YYYY-MM-DD HH:mm:ss');
             let list = await this.model('order_user').where({status : '0',starttime : ['>',momentStartTime],sid : uniqueId,goodid : goodId}).select();
-            // let list = await this.model().query('select * from order_user where UNIX_TIMESTAMP(now()) - UNIX_TIMESTAMP(starttime) < 300 and status=0 and sid="'+uniqueId+'" and goodid="'+goodId+'"');
             let dealId = null;
             let longtime = null;
             if (null == list || list.length == 0) {
@@ -132,8 +131,9 @@ module.exports = class extends Base {
                     let checkPrice = parseFloat(tempPrice.toFixed(2));
                     //检查
                     let tempStartTime = moment().subtract(300,'seconds').format('YYYY-MM-DD HH:mm:ss');
-                    let existsList = await this.model('order_user').where({status : '0',price : checkPrice}).select();
-                    // let existsList = await this.model().query('select * from order_user where UNIX_TIMESTAMP(now()) - UNIX_TIMESTAMP(starttime) < 300 and price="'+checkPrice+'" and status=0')
+                    //并且时间是最近5分钟
+                    let timestra = moment().subtract(360,'seconds').format('YYYY-MM-DD HH:mm:ss');
+                    let existsList = await this.model('order_user').where({status : '0',price : checkPrice,starttime : ['>',timestra]}).select();
                     if (null == existsList || existsList.length == 0) {
                         //不存在，可以插入
                         hasCheck = true;
