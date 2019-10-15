@@ -56,7 +56,7 @@
                 </p>
                 <p class="line"></p>
                 <p class="tagq">商品分类:{{item.type}}</p>
-                <p class="tagq">当前已售:{{0 if item.sucnum!=null else item.sucnum}}</p>
+                <p class="tagq">当前已售:{{0 if item.sucnum == null else item.sucnum}}</p>
             </div>
             <div class="byy-clear"></div>
             <div class="byy-tab byy-tab-brief byy-tab-scroll " style="">
