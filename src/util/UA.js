@@ -1,4 +1,6 @@
-
+/***
+ * 获得当前请求的ua
+ ***/
 
 module.exports = function(agent){
     agent = agent ? agent.toLowerCase() : '';

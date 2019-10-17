@@ -1,4 +1,7 @@
-//后台常用的工具类
+/***
+ * 邮件发送
+ * 已模版进行分类，区分不同的业务。
+ ***/
 var fs = require('fs');
 var nodemailer = require('nodemailer');
 

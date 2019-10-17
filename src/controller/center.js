@@ -5,6 +5,7 @@ const rename = think.promisify(fs.rename, fs);
 const axios = require('axios');
 const moment = require('moment');
 const mailer = require('../util/mailer');
+let qiniuCloud = require('../util/qiniuCloud');
 let marked = require('marked');
 //markdown 解析器
 var renderer = new marked.Renderer();
@@ -43,16 +44,19 @@ module.exports = class extends Base {
     //=====================上传===================
     async uploadAction() {
         let file = this.file('file');
+        let ak = this.config('site').qiniuak.value;
+        let sk = this.config('site').qiniusk.value;
+        let scope  = this.config('site').qiniuscope.value;
+        let staticdomain = this.config('site').staticdomain.value;
         let name = file.name;
-        let tempPath = '/static/upload/user/' + name;
-        let filePath = path.join(think.ROOT_PATH, 'www', tempPath);
-        think.mkdir(path.dirname(filePath));
-        await rename(file.path, filePath);
+        let filePath = await qiniuCloud.saveFile(ak,sk,scope,file.path,'static_',path.extname(name));
+        let realPath = staticdomain+'/'+filePath;
+        fs.unlinkSync(file.path);//删除源文件。
         this.json({
             success: true,
             result: {
                 name: file.name,
-                filePath: tempPath,
+                filePath: realPath,
                 size: file.size,
                 type: file.type
             }
@@ -60,6 +64,10 @@ module.exports = class extends Base {
     }
     //=================粘贴上传
     async pasteAction() {
+        let ak = this.config('site').qiniuak.value;
+        let sk = this.config('site').qiniusk.value;
+        let scope  = this.config('site').qiniuscope.value;
+        let staticdomain = this.config('site').staticdomain.value;
         let imgData = this.post('imgData');
         var base64Data = imgData.replace(/^data:image\/\w+;base64,/, "");
         var dataBuffer = new Buffer(base64Data, 'base64');
@@ -67,7 +75,9 @@ module.exports = class extends Base {
         let absPath = '/static/upload/user/' + fileName;
         let filePath = path.join(think.ROOT_PATH, 'www', absPath);
         fs.writeFileSync(filePath, dataBuffer);
-        this.body = absPath;
+        let staticPath = await qiniuCloud.saveFile(ak,sk,scope,filePath,'static_');
+        let finalPath = staticdomain+'/'+staticPath;
+        this.body = finalPath;
     }
     //====================站点属性设置--edi==========================t
     async siteAction() {
@@ -439,5 +449,8 @@ module.exports = class extends Base {
         });
         return this.display('center/shop/analysis');
     }
-
+    //将本地数据库的文件上传到oss上
+    async toossAction(){
+        
+    }
 };
