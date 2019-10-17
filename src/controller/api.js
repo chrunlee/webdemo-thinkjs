@@ -79,7 +79,7 @@ module.exports = class extends Base {
                     await this.model('user_article').where({id : articleId}).update({postpath : staticdomain+'/'+filePath});
                 }
                 //查找content内容
-                let matchRs = content.match(/\((\/upload.*)\)/g);
+                let matchRs = content.match(/\((\/static.*)\)/g);
                 if(matchRs){
                     for(let rsIndex in matchRs){
                         let str = matchRs[rsIndex];
