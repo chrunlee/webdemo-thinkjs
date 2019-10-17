@@ -46,7 +46,7 @@ module.exports = class extends Base {
         let scope = this.config('site').qiniuscope.value;
         let staticdomain = this.config('site').staticdomain.value;
         //1.以数据库为基础进行处理。 
-        let baseFolder = path.join(think.ROOT_PATH,'www','static');
+        let baseFolder = path.join(think.ROOT_PATH,'www');
         //一、order_goods ： picpath.
         let goodList = await this.model('order_goods').field('id,picpath').select();
         for(let index in goodList){
