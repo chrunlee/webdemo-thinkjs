@@ -76,6 +76,7 @@ module.exports = class extends Base {
         let filePath = path.join(think.ROOT_PATH, 'www', absPath);
         fs.writeFileSync(filePath, dataBuffer);
         let staticPath = await qiniuCloud.saveFile(ak,sk,scope,filePath,'static_');
+        fs.unlinkSync(filePath);//删除源文件。
         let finalPath = staticdomain+'/'+staticPath;
         this.body = finalPath;
     }
