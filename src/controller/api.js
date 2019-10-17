@@ -54,7 +54,7 @@ module.exports = class extends Base {
             let picpath = good.picpath;
             let goodId = good.id;
             let realPath = path.join(baseFolder,picpath);
-            if(fs.existsSync(realPath)){
+            if(fs.existsSync(realPath) && think.isFile(realPath)){
                 let filePath = await qiniuCloud.saveFile(ak,sk,scope,realPath,'static_');
                 //更新数据库。
                 await this.model('order_goods').where({id : goodId}).update({picpath : staticdomain+'/'+filePath});
@@ -72,7 +72,7 @@ module.exports = class extends Base {
                 content = article.content;
             //(/upload/user/1537336644065-20.png)
             let realPath = path.join(baseFolder,postpath);
-            if(fs.existsSync(realPath)){
+            if(fs.existsSync(realPath) && think.isFile(realPath)){
                 let filePath = await qiniuCloud.saveFile(ak,sk,scope,realPath,'static_');
                 //更新数据库。
                 await this.model('user_article').where({id : articleId}).update({postpath : staticdomain+'/'+filePath});
@@ -84,7 +84,7 @@ module.exports = class extends Base {
                     let str = matchRs[rsIndex];
                     let tempPath = str.replace('(','').replace(')','');
                     let tempRealPath = path.join(baseFolder,tempPath);
-                    if(fs.existsSync(tempRealPath)){
+                    if(fs.existsSync(tempRealPath) && think.isFile(tempRealPath)){
                         let tempFinalPath = await qiniuCloud.saveFile(ak,sk,scope,tempRealPath,'static_');
                         //替换
                         content = content.replace(str,'('+staticdomain+'/'+tempFinalPath+')');
@@ -102,7 +102,7 @@ module.exports = class extends Base {
             let picpath = good.bannerpath;
             let goodId = good.id;
             let realPath = path.join(baseFolder,picpath);
-            if(fs.existsSync(realPath)){
+            if(fs.existsSync(realPath) && think.isFile(realPath)){
                 let filePath = await qiniuCloud.saveFile(ak,sk,scope,realPath,'static_');
                 //更新数据库。
                 await this.model('user_banner').where({id : goodId}).update({bannerpath : staticdomain+'/'+filePath});

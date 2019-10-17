@@ -20,13 +20,8 @@ function saveFile(ak,sk,scope,filePath,prefix,extname){
         let putExtra = new qiniu.form_up.PutExtra();
         // 文件上传
         let fileName = prefix+(+new Date())+'-'+(Math.floor(Math.random()*10000))+(extname||path.extname(filePath));
-        console.log(filePath)
-        console.log(fileName);
         formUploader.putFile(uploadToken, fileName, filePath, putExtra, function(respErr,respBody, respInfo) {
-            console.log(respErr);
-            console.log(respBody);
-            console.log(respInfo);
-            if(respInfo.status != 200){
+            if(respErr){
                 reject(respErr);
             }else{
                 resolve(fileName); 
