@@ -25,17 +25,12 @@ module.exports = class extends Base {
     async getIpAction(){
         let startDate = moment().format('YYYY-MM-DD');
         let obj = ipDateMap[startDate] || {
-            arr : [],
             page : 0
         };
-        if(obj.arr.length == 0){
-            //page++
-            obj.page++;
-            obj.arr = await getProxyIp(obj.page);
-        }
-        //返回一个数据对象
+        obj.page++;
+        let rst = await getProxyIp(obj.page);
         ipDateMap[startDate] = obj;
-        return this.json(obj.arr);
+        return this.json(rst);
     }
 
     async fileToOssAction(){
