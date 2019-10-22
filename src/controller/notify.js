@@ -10,6 +10,7 @@ module.exports = class extends Base {
             res.json({ success: false, msg: '无效金额' });
             return;
         }
+        let dingding = new ding(this.config('site').dingding.value)
         //根据deviceid 来进行校验设备
         let deviceList = await this.model('order_device').select();
         let currentId = data.deviceid;
@@ -39,7 +40,7 @@ module.exports = class extends Base {
             // let undoList = await this.model().query('select * from order_user where UNIX_TIMESTAMP(now()) - UNIX_TIMESTAMP(starttime) < 360 and price="'+data.money+'" and status="0"');
             if (undoList == null || undoList.length == 0) {
                 //说明有人付款，但是未查到是谁付款。这里请给我个钉钉
-                await ding(this.config('site').dingding.value,'商品售卖:有人付款，但是未查询到订单来源。(' + data.content + ')');
+                await dingding('','商品售卖:有人付款，但是未查询到订单来源。(' + data.content + ')');
             } else {
                 //找到订单人
                 let order = undoList[0];
@@ -52,7 +53,7 @@ module.exports = class extends Base {
                 let goodItem = await this.model('order_goods').where({id : goodId}).find();
                 if (think.isEmpty(goodItem)) {
                     //商品不存在，请ding我
-                    await ding(this.config('site').dingding.value,'商品售卖:商品不存在，请检查.(' + goodId + ')');
+                    await dingding.sendText('','商品售卖:商品不存在，请检查.(' + goodId + ')')
                 } else {
                     let sendContent = goodItem.content;
                     let goodName = goodItem.name;
@@ -62,10 +63,8 @@ module.exports = class extends Base {
                     //更新订单状态和数量
                     await this.model('order_list').where({id : insertId}).update({sendstatus : '1'});
                     await this.model('order_goods').where({id : goodId}).increment('sucnum',1);
-                    // await query.search('order_list').where({ id: rs.insertId }).update({ sendstatus: '1' });
-                    // await query.search('order_goods').where({ id: goodId }).update({ sucnum: sucnum + 1 });
                     //顶我
-                    await ding(this.config('site').dingding.value,'商品售卖:交易成功。(' + data.content + ')');
+                    await dingding.sendText('','商品售卖:交易成功。(' + data.content + ')')
                 }
             }
             this.json({ success: true, msg: '接受成功' });

@@ -114,7 +114,8 @@ module.exports = class extends Base {
             let uniqueId = sessionId + '_' + datestr;
             //检查当前数据库中是否存在待支付的订单
             let dealPrice = price;
-            await ding(this.config('site').dingding.value,'商品售卖:客户进入交易区[' + goodItem.name + ']，请保持打开支付助手并打开微信支付宝消息提醒推送消息！！！');
+            let dingding = new ding(this.config('site').dingding.value);
+            await dingding.sendText('','商品售卖:客户进入交易区[' + goodItem.name + ']，请保持打开支付助手并打开微信支付宝消息提醒推送消息！！！');
             //待支付，且时间不超过5分钟的。
             let momentStartTime = moment().subtract(300,'seconds').format('YYYY-MM-DD HH:mm:ss');
             let list = await this.model('order_user').where({status : '0',starttime : ['>',momentStartTime],sid : uniqueId,goodid : goodId}).select();
