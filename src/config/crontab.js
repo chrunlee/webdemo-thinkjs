@@ -1,8 +1,8 @@
 module.exports = [
     {
-        cron : '*/5 * * * * *',
-        handle : 'index/fileClearWeek',
+        cron : '* * * * *',
+        handle : 'index/dingding',
         type : 'one',
-        enable : false
+        enable : true
     }
 ]

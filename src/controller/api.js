@@ -113,4 +113,15 @@ module.exports = class extends Base {
             return this.json({msg : 'fuck error'});
         }
     }
+
+
+    /***
+     * 添加定时任务-添加后定时执行，全都为一次性的。为日程类的。
+     ***/
+    async addTimerAction(){
+        let data = this.post();
+        data.send = 0;
+        let iid = await this.model('user_task').add(data);
+        return this.json({success : true,msg : '添加成功'});
+    }
 }

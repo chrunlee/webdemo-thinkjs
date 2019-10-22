@@ -4,6 +4,7 @@ let fs = require('fs');
 let datConvert = require('../util/getBase64');
 let mailer = require('../util/mailer');
 let moment = require('moment');
+let dingding = require('../util/ding');
 /***
  * 前台展示
  **/
@@ -297,11 +298,21 @@ module.exports = class extends Base {
     }
 
     /***
-     * 定时清理多余附件
+     * 钉钉定时提醒
      ***/
-    async fileClearWeekAction(){
+    async dingdingAction(){
         if(this.isCli){
-
+            let api = this.config('site').dingding.value;
+            //查找比当前时间小的数据，如果有则依次进行
+            let now = moment().format('YYYY-MM-DD HH:mm:ss');
+            let list = await this.model('user_task').where({createtime : ['<',now],send : 0}).select();
+            let ding = new dingding(api);
+            let fns = ['sendText','sendLink','sendMd','sendCard'];
+            for(let i in list){
+                let obj = list[i];
+                await ding[fns[obj.type]](obj.title,obj.content,obj.picpath,obj.url);
+                await this.model('user_task').where({id : obj.id}).update({send : 1});
+            }
         }
     }
 };
