@@ -9,7 +9,7 @@
     <meta name="applicable-device" content="pc,mobile">
     <meta name="MobileOptimized" content="width">
     <meta name="HandheldFriendly" content="true">
-    <meta name="mobile-agent" content="format=html5;url=https://chrunlee.cn/shop/detail/{{item.id}}.html">
+    <meta name="mobile-agent" content="format=html5;url={{site.domain.value}}/shop/detail/{{item.id}}.html">
     <meta name="description" content="{{item.description}}">
     <meta name="keywords" content="{{item.name}}">
     <meta name="author" content="{{site.sitename.value}}">
@@ -42,7 +42,7 @@
             <div class="left-img">
                 <div class="byy-carousel" id="test" byy-indicator="none" byy-arrow="none">
                     <div carousel-item="">
-                        <div style="background-image:url({{item.picpath}})">
+                        <div style="background-image:url({{site.staticdomain.value}}{{item.picpath}})">
                         </div>
                     </div>
                 </div>

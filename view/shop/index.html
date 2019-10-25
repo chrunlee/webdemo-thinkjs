@@ -5,7 +5,7 @@
     <title>采然小店 - {{site.sitename.value}}</title>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta http-equiv="Cache-Control" content="no-siteapp">
-    <meta name="keywords" content="小八店铺,{{site.authorname.value}},迅哥博客,{{site.domain.value}}">
+    <meta name="keywords" content="小八店铺,{{site.authorname.value}},{{site.sitename.value}},{{site.domain.value}}">
     <meta name="description" content="小八店铺,{{site.sitedes.value}}">
     <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
     <link rel="stylesheet" href="/static/plugins/byy/css/default/byy.css">
@@ -29,7 +29,7 @@
             <div class="shop-item-header" onclick="javascript:location.href='/shop/detail/{{value.id}}.html'">
                 <div class="byy-carousel" id="{{value.id}}" byy-indicator="none" byy-arrow="none">
                     <div carousel-item="">
-                        <div style="background-image:url({{value.picpath}})">
+                        <div style="background-image:url({{site.staticdomain.value}}{{value.picpath}})">
                         </div>
                     </div>
                 </div>

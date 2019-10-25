@@ -3,6 +3,8 @@
 <head>
 	<meta charset="UTF-8">
 	<title>技术系列 - {{site.sitename.value}}</title>
+	<meta name="keywords" content="{{site.sitename.value}},{{site.authorname.value}},{{site.domain.value}}">
+	<meta name="description" content="{{site.sitedes}}">
 	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
 	<link rel="stylesheet" href="/static/plugins/byy/css/default/byy.css">
 	<link rel="stylesheet" href="/static/css/index/index.css">
@@ -15,7 +17,7 @@
 		<div class="byy-carousel" id="banner">
 			<div carousel-item="">
 				{%for value in banner %}
-				<div class="banner-item {{value.bannerstyle}}" style="background-image: url({{value.bannerpath}});background-size:100% {{value.bannerheight}};">
+				<div class="banner-item {{value.bannerstyle}}" style="background-image: url({{site.staticdomain.value}}{{value.bannerpath}});background-size:100% {{value.bannerheight}};">
 					<div class="banner-title">{{value.title}}</div>
 					<div class="banner-des">{{value.bannerdes}}</div>
 				</div>
@@ -38,7 +40,7 @@
 				{% for value in article %}
 				<article>
 					<a href="{{value.link}}" target="_self">
-						<div class="post" style="background-image: url({{value.postpath}})"></div>
+						<div class="post" style="background-image: url({{site.staticdomain.value}}{{value.postpath}})"></div>
 					</a>
 					<div class="article-title">
 						<a href="{{value.link}}" target="_blank">{{value.title}}</a>

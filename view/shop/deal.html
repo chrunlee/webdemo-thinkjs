@@ -9,7 +9,7 @@
     <meta name="applicable-device" content="pc,mobile">
     <meta name="MobileOptimized" content="width">
     <meta name="HandheldFriendly" content="true">
-    <meta name="mobile-agent" content="format=html5;url=https://chrunlee.cn/shop/detail/{{item.id}}.html">
+    <meta name="mobile-agent" content="format=html5;url={{site.domain.value}}/shop/detail/{{item.id}}.html">
     <meta name="description" content="{{item.description}}">
     <meta name="keywords" content="{{item.name}}">
     <meta name="author" content="{{site.sitename}}">
@@ -39,7 +39,7 @@
         </div>
         <div class="deal-info">
             <div class="tips">
-               请在下方倒计时前完成付款，否则当前订单将失效。付款成功但未收到发货邮件，请带上付款截图，发我邮箱 <email>chrunlee@foxmail.com</email>.
+               请在下方倒计时前完成付款，否则当前订单将失效。付款成功但未收到发货邮件，请带上付款截图，发我邮箱 <email>{{site.email.value}}</email>.
                {% if ismobile%}
                 <div style="color:#49e;font-size:14px;">(手机端请截屏后打开支付宝扫码。)</div>
                {%endif%}

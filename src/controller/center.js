@@ -108,6 +108,12 @@ module.exports = class extends Base {
                 data.strval = body.value;
             }
             await this.model('site_set').where({ name: body.name }).update(data);
+            //同步更新site属性
+            let site = this.config('site');
+            let obj = site[body.name];
+            obj.value = data.intval || data.strval;
+            site[body.name] = obj;
+            this.config('site',site);
             this.json({ success: true });
         } else {
             let list = await this.model('site_set').select();
