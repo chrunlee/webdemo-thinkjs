@@ -26,6 +26,16 @@ module.exports = class extends Base {
         })
         return this.display('home/index');
     }
+
+    //OSS 302
+    async staticAction(){
+        let id = this.query('id');
+        let fileName = 'static_'+id;
+        let staticdomain = this.config('site').staticdomain.value;
+        let realPath = staticdomain+'/'+fileName;
+        return this.redirect(realPath);
+    }
+
     //dat count
     async datCountAction(){
         let obj = await this.model('site_set').where({name : 'datcount'}).find();

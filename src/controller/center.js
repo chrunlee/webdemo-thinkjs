@@ -48,12 +48,12 @@ module.exports = class extends Base {
         let sk = this.config('site').qiniusk.value;
         let scope  = this.config('site').qiniuscope.value;
         let staticdomain = this.config('site').staticdomain.value;
-        let qiniuenable = this.config('site').qiniuenable.value == 0 ? true : false;//是否启用七牛云存储。
+        let qiniuenable = this.config('site').qiniuenable.value == 1 ? true : false;//是否启用七牛云存储。
         let name = file.name;
         let realPath = "";
         if(qiniuenable){
             let filePath = await qiniuCloud.saveFile(ak,sk,scope,file.path,'static_',path.extname(name));
-            realPath = staticdomain+'/'+filePath;
+            realPath = '/'+filePath;
             fs.unlinkSync(file.path);//删除源文件。
         }else{
             realPath = '/static/upload/user/' + name;
@@ -77,7 +77,7 @@ module.exports = class extends Base {
         let sk = this.config('site').qiniusk.value;
         let scope  = this.config('site').qiniuscope.value;
         let staticdomain = this.config('site').staticdomain.value;
-        let qiniuenable = this.config('site').qiniuenable.value == 0 ? true : false;//是否启用七牛云存储。
+        let qiniuenable = this.config('site').qiniuenable.value == 1 ? true : false;//是否启用七牛云存储。
 
         let imgData = this.post('imgData');
         var base64Data = imgData.replace(/^data:image\/\w+;base64,/, "");
@@ -90,7 +90,7 @@ module.exports = class extends Base {
         if(qiniuenable){
             let staticPath = await qiniuCloud.saveFile(ak,sk,scope,filePath,'static_');
             fs.unlinkSync(filePath);//删除源文件。
-            finalPath = staticdomain+'/'+staticPath;
+            finalPath = '/'+staticPath;
         }else{
             finalPath = absPath;
         }
