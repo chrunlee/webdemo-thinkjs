@@ -187,7 +187,7 @@ module.exports = class extends Base {
         if (category) {
             articleWhere.category = category;
         }
-        let articles = await this.model('user_article').where(articleWhere).order('ctime DESC').limit(start, start + 20).select();
+        let articles = await this.model('user_article').where(articleWhere).order('ctime DESC').limit(start,20).select();
         let counts = await this.model('user_article').where(articleWhere).count();
         this.assign({ page:page,banner: banner, category: categoryList, c: category, article: articles, total: counts, site: this.config('site'), github: github, d: { header: 'article' } });
 
