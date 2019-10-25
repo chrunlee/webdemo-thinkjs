@@ -25,7 +25,7 @@
 	<link rel="stylesheet" href="/static/css/article/easy.css">
 </head>
 <body class="grey-bg fixed">
-	<div style="width:0px;height:0px;overflow:hidden;line-height:0px;font-size:0px;"><img alt="{{article.title}}" src="{{site.staticdomain.value}}{{article.postpath}}" width="0px" height="0px" /></div>
+	<div style="width:0px;height:0px;overflow:hidden;line-height:0px;font-size:0px;"><img alt="{{article.title}}" src="{{article.postpath}}" width="0px" height="0px" /></div>
 	{% include '../tpl/header.html'%}
 	<div class="detail-wrap">
 		<input type="hidden" name="id" value="{{article.id}}">
@@ -102,7 +102,7 @@
 				{%endif%}
 				{% for value in link %}
 				<div class="command-article">
-					<a href="{{value.link}}" style="background-image:url({{site.staticdomain.value}}{{value.postpath}});"></a>
+					<a href="{{value.link}}" style="background-image:url({{value.postpath}});"></a>
 					<div class="title">
 						<a href="{{value.link}}">{{value.title}}</a>
 					</div>
