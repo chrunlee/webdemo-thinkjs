@@ -15,7 +15,7 @@
     <meta name="author" content="{{site.sitename}}">
     <meta name="site" content="{{site.domain.value}}">
     <meta name="title" content="{{item.name}} | {{site.sitename.value}}">
-    <title>{{item.name}} - 成交区 - 采然小店</title>
+    <title>{{item.name}} - 成交区 - {{site.shopname.value}}</title>
     <link rel="stylesheet" href="/static/plugins/byy/css/default/byy.css">
     <link rel="stylesheet" href="/static/css/index/index.css">
     <link rel="stylesheet" href="/static/css/shop/index.css">
@@ -26,20 +26,20 @@
     <header>
         <ul class="byy-nav">
             <li class="byy-nav-item"><a href="/shop.html?type=tool">工具</a></li>
-            <span class="byy-info pull-right">采然小店</span>
+            <span class="byy-info pull-right">{{site.shopname.value}}</span>
         </ul>
     </header>
     <div id="shop-content">
         <div class="shop-path">
             <span class="byy-breadcrumb" separator="/">
                 <a href="/index.html">首页</a>
-                <a href="/shop.html">采然小店</a>
+                <a href="/shop.html">{{site.shopname.value}}</a>
                 <a><cite>{{item.name}}</cite></a>
             </span>    
         </div>
         <div class="deal-info">
             <div class="tips">
-               请在下方倒计时前完成付款，否则当前订单将失效。付款成功但未收到发货邮件，请带上付款截图，发我邮箱 <email>{{site.email.value}}</email>.
+               请在下方倒计时前完成付款，否则当前订单将失效。付款成功1分钟内即可收到邮件，若未收到发货邮件，请带上付款截图，呼叫{{site.shopauthor.value}}-邮箱 <email>{{site.email.value}}</email>.
                {% if ismobile%}
                 <div style="color:#49e;font-size:14px;">(手机端请截屏后打开支付宝扫码。)</div>
                {%endif%}
