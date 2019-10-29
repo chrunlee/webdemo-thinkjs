@@ -6,6 +6,7 @@ const axios = require('axios');
 const moment = require('moment');
 const mailer = require('../util/mailer');
 let qiniuCloud = require('../util/qiniuCloud');
+let {downloadPicture} = require('../util/downloader');
 let marked = require('marked');
 //markdown 解析器
 var renderer = new marked.Renderer();
@@ -70,6 +71,30 @@ module.exports = class extends Base {
                 type: file.type
             }
         });
+    }
+    //图片地址转换
+    async convertHrefAction(){
+        let href = this.post('href');
+        let ak = this.config('site').qiniuak.value;
+        let sk = this.config('site').qiniusk.value;
+        let scope  = this.config('site').qiniuscope.value;
+        let qiniuenable = this.config('site').qiniuenable.value == 1 ? true : false;//是否启用七牛云存储。
+        //保存在本地。
+        try{
+            let fileName =  (+new Date()) + '-' + Math.floor(Math.random() * 1000) + '.png';
+            let absPath = '/static/upload/user/' + fileName;
+            let filePath = path.join(think.ROOT_PATH, 'www', absPath);
+            await downloadPicture(href,filePath);
+            if(qiniuenable){
+                let staticPath = await qiniuCloud.saveFile(ak,sk,scope,filePath,'static_');
+                fs.unlinkSync(filePath);
+                return this.body = '/'+staticPath;
+            }else{
+                return this.body = absPath;
+            }
+        }catch(e){
+            return this.body = '';
+        }
     }
     //=================粘贴上传
     async pasteAction() {
@@ -475,5 +500,72 @@ module.exports = class extends Base {
     //将本地数据库的文件上传到oss上
     async toossAction(){
         
+    }
+
+
+    //========================笑话集锦=====================
+    async jokeListAction(){
+        if(this.isPost){
+            //分页处理
+            let data = this.post();
+            var page = parseInt(data.page, 10);
+            var rows = parseInt(data.rows, 10);
+            let list = await this.model('user_joke').field('id,type,mediatype,likenum,readnum,createtime').order('id desc').page(page, rows).select();
+            let total = await this.model('user_joke').count();
+            this.json({ success: true, rows: list, total: total });
+        }else{
+            return this.display('center/joke/list');
+        }
+    }
+    //删除笑话
+    async jokeDeleteAction(){
+        let id = this.post('id');
+        if(id){
+            await this.model('user_joke').where({id : id}).delete();
+            return this.json({success : true});
+        }else{
+            return this.json({success : false})
+        }
+    }
+
+    //添加或编辑笑话
+    async jokeAddAction(){
+        let id = this.query('id');
+        let article = {};
+        if (id) {
+            article = await this.model('user_joke').where({ id: id }).find();
+        }
+        this.assign('article', article);
+        return this.display('center/joke/add');
+    }
+
+    //保存
+    async jokeSaveAction(){
+        var data = this.post();
+        var isnew = false;
+        if (!data.id) {
+            isnew = true;
+        }
+        data.content = data.description;//懒癌
+        if (isnew) {
+            data.createtime = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
+            let id = await this.model('user_joke').add(data);
+            data.id = id;
+        } else {
+            data.createtime = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
+            await this.model('user_joke').where({ id: data.id }).update(data);
+        }
+        return this.json({ success: true, id: data.id });
+    }
+    //update content of joke
+    async jokeUpdateAction(){
+        var id= this.post('id');
+        if(id){
+            var content = this.post('content');
+            await this.model('user_joke').where({id : id}).update({content : content});
+            return this.json({success : true})
+        }else{
+            return this.json({success : false})
+        }
     }
 };

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <title>磁力检索 - {{site.sitename.value}}</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta name="keywords" content="{{site.sitename.value}},{{site.authorname.value}},{{site.domain.value}}">
+    <meta name="description" content="{{site.sitedes}}">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <style>
+        html,body{
+            width:100%;
+            height:100%;
+            margin:0px;
+            padding:0px;
+            background-color:#f2f2f2;
+            font-family:"微软雅黑";
+        }
+        h1{text-align:center;margin-bottom:50px;font-size:40px;}
+        .info{text-align:center;position:relative;top:-20px;color:#ccc;font-size:14px;}
+        .ipt{
+            width:80%;margin:0px auto;
+            position:relative;
+        }
+        .ipt .search{
+            width:100%;
+            height:40px;
+            line-height:40px;
+            font-size:16px;
+            color:#333;
+            border-radius:2px;
+            outline:none;
+            border:1px solid #11b5b5;
+            padding-right:100px;
+            box-sizing:border-box;
+        }
+        .submit{
+            position:absolute;
+            right:0px;
+            top:0px;
+            height:39px;
+            width:100px;
+            outline:none;
+            border-style:hidden;
+            border-left:1px solid #11b5b5;
+            background-color:#11b5b5;
+            color:white;
+        }
+        .empty{
+            text-align:center;
+            margin-top:100px;
+        }
+        .block{
+            width:95%;
+            margin:10px auto;
+            border:1px solid #d7d4d4;
+            border-radius:4px;
+            padding:5px 10px;
+            box-sizing:border-box;
+            background-color:#fff;
+        }
+        .block a,.block a:active,.block a:focus{
+            color:#333;
+            font-size:16px;
+            font-family:"微软雅黑";
+            text-decoration:none;
+            word-break:break-all;
+            white-space:normal;
+        }
+    </style>
+</head>
+<body>
+    <h1>磁力检索</h1>
+    <p class="info">小采然正在积极抓取数据，如果搜不到过几天来试试？</p>
+    <div class="form">
+        <form action="/magnet/search" method="get">
+            <div class="ipt">
+                <input type="text" name="name" class="search" value="{{search}}">
+                <input type="submit" value="检索" class="submit">
+            </div>
+        </form>
+    </div>
+    <div class="content">
+        {%if q and list.length == 0%}
+        <div class="empty">没有检索到关于"{{search}}"的记录</div>
+        {%endif %}
+        {%if q==null or q == undefined or q == '' %}
+            <!-- 如果没有检索内容，默认展示最近的前100条记录-->
+            {%for value in showList %}
+            <div class="block">
+                <a href="/magnet/detail/{{value.infohash}}">{{value.name}}</a>
+            </div>
+            {%endfor%}
+        {%endif%}
+        {%for value in list %}
+        <div class="block">
+            <a href="/magnet/detail/{{value.infohash}}">{{value.name}}</a>
+        </div>
+        {%endfor%}
+    </div>
+    <p style="color:#ccc;font-size:12px;text-align:center;margin-top:100px;">*本站不保存任何文件，所有数据均从网络爬取，若侵权请联系站长屏蔽.</p>
+</body>
+</html>
+{% include '../tpl/commonjs.html' %}

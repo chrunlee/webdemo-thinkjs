@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>笑话集锦</title>
+    {% include '../hometpl/css.html' %}
+</head>
+<body class="grey-bg frame-body">
+    <div class="byy-panel list-panel">
+        <div class="byy-panel-title">
+            <span class="byy-breadcrumb">
+                <a href="/center/index" target="_parent">首页</a>
+                <a><cite>笑话列表</cite></a>
+            </span>
+            <span class="byy-btn-group pull-right">
+                <span class="byy-btn small danger" filter="openAdd"><i class="byyicon icon-plus"></i>添加笑话</span>
+            </span>
+        </div>
+        <div class="byy-panel-content byy-clear">
+            <table class="byy-table">
+                
+            </table>
+            <div class="page">
+                <div class="pagination pull-right"></div>   
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+{% include '../hometpl/js.html' %}
+<script type="text/javascript">
+    byy.require(['jquery','win','table'],function(){
+        var category = [];
+        byy.bindEvents({
+            
+            openAdd : function(){
+                location.href = '/center/jokeAdd';
+            },
+            edit : function(data){
+                var id = data.id;
+                location.href = '/center/jokeAdd?id='+id;   
+            },
+            delete : function(data){
+                var id = data.id;
+                $.ajax({
+                    url : '/center/jokeDelete',
+                    type : 'post',
+                    data : {id : id},
+                    success : function(res){
+                        if(res.success){
+                            location.reload(); 
+                        }else{
+                            byy.win.msg('删除失败,请检查');
+                        }
+                    }
+                });
+            }
+            
+        });
+        
+
+        var loadData = function(){
+            //渲染数据
+            byy.table.render({
+                elem : '.byy-table',
+                method : 'post',
+                url : '/center/jokeList',
+                page : {
+                    limit : 100,
+                    pageArray : [100]
+                },
+                cols : [[
+                    {field : 'id',title : 'ID'},
+                    {field : 'type',title : '类型',templet : function(data){
+                        return ['笑话'][data.type]
+                    }},
+                    {field : 'mediatype',title : '媒体类型',templet : function(data){
+                        return ['纯文本','多图','图文'][data.mediatype];
+                    }},
+                    {field : 'likenum',title : '热度',sort : true},
+                    {field : 'readnum',title : '阅读',sort : true},
+                    {field : 'tool',title:'操作',tool : true,width:250,templet : function( data ){
+                        return ['<span class="byy-btn mini" data-id="'+data.id+'" filter="edit">去编辑</span>',
+                                '<span class="byy-btn mini danger" data-id="'+data.id+'" filter="delete">删除</span>'
+                            ].join('');
+                    }}
+                ]]
+
+            });
+        }
+
+        loadData();
+    })
+
+</script>

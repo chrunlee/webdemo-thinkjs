@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>发布笑话</title>
+    <link rel="stylesheet" href="/static/plugins/byy/css/default/byy.css">
+    <link rel="stylesheet" href="/static/css/center/editor.css">
+    <link rel="stylesheet" href="/static/css/article/article.css">
+</head>
+<body class="grey-bg ">
+    <div class="base-info byy-form">
+        <input type="hidden" name="id" value="{{article.id }}">
+        <div class="article-info">
+            <div class="byy-form-item">
+                
+                <label for="" class="byy-label">类型</label>
+                <div class="byy-block">
+                    <input type="radio" name="type" class="byy-form-radio" {{ 'checked' if article.type == '0' else ''}}  value="0" title="笑话">
+                </div>
+            </div>
+            <div class="byy-form-item">
+                <label for="" class="byy-label">媒体类型</label>
+                <div class="byy-block">
+                    <span>
+                        <input type="radio" class="byy-form-radio" {{ 'checked' if article.mediatype == '0' else ''}} name="mediatype" value="0" title="纯文本">
+                    </span>
+                    <span>
+                        <input type="radio" class="byy-form-radio"  {{ 'checked' if article.mediatype == '1' else ''}} name="mediatype" value="1" title="多图">
+                    </span>
+                    <span>
+                        <input type="radio" class="byy-form-radio" {{ 'checked' if article.mediatype == '2' else ''}} name="mediatype" value="2" title="图文">
+                    </span>
+                </div>
+            </div>
+            <div class="bottom-tool byy-clear">
+                <div>
+                    <span class="byy-btn small" filter="save">保存记录</span>
+                </div>
+                
+                <div>
+                    <span class="byy-btn warm small" filter="preview">预览</span>
+                </div>
+                <div>
+                    <input type="text" id="urlshow" style="width:250px;height:30px;line-height:30px;">
+                    <span class="byy-btn small" id="uploadPicture">上传照片复制路径</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--编辑器-->
+    <div class="editor byy-clear" style="top:170px;">
+        <span class="exitfull" filter="exitfull">
+            <i class="byyicon icon-arrow-down"></i>
+        </span>
+        <!--左侧编辑器-->
+        <div class="left-editor">
+            <div class="editor-content">
+                <textarea name="description" id="description">{{article.content}}</textarea>
+            </div>
+        </div>
+        <!--右侧文章预览区域-->
+        <div class="right-preview article-detail">
+            
+        </div>
+    </div>
+</body>
+</html>
+<script type="text/javascript" src="/static/plugins/byy/byy.js"></script>
+<script type="text/javascript" src="/static/plugins/marked/marked.min.js"></script>
+<script type="text/javascript" src="/static/plugins/highlight/highlight.pack.js"></script>
+<script type="text/javascript">
+    byy.require(['jquery','win','uploader'],function(){
+
+
+        $.fn.extend({
+            insertAtCaret : function (myValue) {
+                var $t = $(this)[0];
+                if (document.selection) {
+                    this.focus();
+                    var sel = document.selection.createRange();
+                    sel.text = myValue;
+                    this.focus();
+                } else
+                    if ($t.selectionStart || $t.selectionStart == '0') {
+                        var startPos = $t.selectionStart;
+                        var endPos = $t.selectionEnd;
+                        var scrollTop = $t.scrollTop;
+                        $t.value = $t.value.substring(0, startPos) + myValue + $t.value.substring(endPos, $t.value.length);
+                        this.focus();
+                        $t.selectionStart = startPos + myValue.length;
+                        $t.selectionEnd = startPos + myValue.length;
+                        $t.scrollTop = scrollTop;
+                    } else {
+                        this.value += myValue;
+                        this.focus();
+                    }
+            }
+        });
+
+
+        byy.bindEvents({
+            
+            save : function(){
+                var values = byy('.base-info').getValues();
+                console.log(values);
+                $.ajax({
+                    url : '/center/jokeSave',
+                    type : 'post',
+                    data : values,
+                    success : function(res){
+                        if(!res.success){
+                            byy.win.msg('保存失败，请检查')
+                        }else{
+                            $('[name="id"]').val(res.id);
+                        }
+                    }
+                });
+            },
+            removeTag : function(){
+                $(this).remove();
+            },
+            //预览
+            preview : function(){
+                var id = $('[name="id"]').val();
+                window.open('/joke/'+id+'.html');
+            }
+        });
+
+
+
+        //上传
+        byy.uploader().simpleImage({
+            server : '/center/upload',
+            selector : '#uploadPicture',
+            onSuccess : function(file,res){
+                $('#urlshow').val(res.result.filePath);
+            }
+        });
+
+        //textarea 绑定change事件
+        $('body').on('keyup','[name="description"]',byy.debounce(render,1000,true))
+
+        //图片复制
+        //paste 绑定事件
+        document.getElementById('description').addEventListener('paste',function(event){
+            if(event.clipboardData.items[0].type.indexOf('image') > -1){
+                var reader = new FileReader(),
+                    file = event.clipboardData.items[0].getAsFile();
+                reader.onload = function(e){
+                    //this.result 可以得到图片的base64
+                    var urldata = this.result;
+                    $.ajax({
+                        url : '/center/paste',
+                        type : 'post',
+                        data : {imgData : urldata},
+                        success : function(res){
+                            $('#description').insertAtCaret('![]('+res+')');
+                        }
+                    });
+                }
+                reader.readAsDataURL(file);
+            }else if(event.clipboardData.items[0].type.indexOf('plain') > -1){
+                //比对图片。
+                event.clipboardData.items[0].getAsString(function(s){
+                    if(s.startWith('http') && ( s.indexOf('.jpg') > -1 || s.indexOf('.png') || s.indexOf('gif') > -1) ){
+                        console.log('是个图片地址')
+                        $.ajax({
+                            url : '/center/convertHref',
+                            type : 'post',
+                            data : {href : s},
+                            success : function(res){
+                                if(res){
+                                    $('#description').insertAtCaret('![]('+res+')');
+                                }else{
+                                    byy.win.msg('转化失败')
+                                }
+                            }
+                        })
+                        byy.stope(event);
+                        event.preventDefault();
+                        return false;
+                    }else{
+                        $('#description').insertAtCaret(''+s);
+                    }
+                })
+            }else{
+                return false;
+            }
+            byy.stope(event);
+            event.preventDefault();
+            return;
+        });
+        /**
+         * 渲染markdown样式
+         **/
+        function render(){
+            var content = $('[name="description"]').val();
+            $('.right-preview').html(marked(content));
+            update(content);
+            highlight();
+        }
+        render();
+        function highlight(){
+            $('pre code').each(function(i, block) {
+                hljs.highlightBlock(block);
+            });
+        }
+        //与渲染同频率进行内容更新
+        function update(content){
+            var id = $('input[name="id"]').val();
+            if(!id){
+                byy.win.msg('该记录还未保存，请尽快保存')
+                return;
+            }
+            $.ajax({
+                url : '/center/jokeUpdate',
+                type : 'post',
+                data : {
+                    id : id,
+                    content : content
+                },
+                success : function(res){
+                    if(!res.success){
+                        byy.win.msg('笑话内容保存失败，请检查')
+                    }   
+                }
+            });
+        }
+    });
+</script>
