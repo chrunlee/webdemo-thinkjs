@@ -19,8 +19,8 @@ byy.define(['jquery','win','store'],function(exports){
 			byy.store.local('id',LoginUser.id);
 		}
 	};
-	//获取后自动登录
-	autoLogin();
+	//获取后自动登录，取消自动登陆
+	// autoLogin();
 	var common = {
 		//弹窗登录
 		login : function(){	
