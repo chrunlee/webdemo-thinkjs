@@ -53,6 +53,7 @@ module.exports = class extends Base {
             let sesId = joke.id;
             jokeId.push(sesId)
             await this.session('jokeId',jokeId);
+            await this.model('user_joke').where({id : sesId}).increment('readnum',1);
             joke.html = marked(joke.content||'',{renderer : renderer});    
         }
         this.assign('joke',joke);
