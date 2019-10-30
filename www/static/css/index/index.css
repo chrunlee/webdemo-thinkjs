@@ -465,4 +465,7 @@ section.dark article .article-info {
     position: relative;
     top: 10px;
   }
+  .search-block {
+    display: none;
+  }
 }
