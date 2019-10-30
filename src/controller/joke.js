@@ -42,18 +42,18 @@ module.exports = class extends Base {
         if(think.isEmpty(joke)){
             //此处需要随机获取。
             if(jokeId && jokeId.length > 0){
-                joke = await this.model('user_joke').where({id : ['notin',jokeId||[]]}).limit(0,1).order('id desc').find();
+                joke = await this.model('user_joke').where({id : ['notin',jokeId||[]]}).limit(0,1).order('likenum desc,id desc').find();
             }else{
-                joke = await this.model('user_joke').limit(0,1).order('id desc').find();
+                joke = await this.model('user_joke').limit(0,1).order('rand(),id desc').find();
             }
         }
-        let sesId = joke.id;
-        jokeId.push(sesId)
-        await this.session('jokeId',jokeId);
         if(think.isEmpty(joke)){
             this.assign('empty',true);
         }else{
-            joke.html = marked(joke.content,{renderer : renderer});    
+            let sesId = joke.id;
+            jokeId.push(sesId)
+            await this.session('jokeId',jokeId);
+            joke.html = marked(joke.content||'',{renderer : renderer});    
         }
         this.assign('joke',joke);
         this.assign('d', {
@@ -73,6 +73,12 @@ module.exports = class extends Base {
             return this.body = joke.likenum;
         }
         return this.body = '0';
+    }
+
+    async clearAction(){
+        //清掉重看
+        await this.session('jokeId',[]);
+        return this.body = '缓存已清理，刷新页面即可！';
     }
 
 };

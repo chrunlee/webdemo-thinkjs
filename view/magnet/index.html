@@ -69,14 +69,27 @@
             word-break:break-all;
             white-space:normal;
         }
+        .page{
+            text-align:center;
+        }
+        .page span{
+            display:inline-block;
+            width:200px;
+            text-align:center;
+            color:#49e;
+            text-decoration:underline;
+            cursor:pointer;
+        }
     </style>
 </head>
 <body>
     <h1>磁力检索</h1>
     <p class="info">小采然正在积极抓取数据，如果搜不到过几天来试试？</p>
     <div class="form">
-        <form action="/magnet/search" method="get">
+        <form action="/magnet/search" method="get" id="submitForm">
             <div class="ipt">
+                <input type="hidden" name="type" id="type">
+                <input type="hidden" name="page" value="{{page}}">
                 <input type="text" name="name" class="search" value="{{search}}">
                 <input type="submit" value="检索" class="submit">
             </div>
@@ -85,7 +98,10 @@
     <div class="content">
         {%if q and list.length == 0%}
         <div class="empty">没有检索到关于"{{search}}"的记录</div>
-        {%endif %}
+        <div class="page">
+            <span id="prev">上一页</span>
+        </div>
+        {%else %}
         {%if q==null or q == undefined or q == '' %}
             <!-- 如果没有检索内容，默认展示最近的前100条记录-->
             {%for value in showList %}
@@ -99,8 +115,27 @@
             <a href="/magnet/detail/{{value.infohash}}">{{value.name}}</a>
         </div>
         {%endfor%}
+        <div class="page">
+            <span id="prev">上一页</span>
+            <span id="next">下一页</span>
+        </div>
+        {%endif%}
     </div>
     <p style="color:#ccc;font-size:12px;text-align:center;margin-top:100px;">*本站不保存任何文件，所有数据均从网络爬取，若侵权请联系站长屏蔽.</p>
 </body>
 </html>
+<script type="text/javascript">
+    var prev =document.getElementById('prev');
+    var next = document.getElementById('next');
+    var type = document.getElementById('type');
+    var form = document.getElementById('submitForm');
+    prev.onclick = function(){
+        type.value = '0';
+        form.submit();
+    }
+    next.onclick = function(){
+        type.value = '1';
+        form.submit();
+    }
+</script>
 {% include '../tpl/commonjs.html' %}

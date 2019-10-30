@@ -25,14 +25,30 @@ module.exports = class extends Base {
 
     async searchAction(){
         var name = this.query('name') || '';
+        var page = this.query('page') || '0';
+        var type = this.query('type') || '1';//0 上一页，1 下一页
         name = name.trim();
         if(name.length ==0 ){
             let list = await this.model('demo_magnet').order('createTime desc').limit(0,100).select();
             this.assign({q : false,list : [],showList : list,site : this.config('site')});
             return this.display('magnet/index');
         }else{
-            let list = await this.model('demo_magnet').where({name : ['like','%'+name+'%']}).order('createTime desc').select();
+            var curPage = 1;
+            try{
+                curPage = parseInt(page,10);
+                if(type == '0'){
+                    curPage --;
+                }else{
+                    curPage ++ ;
+                }
+                curPage = Math.max(1,curPage);
+            }catch(er){
+                curPage = 1;
+            }
+            let start = (curPage-1)*20;
+            let list = await this.model('demo_magnet').where({name : ['like','%'+name+'%']}).limit(start,20).order('createTime desc').select();
             this.assign({
+                page : curPage,
                 q : true,
                 list : list,
                 search : name,
