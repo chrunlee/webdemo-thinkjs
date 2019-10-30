@@ -66,7 +66,6 @@ module.exports = class extends Base {
                 this.assign({success : false,site : this.config('site')})
                 this.display('magnet/detail');
             }else{
-                console.log(obj.json);
                 var json = JSON.parse(obj.json);
                 json.size = format(json.size);
                 json.files.forEach(item=>{
