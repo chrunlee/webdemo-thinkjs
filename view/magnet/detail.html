@@ -52,6 +52,9 @@
         <p>{{value.path}} <span class="obj size">{{value.size}}</span></p>
         {%endfor%}
     </div>
+    <div>
+        {{site.magnetadsscript.value | safe}}
+    </div>
 </body>
 </html>
 {% include '../tpl/commonjs.html'%}
