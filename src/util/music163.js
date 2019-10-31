@@ -43,7 +43,6 @@ class music {
     getMusicUrl(cookie,ids){
         ids = typeof ids == Array ? ids.join(',') : ids;
         return axios.get(`${this.api}/song/url?id=${ids}`,{headers : {cookie : cookie}}).then(rs=>{
-            console.log(rs.data);
             let data = rs.data;
             return data.data;
         });
