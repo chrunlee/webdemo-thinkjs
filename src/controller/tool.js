@@ -1,7 +1,7 @@
 //工具类相关的页面处理
 const Base = require('./base.js');
 const axios = require('axios');
-// const URL = require('url');
+const {URL} = require('url');
 const music163 = require('../util/music163');
 
 module.exports = class extends Base {
@@ -18,7 +18,6 @@ module.exports = class extends Base {
         //检查code
         let code = await this.session('netmusiccode');
         let isFirst = await this.session('netmusicfirst')||1;
-        console.log(isFirst);
         if( (code == null || code == undefined || code == '') && isFirst >= 3){
             //无code
             let codestr = this.post('code')||'';
