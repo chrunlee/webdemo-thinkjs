@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>网易云音乐VIP下载 - {{site.sitename.value}}</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta name="keywords" content="{{site.shopname.value}},网易云音乐VIP音乐下载,{{site.authorname.value}},{{site.sitename.value}},{{site.domain.value}}">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <link rel="stylesheet" href="/static/plugins/byy/css/default/byy.css">
+    <style>
+        header{
+            font-size:38px;
+            text-align:center;
+            line-height:4em;
+        }
+        form{text-align:center;}
+        form input{
+            height:40px;
+            width:600px;
+            line-height:40px;
+            border:1px solid #ddd;
+            border-radius:5px;
+            font-size:16px;
+            color:#333;
+            outline:none;
+            padding:3px 10px;
+        }
+        span.byy-btn.submit{
+            background-color:#d6130f!important;
+            color:white;
+        }
+        .music-content{
+            width:800px;
+            max-width:90%;
+            margin:20px auto;
+        }
+        .music-block{
+            position:relative;
+            padding:5px 200px 5px 50px;
+            border-bottom:1px dashed #ddd;
+        }
+        .music-block label{cursor:pointer;}
+        .toolbar{border-bottom:1px solid #aaa;margin-bottom:20px;padding-bottom:10px;}
+        .music-block .check{display:inline-block;position:absolute;left:20px;top:-3px;}
+        .music-block .name{width:100%;display:inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+        .music-block .size{width:50px;display:inline-block;position:absolute;right:130px;text-align:center;}
+        .music-block .tool{width:100px;display:inline-block;position:absolute;right:5px;text-align:center;}
+    </style>
+</head>
+<body>
+    <header>
+        <img src="/static/images/netmusic-logo.jpg" alt="">网易云音乐VIP音乐下载    
+    </header>
+    <form action="/tool/music163" method="post">
+        <input type="hidden" name="code" value="{{codestr}}">
+        <input type="text" placeholder="请输入复制的网易云音乐地址[单曲/歌单/视频]" name="url" value="{{url}}">
+        <span class="byy-btn submit" filter="submit">提交链接</span>
+    </form>
+    {% if success == false %}
+    <div class="tips" style="display:none;">
+    {{msg}}
+    </div>
+    {% endif %}
+    {% if list.length > 0 %}
+    <div class="music-content">
+        {% if playlist == true%}
+        <p>歌单: {{name}} &nbsp;&nbsp; 共计歌曲:{{list.length}}首</p>
+        {% endif %}
+        <div class="toolbar">
+            <span class="byy-btn mini" filter="all">全选</span>
+            <span class="byy-btn mini" filter="none">反选</span>
+            <span class="byy-btn mini" filter="down">下载(建议迅雷9以上)</span>
+        </div>
+        {% for value in list %}
+            <div class="music-block">
+                <span class="check">
+                    <input type="checkbox" class="byy-form-checkbox" byy-skin="primary" title="&nbsp;" name="{{value.id}}" value="{{value.id}}" data-href="{{value.url}}" data-name="{{value.name}}">
+                </span>
+                <span class="name">
+                    <label for="{{value.id}}" filter="link">{{value.name}}</label>
+                    {% if value.success == false %}
+                    <span style="color:red;font-size:14px;">(获取失败)</span>
+                    {% endif %}
+                </span>
+                <span class="size">
+                    {{value.size}}
+                </span>
+                <span class="tool">
+                    <a href="{{value.url}}" target="_blank">播放</a>
+                    <a href="javascript:;" filter="single" data-name="{{value.name}}" data-href="{{value.url}}">下载</a>
+                </span>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+</body>
+</html>
+{%include '../tpl/commonjs.html'%}
+<script type="text/javascript" src="/static/plugins/thunder/thunder-link.js"></script>
+<script type="text/javascript">
+    byy.require(['jquery','win'],function(){
+        
+        var code = $('input[name="code"]').val();
+        var trystr = $('input[name="try"]').val();
+        if(code == undefined || code == '' && trystr != '1'){
+            byy.win.prompt({
+                formType: 0,
+                value: '',
+                offset : ['200px','50%'],
+                title: '请输入注册码(试用已结束)',
+            },function(value,index){
+                $('input[name="code"]').val(value);
+                $('form').get(0).submit();
+                byy.win.close(index);
+            });
+        }
+        if($('.tips').length > 0){
+            byy.win.msg($('.tips').html())
+        }
+        byy.bindEvents({
+            submit : function(){
+                byy.win.load(1);
+                $('form').get(0).submit()
+            },
+            link : function(){
+                var id = $(this).attr('for');
+                var $ipt = $('[name="'+id+'"]');
+                $ipt.prop('checked',!$ipt.prop('checked'));
+                byy($ipt).checkbox();
+            },
+            all : function(){
+                var $box = $('input[type="checkbox"]');
+                $box.each(function(i,item){
+                    $(item).prop('checked',true);
+                })
+                byy($box).checkbox();
+            },
+            none : function(){
+                var $box = $('input[type="checkbox"]');
+                $box.each(function(i,item){
+                    $(item).prop('checked',!$(item).prop('checked'));
+                })
+                byy($box).checkbox();
+            },
+            //thunder downloader
+            down : function(){
+                var $box = $('input[type="checkbox"]:checked');
+                if($box.length == 0){
+                    byy.win.msg('请选中后再下载!')
+                    return;
+                }
+                var task = [];
+                $box.each(function(i,item){
+                    task.push({
+                        name : $(item).data('name'),
+                        url : $(item).data('href')
+                    });
+                })
+                thunderLink.newTask({
+                    downloadDir: '', // 指定当前任务的下载目录，迅雷会在用户剩余空间最大的磁盘根目录中创建这个目录。若不填此项，会下载到用户默认下载目录
+                    tasks: task
+                });
+            },
+            single : function(){
+                thunderLink.newTask({
+                    downloadDir: '', // 指定当前任务的下载目录，迅雷会在用户剩余空间最大的磁盘根目录中创建这个目录。若不填此项，会下载到用户默认下载目录
+                    tasks: [{name : $(this).data('name'),url : $(this).data('href')}]
+                });
+            },
+            try : function(){
+                $('input[name="try"]').val('1');
+                $('form').get(0).submit();
+            }
+        });
+    })
+</script>
