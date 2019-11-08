@@ -36,14 +36,14 @@ module.exports = class extends Base {
         page = 1;
     }
     var start = (page-1)*20;
-    let banner = await this.model('user_banner').where({type : '1',isenable : '1'}).select();
-    let categoryList = await this.model('user_category').select();
+    let banner = await this.cache('user_banner',()=>{return this.model('user_banner').where({type : '1',isenable : '1'}).select();});
+    let categoryList = await this.cache('user_category',()=>{return this.model('user_category').select();});
     let articleWhere = {ispublish : 1,type : 0};
     if(category){
         articleWhere.category = category;
     }
-    let articles = await this.model('user_article').where(articleWhere).order('ctime desc').limit(start,start+20).select();
-    let counts = await this.model('user_article').where(articleWhere).count();
+    let articles = await this.cache(`user_article_${category}_${start}`,()=>{return this.model('user_article').where(articleWhere).order('ctime desc').limit(start,start+20).select();});
+    let counts = await this.cache(`user_article_${category}_${start}_count`,()=>{return this.model('user_article').where(articleWhere).count();});
     this.assign({banner : banner,category : categoryList,c : category,article : articles,total : counts,site : this.config('site'),github : github ,d : {header : 'article'}});
     
     return this.display('home/article');
@@ -59,7 +59,7 @@ module.exports = class extends Base {
         return this.ctx.redirect('/article/index');
     }
     id = (id||'').toLowerCase();
-    let article = await this.model('user_article').where({enname : id}).find();//获得。
+    let article = await this.cache('user_article_'+id,()=>{return this.model('user_article').where({enname : id}).find();});//获得。
     if(think.isEmpty(article)){
         return this.display('error/404');
     }

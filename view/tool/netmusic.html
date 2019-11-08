@@ -54,9 +54,10 @@
         <img src="/static/images/netmusic-logo.jpg" alt="">网易云音乐VIP音乐下载    
     </header>
     <form action="/tool/music163" method="post">
-        <input type="hidden" name="code" value="{{codestr}}">
+        <input type="hidden" name="code" value="{{code}}">
         <input type="text" placeholder="请输入复制的网易云音乐地址[单曲/歌单/视频]" name="url" value="{{url}}">
         <span class="byy-btn submit" filter="submit">提交链接</span>
+        <span class="byy-btn mini" filter="code">修改注册码</span>
     </form>
     {% if success == false %}
     <div class="tips" style="display:none;">
@@ -103,24 +104,23 @@
 <script type="text/javascript">
     byy.require(['jquery','win'],function(){
         
-        var code = $('input[name="code"]').val();
-        var trystr = $('input[name="try"]').val();
-        if(code == undefined || code == '' && trystr != '1'){
-            byy.win.prompt({
-                formType: 0,
-                value: '',
-                offset : ['200px','50%'],
-                title: '请输入注册码(试用已结束)',
-            },function(value,index){
-                $('input[name="code"]').val(value);
-                $('form').get(0).submit();
-                byy.win.close(index);
-            });
-        }
+        
         if($('.tips').length > 0){
             byy.win.msg($('.tips').html())
         }
         byy.bindEvents({
+            code : function(){
+                byy.win.prompt({
+                    formType: 0,
+                    value: '',
+                    offset : ['200px','50%'],
+                    title: '请输入注册码',
+                },function(value,index){
+                    $('input[name="code"]').val(value);
+                    byy.win.close(index);
+                    byy.win.msg('注册码已修改，输入链接提交即可。')
+                });
+            },
             submit : function(){
                 byy.win.load(1);
                 $('form').get(0).submit()

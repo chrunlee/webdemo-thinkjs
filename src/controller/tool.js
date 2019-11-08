@@ -16,30 +16,15 @@ module.exports = class extends Base {
     async music163Action(){
         this.assign('site',this.config('site'))
         //检查code
-        let code = await this.session('netmusiccode');
-        let isFirst = await this.session('netmusicfirst')||1;
-        if( (code == null || code == undefined || code == '') && isFirst >= 3){
-            //无code
-            let codestr = this.post('code')||'';
-            //check code
-            let codeObj = await this.model('user_code').where({code : codestr.trim(),type : 'netmusic'}).find();
-            if(think.isEmpty(codeObj)){
-                this.assign('code',false);
-                this.assign('msg','当前校验码无效，请重新填写或联系站长!')
-                this.assign('success',false);
-                return this.display('tool/netmusic');
+        let codestr = this.post('code') || '';
+        let hasValid = false;
+        if(codestr != null && codestr != ''){
+            let codeObj = await this.model('user_code').where({code : codestr.trim().toLowerCase(),type : 'netmusic'}).find();
+            if(!think.isEmpty(codeObj)){
+                hasValid = true;
             }
-            await this.session('netmusiccode',codeObj.code);
-            this.assign('codestr',codeObj.code);
         }
-        if(isFirst < 3){
-            console.log('当前为试用状态'+isFirst)
-            this.assign('codestr','shiyong');
-            this.assign('success',true);
-            this.assign('msg','');
-        }else{
-            this.assign('codestr',code);
-        }
+        this.assign('code',codestr);//返回元数据
         if(this.isPost){
             let urlstr = this.post('url');
             try{
@@ -57,6 +42,8 @@ module.exports = class extends Base {
                             type = 1;
                         }else if(urlObj.pathname.indexOf('video') > -1){
                             type = 2;
+                        }else if(urlObj.pathname.indexOf('mv') > -1){
+                            type = 3;
                         }
                         if(type >= 0){
                             //单首，直接获取数据和url
@@ -66,8 +53,8 @@ module.exports = class extends Base {
                                 cookie =await musicObj.login();
                                 this.config('netmusiccookie',cookie);
                             }
-                            if(isFirst < 3 && type > 0){
-                                this.assign({success : false,msg : '试用下不支持歌单和视频'})
+                            if(!hasValid && type > 0){
+                                this.assign({success : false,msg : '注册码无效，试用下不支持歌单和视频'})
                             }else{
                                 if(type == 0){
                                     let detail = await musicObj.getSingle(cookie,id);
@@ -77,12 +64,11 @@ module.exports = class extends Base {
                                     this.assign(list);
                                     this.assign('playlist',true);
                                 }else if(type == 2){
-                                    let rs = await musicObj.getMV(cookie,id);
+                                    let rs = await musicObj.getVideo(cookie,id);
                                     this.assign('list',[rs]);
-                                }
-                                if(isFirst < 3){
-                                    isFirst +=1;
-                                    await this.session('netmusicfirst',isFirst);
+                                }else if(type == 3){
+                                    let rs = await musicObj.getMv(cookie,id);
+                                    this.assign('list',[rs]);
                                 }
                             }
                         }else{

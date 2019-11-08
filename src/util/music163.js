@@ -61,27 +61,56 @@ class music {
     }
 
     getMvDetail(cookie,id){
-        return axios.get(`${this.api}/video/detail?id=${id}`,{headers : {cookie : cookie}})
+        return axios.get(`${this.api}/mv/detail?mvid=${id}`,{headers : {cookie : cookie}})
         .then(rs=>{
             return rs.data;
         })
     }
     getMvUrl (cookie,id){
+        return axios.get(`${this.api}/mv/url?id=${id}`,{headers : {cookie : cookie}})
+        .then(rs=>{
+            return rs.data;
+        })
+    }
+    //获得视频的数据
+    async getMv(cookie,id){
+        let detail = await this.getMvDetail(cookie,id);
+        var name = detail.data.name;
+        let urlrs = await this.getMvUrl(cookie,id);
+        let urls = urlrs.data.url;
+        let size = urlrs.data.size;
+        return {
+            id : id,
+            name : name+path.extname(url.parse(urls||'').pathname||''),
+            url : urls,
+            size : format(size),
+            success : urls == null ? false : true
+        }
+    }
+
+
+    getVideoDetail(cookie,id){
+        return axios.get(`${this.api}/video/detail?id=${id}`,{headers : {cookie : cookie}})
+        .then(rs=>{
+            return rs.data;
+        })
+    }
+    getVideoUrl (cookie,id){
         return axios.get(`${this.api}/video/url?id=${id}`,{headers : {cookie : cookie}})
         .then(rs=>{
             return rs.data;
         })
     }
     //获得视频的数据
-    async getMV(cookie,id){
-        let detail = await this.getMvDetail(cookie,id);
+    async getVideo(cookie,id){
+        let detail = await this.getVideoDetail(cookie,id);
         var name = detail.data.title;
-        let urlrs = await this.getMvUrl(cookie,id);
+        let urlrs = await this.getVideoUrl(cookie,id);
         let urls = urlrs.urls[0].url;
         let size = urlrs.urls[0].size;
         return {
             id : id,
-            name : name+path.extname(url.parse(urls||'').pathname),
+            name : name+path.extname(url.parse(urls||'').pathname||''),
             url : urls,
             size : format(size),
             success : urls == null ? false : true
@@ -94,7 +123,7 @@ class music {
         let urldetail = await this.getMusicUrl(cookie,ids);
         return {
             id : detail[0].id,
-            name : detail[0].name+path.extname(url.parse(urldetail[0].url||'').pathname),
+            name : detail[0].name+path.extname(url.parse(urldetail[0].url||'').pathname||''),
             url : urldetail[0].url,
             size : format(urldetail[0].size),
             success : urldetail[0].url == null ? false : true
@@ -120,7 +149,7 @@ class music {
             let ur = urlMap[tempId];
             return {
                 id : tempId,
-                name : de.name+path.extname(url.parse(ur.url||'').pathname),
+                name : de.name+path.extname(url.parse(ur.url==null||ur.url == undefined ? '' : ur.url.toString()).pathname||''),
                 url : ur.url,
                 size : format(ur.size),
                 success : ur.url == null  ? false : true

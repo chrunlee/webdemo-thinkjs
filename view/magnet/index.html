@@ -9,6 +9,7 @@
     <meta name="keywords" content="{{site.sitename.value}},{{site.authorname.value}},{{site.domain.value}}">
     <meta name="description" content="{{site.sitedes}}">
     <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <link rel="stylesheet" href="/static/plugins/byy/css/default/byy.css">
     <style>
         html,body{
             width:100%;
@@ -47,6 +48,8 @@
             border-left:1px solid #11b5b5;
             background-color:#11b5b5;
             color:white;
+            line-height:40px;
+            text-align:center;
         }
         .empty{
             text-align:center;
@@ -72,19 +75,6 @@
         .page{
             text-align:center;
         }
-        .page span{
-            display:inline-block;
-            width:200px;
-            text-align:center;
-            color:#49e;
-            text-decoration:underline;
-            cursor:pointer;
-        }
-        @media screen and (max-width:768px){
-            .page span{
-                width:48%;
-            }
-        }
     </style>
 </head>
 <body>
@@ -93,19 +83,14 @@
     <div class="form">
         <form action="/magnet/search" method="get" id="submitForm">
             <div class="ipt">
-                <input type="hidden" name="type" id="type">
-                <input type="hidden" name="page" value="{{page}}">
                 <input type="text" name="name" class="search" value="{{search}}">
-                <input type="submit" value="检索" class="submit">
+                <span filter="search" class="submit">检索</span>
             </div>
         </form>
     </div>
     <div class="content">
         {%if q and list.length == 0%}
         <div class="empty">没有检索到关于"{{search}}"的记录</div>
-        <div class="page">
-            <span id="prev">上一页</span>
-        </div>
         {%else %}
         {%if q==null or q == undefined or q == '' %}
             <!-- 如果没有检索内容，默认展示最近的前100条记录-->
@@ -120,27 +105,36 @@
             <a href="/magnet/detail/{{value.infohash}}">{{value.name}}</a>
         </div>
         {%endfor%}
-        <div class="page">
-            <span id="prev">上一页</span>
-            <span id="next">下一页</span>
-        </div>
+        <div class="page" data-total="{{total}}" data-curr="{{curr}}"></div>
         {%endif%}
     </div>
     <p style="color:#ccc;font-size:12px;text-align:center;margin-top:100px;">*本站不保存任何文件，所有数据均从网络爬取，若侵权请联系站长屏蔽.</p>
 </body>
 </html>
+{%include '../tpl/commonjs.html'%}
 <script type="text/javascript">
-    var prev =document.getElementById('prev');
-    var next = document.getElementById('next');
-    var type = document.getElementById('type');
-    var form = document.getElementById('submitForm');
-    prev.onclick = function(){
-        type.value = '0';
-        form.submit();
-    }
-    next.onclick = function(){
-        type.value = '1';
-        form.submit();
-    }
+    byy.require(['jquery','page'],function(){
+        var page = byy.page;
+        var total = $('.page').data('total');
+        var curr = $('.page').data('curr');
+        var name = $('input[name="name"]').val();
+        page({
+            selector : '.page',
+            total : total,
+            pagesize : 20,
+            showTotal : true,
+            curr : curr,
+            skin : '#49e',
+            callback : function(rs){
+                console.log(rs);
+                location.href = '/magnet/search?name='+name+'&page='+rs.curr;
+            }
+        });
+
+        byy.bindEvents({
+            search : function(){
+                $('#submitForm').get(0).submit();
+            }
+        });
+    })
 </script>
-{% include '../tpl/commonjs.html' %}

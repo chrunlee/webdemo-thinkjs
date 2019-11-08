@@ -13,8 +13,8 @@ module.exports = class extends Base {
      * 首页：获取对应的文章和banner
      **/
     async indexAction() {
-        let banner = await this.model('user_banner').where({ type: '1', isenable: '1' }).select();
-        let articles = await this.model('user_article').where({ ispublish: '1', type: '0', recommend: 1 }).order('ctime desc').limit(8).select();
+        let banner = await this.cache('user_banner',()=>{return this.model('user_banner').where({ type: '1', isenable: '1' }).select()});
+        let articles = await this.cache('user_article_first',()=>{return this.model('user_article').where({ ispublish: '1', type: '0', recommend: 1 }).order('ctime desc').limit(8).select();});
         let github = await this.session('github');
         this.assign('github', github);
         this.assign('banners', banner);
@@ -181,14 +181,14 @@ module.exports = class extends Base {
             page = 1;
         }
         var start = (page - 1) * 20;
-        let banner = await this.model('user_banner').where({ type: '1', isenable: '1' }).select();
-        let categoryList = await this.model('user_category').select();
+        let banner = await this.cache('user_banner',()=>{return this.model('user_banner').where({ type: '1', isenable: '1' }).select();});
+        let categoryList = await this.cache('user_category',()=>{return this.model('user_category').select();});
         let articleWhere = { ispublish: 1, type: 0 };
         if (category) {
             articleWhere.category = category;
         }
-        let articles = await this.model('user_article').where(articleWhere).order('ctime DESC').limit(start,20).select();
-        let counts = await this.model('user_article').where(articleWhere).count();
+        let articles = await this.cache(`user_article_${category}_${start}`,()=>{return this.model('user_article').where(articleWhere).order('ctime DESC').limit(start,20).select();});
+        let counts = await this.cache(`user_article_${category}_${start}_count`,()=>{return this.model('user_article').where(articleWhere).count();});
         this.assign({ page:page,banner: banner, category: categoryList, c: category, article: articles, total: counts, site: this.config('site'), github: github, d: { header: 'article' } });
 
         return this.display('home/article');
@@ -282,7 +282,7 @@ module.exports = class extends Base {
         let referer = this.header('referer');
         let q = this.ctx.param('q') || '';
         let github = await this.session('github');
-        q = q.replace(/[";'&)(]/gi, '');
+        q = q.replace(/[";'&)(=%]/gi, '');
         if (q.trim() == '') {
             //重新返回来源网页
             return this.redirect(referer);
