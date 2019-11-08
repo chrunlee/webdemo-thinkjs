@@ -28,6 +28,8 @@
 						<textarea name="{{value.name}}" type="1">{{value.strval}}</textarea>
 						{% elif value.strval.length > 0 %}
 						<input type="text" name="{{value.name}}" type="1" value="{{value.strval}}" >
+						{% else %}
+						<input type="text" name="{{value.name}}" type="1" value="{{value.strval}}" placeholder="{{value.description}}" >
 						{% endif %}
 					</div>
 					<span class="byy-btn small pull-left" filter="update">更新</span>

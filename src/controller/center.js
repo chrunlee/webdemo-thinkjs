@@ -58,7 +58,7 @@ module.exports = class extends Base {
             fs.unlinkSync(file.path);//删除源文件。
         }else{
             realPath = '/static/upload/user/' + name;
-            let filePath = path.join(think.ROOT_PATH, 'www', tempPath);
+            let filePath = path.join(think.ROOT_PATH, 'www', realPath);
             think.mkdir(path.dirname(filePath));
             await rename(file.path, filePath);
         }
