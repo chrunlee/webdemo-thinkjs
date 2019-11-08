@@ -48,7 +48,7 @@ module.exports = class extends Base {
                 }
                 let start = (curPage-1)*20;
                 let list = await this.cache('demo_magnet_search_'+name+'_'+start,()=>{
-                    return this.model('demo_magnet').field('id,name,filesize,fileaddress,fileport,magnet,infohash,createTime,hots').where({name : ['like','%'+name+'%']}).limit(start,20).order('hots desc,createTime desc').select();
+                    return this.model('demo_magnet').field('id,name,filesize,fileaddress,fileport,magnet,infohash,createTime,hots').where({name : ['like','%'+name+'%']}).limit(start,20).select();
                 })
                 let total = await this.cache('demo_magnet_search_count_'+name,()=>{
                     return this.model('demo_magnet').field('id').where({name : ['like','%'+name+'%']}).count();
