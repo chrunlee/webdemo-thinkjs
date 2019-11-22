@@ -11,6 +11,10 @@ git clone git@github.com:chrunlee/webdemo-thinkjs.git
 npm install
 ```
 
+# 配置
+
+数据库导入后，首先要做的是把`site_set`表的配置做下，这里大都是一些可配置性的...名字起的比较随意，勿怪
+
 # 启动
 ```
 npm start
