@@ -13,9 +13,14 @@
         html,body{margin:0px;padding:0px;}
         body{
             padding:10px 20px;
-            background-color:#fafafa;
+            background-color:#f6e2c9;
         }
         .left{padding:10px;font-size:16px;line-height:1.5em;}
+        .top{
+            position:fixed;
+            top:0px;
+            right:0px;
+        }
     </style>
 </head>
 <body>
@@ -36,7 +41,12 @@
             2.由于上传文件过多，严重影响了博客的访问速度..只能再次限制大小(1M).同时，可以去我的<a href="/shop" target="_blank" style="color:#49e;">{{site.shopname.value}}</a>购买软件哦.<a href="/shop" style="color:#49e;" target="_blank">点我进入小店</a><br />
             3.文件是获取即转，然后删除并下发base64图片内容.<span style="color:red;">推荐使用谷歌浏览器</span>。<br />
             4.有编码能力的可以直接看源码，实现不难，这里主要提供给无编码能力的人使用.<br />
-            <span style="font-weight:bold;color:#3fbcb4;">5.各位同学可以点下页面底部的广告，随便点一个就可以，好人一生平安！！</span>
+            <span style="font-weight:bold;color:#3fbcb4;">5.各位同学可以扫下右上角的二维码，领取支付宝红包！！</span>
+        </div>
+        <div class="top">
+            <i class="byyicon icon-close" title="点击关闭，不影响使用" style="position:absolute;left:-20px;top:0px;cursor:pointer;" filter="closeAd"></i>
+            <img src="/static/images/shenghuofei.jpg" alt="" style="width:200px;display:block;">
+            <img src="/static/images/hongbao.jpg" alt="" style="width:200px;display:block;">
         </div>
     </div>    
     <div class="text-center">
@@ -52,8 +62,7 @@
         </div>
         <div style="margin:20px auto;width:1000px;">
             <!--糊口区域-->
-            {{site.detailadscript.value | safe}}
-            {{site.selfadscode.value | safe}}
+            
         </div>
     </div>
 </body>
@@ -93,6 +102,9 @@
             }
         });
         byy.bindEvents({
+            closeAd : function(){
+                $(this).parent().remove();
+            },
             clear : function(){
                 $('.content').html('');
             },
