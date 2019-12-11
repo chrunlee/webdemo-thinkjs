@@ -131,9 +131,9 @@ module.exports = class extends Base {
                     let tempPrice = price - (0.01 * countTimes);
                     let checkPrice = parseFloat(tempPrice.toFixed(2));
                     //检查
-                    let tempStartTime = moment().subtract(300,'seconds').format('YYYY-MM-DD HH:mm:ss');
+                    let tempStartTime = moment().subtract(240,'seconds').format('YYYY-MM-DD HH:mm:ss');
                     //并且时间是最近5分钟
-                    let timestra = moment().subtract(360,'seconds').format('YYYY-MM-DD HH:mm:ss');
+                    let timestra = moment().subtract(240,'seconds').format('YYYY-MM-DD HH:mm:ss');
                     let existsList = await this.model('order_user').where({status : '0',price : checkPrice,starttime : ['>',timestra]}).select();
                     if (null == existsList || existsList.length == 0) {
                         //不存在，可以插入

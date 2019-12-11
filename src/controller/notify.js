@@ -6,7 +6,7 @@ module.exports = class extends Base {
     async indexAction() {
         console.log(this.post());
         let data = this.post();
-        if (!data.money || null == data.money || undefined == data.money) {
+        if (!data.money || null == data.money || undefined == data.money || data.money == 'null') {
             res.json({ success: false, msg: '无效金额' });
             return;
         }
@@ -34,9 +34,9 @@ module.exports = class extends Base {
                 content: data.content || ''
             }
             let insertId = await this.model('order_list').add(insertData);
-            //根据价格查找当前时间6分钟以内的该价格的订单
-            let startTime = moment().subtract(360,'seconds').format('YYYY-MM-DD HH:mm:ss');
-            let undoList = await this.model('order_user').where({status : '0',starttime : ['>',startTime]}).select();
+            //根据价格查找当前时间5分钟以内的该价格的订单
+            let startTime = moment().subtract(300,'seconds').format('YYYY-MM-DD HH:mm:ss');
+            let undoList = await this.model('order_user').where({status : '0',starttime : ['>',startTime],price : data.money}).select();
             // let undoList = await this.model().query('select * from order_user where UNIX_TIMESTAMP(now()) - UNIX_TIMESTAMP(starttime) < 360 and price="'+data.money+'" and status="0"');
             if (undoList == null || undoList.length == 0) {
                 //说明有人付款，但是未查到是谁付款。这里请给我个钉钉
