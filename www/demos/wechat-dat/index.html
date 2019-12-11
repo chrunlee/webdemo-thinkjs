@@ -33,7 +33,7 @@
             说明：<br />
             1.微信文件默认在【 C:\Users\Administrator\Documents\WeChat Files 】下，找到FileStorage/Image 下的dat文件上传即可。<br />
             <span style="text-decoration:line-through;">2.上传大小限制20M，实际上5M以上下载就会很慢了(服务器带宽1M,所以很慢).</span><br />
-            2.由于上传文件过多，严重影响了博客的访问速度..只能再次限制大小(1M).同时，可以去我的<a href="/shop" target="_blank" style="color:#49e;">采然小店</a>购买软件哦.<a href="/shop" style="color:#49e;" target="_blank">点我进入小店</a><br />
+            2.由于上传文件过多，严重影响了博客的访问速度..只能再次限制大小(1M).同时，可以去我的<a href="/shop" target="_blank" style="color:#49e;">采然小店</a>购买软件哦.<a href="/shop" style="font-size:20px;color:#49e;" target="_blank">点我进入小店</a><br />
             3.文件是获取即转，然后删除并下发base64图片内容<br />
             4.有编码能力的可以直接看源码，实现不难，这里主要提供给无编码能力的人使用.<br />
             <span style="font-weight:bold;">5.各位同学可以点下页面底部的广告，随便点一个就可以，好人一生平安！！</span>
@@ -49,22 +49,6 @@
         <!-- 图片区域-->
         <div class="content" style="min-height:400px;">
             
-        </div>
-        <div style="margin:20px auto;width:1000px;">
-        <!--糊口区域-->
-            <script type="text/javascript">
-                    (function() {
-                        var s = "_" + Math.random().toString(36).slice(2);
-                        document.write('<div style="" id="' + s + '"></div>');
-                        (window.slotbydup = window.slotbydup || []).push({
-                            id: "u4125857",
-                            container: s
-                        });
-                    })();
-            </script>
-            <!-- 多条广告如下脚本只需引入一次 -->
-            <script type="text/javascript" src="//cpro.baidustatic.com/cpro/ui/c.js" async="async" defer="defer" >
-            </script>
         </div>
     </div>
 </body>
@@ -149,17 +133,8 @@
                 }
             },
             onError : function(er,msg){
-               byy.win.msg(msg+',仅限dat文件(1M以内)!');
+               byy.win.msg(msg+',仅限dat文件(1M以内)!超出限制请购买软件，点击上方商店链接');
             }
         });
     })
-</script>
-<script>
-var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = "https://hm.baidu.com/hm.js?6989c14fa2c7041996bde7f67269e2c0";
-  var s = document.getElementsByTagName("script")[0]; 
-  s.parentNode.insertBefore(hm, s);
-})();
 </script>
