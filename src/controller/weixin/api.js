@@ -72,16 +72,17 @@ module.exports = class extends Base {
                     return this.body = this.wx.createText(content,`图片资源正在搜集中....`)
                 }else if(content.Content.indexOf('电影') > -1){
                     let magnet = null;
-                    if(parr.length < 1){
-                        return this.body = this.wx.createText(content,`电影检索请提供关键字....`)    
-                    }else{
-                        magnet = await this.model('demo_magnet').where({name : ['like','%'+parr[1]+'%']}).order('rand()').limit(0,1).find();
-                    }
-                    if(think.isEmpty(magnet)){
-                        return this.body = this.wx.createText(content,`小采然没有检索到<${content.Content}>相关的电影!请尝试其他关键字....`)    
-                    }else{
-                        return this.body = this.wx.createText(content,`小采然给您找到了一部电影,<a href="${domain}/weixin/move/detail?id=${magnet.id}">${magnet.name}</a>`)
-                    }
+                    //TODO : 优化数据或全文检索。
+                    // if(parr.length < 1){
+                    //     return this.body = this.wx.createText(content,`电影检索请提供关键字....`)    
+                    // }else{
+                    //     magnet = await this.model('demo_magnet').where({name : ['like','%'+parr[1]+'%']}).order('rand()').limit(0,1).find();
+                    // }
+                    // if(think.isEmpty(magnet)){
+                    //     return this.body = this.wx.createText(content,`小采然没有检索到<${content.Content}>相关的电影!请尝试其他关键字....`)    
+                    // }else{
+                    //     return this.body = this.wx.createText(content,`小采然给您找到了一部电影,<a href="${domain}/weixin/move/detail?id=${magnet.id}">${magnet.name}</a>`)
+                    // }
                     return this.body = this.wx.createText(content,`电影资源正在搜集中....`)
                 }else if(content.Content.indexOf('诗词') > -1){
                     return this.body = this.wx.createText(content,`诗词资源正在搜集中....`)
@@ -137,7 +138,7 @@ module.exports = class extends Base {
                     }else{
                         return this.body = this.wx.createText(content,`接龙 ${chengyu.name}`);
                     }
-                }else if(content.Content.indexOf('玩法') > -1){
+                }else if(content.Content.indexOf('秘籍') > -1){
                     return this.body = this.wx.createText(content,`公众号玩法秘籍:
  故事系列:
    回复"故事" : 给您随机推荐一个小故事. 
@@ -182,7 +183,7 @@ module.exports = class extends Base {
                         }
                         await this.model('sys_user').add(user);
                     }
-                    return this.body = this.wx.createText(content,'谢谢您的关注!\r\n更多惊喜等你开启....')
+                    return this.body = this.wx.createText(content,'谢谢您的关注!\r\n回复:秘籍\r\n更多惊喜等你开启....')
                 }else if(eventType === 'unsubscribe'){
                     console.log('取消关注')
                 }else if(eventType === 'TEMPLATESENDJOBFINISH'){
@@ -191,7 +192,7 @@ module.exports = class extends Base {
                     console.log(eventType);
                 }
             }
-            return this.body =this.wx.createText(content,'谢谢关注哦，更多玩法请回复:玩法');
+            return this.body =this.wx.createText(content,'谢谢关注哦，更多玩法请回复:秘籍');
         }else{
             // let token = await this.wx.getToken(this);
             let signature = this.query('signature');
