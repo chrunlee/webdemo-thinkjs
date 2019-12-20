@@ -28,7 +28,7 @@ module.exports = class extends Base {
     let page = this.ctx.param('p'),//页码
         category = this.ctx.param('c');//类别
 
-    let github = await this.session('github');
+    let user = await this.session('user');
     try{
         page = parseInt(page||'1',10); 
         page = Math.max(page,1);
@@ -44,7 +44,7 @@ module.exports = class extends Base {
     }
     let articles = await this.cache(`user_article_${category}_${start}`,()=>{return this.model('user_article').where(articleWhere).order('ctime desc').limit(start,start+20).select();});
     let counts = await this.cache(`user_article_${category}_${start}_count`,()=>{return this.model('user_article').where(articleWhere).count();});
-    this.assign({banner : banner,category : categoryList,c : category,article : articles,total : counts,site : this.config('site'),github : github ,d : {header : 'article'}});
+    this.assign({banner : banner,category : categoryList,c : category,article : articles,total : counts,site : this.config('site'),user : user ,d : {header : 'article'}});
     
     return this.display('home/article');
   }
@@ -54,7 +54,7 @@ module.exports = class extends Base {
   async detailAction(){
 
     let id = this.ctx.param('id');
-    let github = await this.session('github');
+    let user = await this.session('user');
     if(id === 'index'){
         return this.ctx.redirect('/article/index');
     }
@@ -66,7 +66,7 @@ module.exports = class extends Base {
     article.html = marked(article.content,{renderer : renderer});
     article.tags = article.tags ? article.tags.split(',') : [];
     let links = await this.model('user_article').where({ispublish : 1,type : 0,enname : ['!=',id],category:article.category}).order(' rand() ').limit(0,8).select();
-    this.assign({article : article,site : this.config('site'),github : github,link : links,d : {header : 'article'},links : this.config('links')});
+    this.assign({article : article,site : this.config('site'),user : user,link : links,d : {header : 'article'},links : this.config('links')});
     return this.display('home/detail');
     
   }

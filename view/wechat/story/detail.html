@@ -1,0 +1,35 @@
+{% extends "../tpl/layout.html" %}
+{% block title %}
+<title>{{data.name}} - 采然一刻</title>
+{% endblock %}
+{% block content %}
+<div class="page article">
+    <div class="page__hd">
+        <h1 class="page__title" style="text-align:center;">{{data.name}}</h1>
+        <p class="page__desc" style="text-align:center;color:#aaa;">{{data.type}} &nbsp;&nbsp ({{data.viewnum}}人看过)</p>
+    </div>
+    <div class="page__bd">
+        <article class="weui-article">
+            {{data.content|safe}}
+        </article>
+    </div>
+    <div class="page__ft">
+        <div class="detail-footer">
+            <div class="left">
+                <img src="{{site.wxqrpath.value}}" alt="长按识别二维码">
+            </div>
+            <div class="right">
+                <p>长按图片识别二维码，关注公众号!</p>
+                <p>这里有大量的小故事/成语接龙/歇后语/诗词等你来拿!</p>
+                <p>还有更多隐藏福利哦!</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block jsfile %}
+<script type="text/javascript">
+    
+
+</script>
+{% endblock %}

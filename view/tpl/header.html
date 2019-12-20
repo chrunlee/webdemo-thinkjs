@@ -11,13 +11,13 @@
 		<!--<li id="tuku" class="byy-nav-item"><a href="/picture">图库</a></li>
 		<li id="caipu" class="byy-nav-item"><a href="/caipu/home">食谱</a></li>-->
 		<li class="pull-right user">
-			{% if github == null %}
+			{% if user == null %}
 			<div class="unlogin" title="点击登录" filter="login">
 				<a href="javascript:;"><img src="/static/images/login-logo.png" /></a>
 			</div>
 			{% else %}
 			<div class="login">
-				<img src="{{github.avatar_url}}" title="{{github.name}}" alt="Avatar" />
+				<img src="{{user.avatar}}" title="{{user.name}}" alt="Avatar" />
 			</div>
 			{% endif %}
 		</li>

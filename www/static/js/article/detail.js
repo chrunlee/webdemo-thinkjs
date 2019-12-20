@@ -28,6 +28,7 @@ var Article = {
 		},
 		//保存评论
 		saveComment : function(){
+			var aaa = byy.win.load(1);
 			//校验内容是否填写
 			var $comment = $(this).parent().parent().parent();//父级容器
 			var $content = $comment.find('textarea'),
@@ -46,6 +47,7 @@ var Article = {
 				validate = false;
 			}
 			if(!validate){
+				byy.win.close(aaa);
 				return;
 			}
 			$.ajax({
@@ -59,13 +61,14 @@ var Article = {
 					toname :toname
 				},success : function(res){
 					//suc err
+					byy.win.close(aaa);
 					if(res.success){
 						byy.win.msg('感谢您的评论~~');
 						//重新加载评论或动态加载评论
 						Article.renderComment({
 							id : res.id,
 							name : LoginUser.name,
-							avatar_url : LoginUser.avatar_url,
+							avatar : LoginUser.avatar,
 							ctime : moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
 							content : content,
 							commentid : commentid,
@@ -237,13 +240,13 @@ var Article = {
 		//根据一个评论获得html
 		getCommentHtmlByComment : function(comment){
 			var $block = $('<div class="comment-block"></div>');
-			var $commentinfo = $('<div class="comment-info"><div class="comment-author"><a href="'+comment.blog+'" target="_blank"><img src="'+comment.avatar_url+'" /></a><a class="name">'+comment.name+'</a><a class="meta">'+comment.ctime+'</a></div><div class="comment-wrap"><p>'+comment.content+'</p><span class="reply" filter="reply" data-id="'+comment.id+'" data-name="'+comment.name+'" data-commentid="'+comment.id+'"><i class="byyicon icon-comment"></i>回复</span></div></div>');
+			var $commentinfo = $('<div class="comment-info"><div class="comment-author"><a href="'+(comment.blog||'javascript:;')+'"><img src="'+comment.avatar+'" /></a><a class="name">'+comment.name+'</a><a class="meta">'+comment.ctime+'</a></div><div class="comment-wrap"><p>'+comment.content+'</p><span class="reply" filter="reply" data-id="'+comment.id+'" data-name="'+comment.name+'" data-commentid="'+comment.id+'"><i class="byyicon icon-comment"></i>回复</span></div></div>');
 			$block.append($commentinfo);
 			if(comment.childs && comment.childs.length > 0){
 				//子级
 				var $subcomment = $('<div class="comment-child"></div>');
 				comment.childs.forEach(function(item){
-					var $child = $('<div class="sub-comment"><p><a href="'+item.blog+'" target="_blank"><img src="'+item.avatar_url+'" /></a><a class="comment-author-name">'+item.name+'</a>:<a class="comment-author-name">@'+item.toname+'</a>'+item.content+'</p><div class="sub-reply"><span>'+item.ctime+'</span><span class="sub-reply-btn" filter="reply" data-id="'+item.id+'" data-name="'+item.name+'" data-commentid="'+comment.id+'"><i class="byyicon icon-comment"></i>回复</span></div></div>')
+					var $child = $('<div class="sub-comment"><p><a href="'+(comment.blog||'javascript:;')+'"><img src="'+item.avatar+'" /></a><a class="comment-author-name">'+item.name+'</a>:<a class="comment-author-name">@'+item.toname+'</a>'+item.content+'</p><div class="sub-reply"><span>'+item.ctime+'</span><span class="sub-reply-btn" filter="reply" data-id="'+item.id+'" data-name="'+item.name+'" data-commentid="'+comment.id+'"><i class="byyicon icon-comment"></i>回复</span></div></div>')
 					$subcomment.append($child);
 				})
 				$block.append($subcomment);
@@ -251,7 +254,7 @@ var Article = {
 			return $block;
 		},
 		getSubComment : function(comment){
-			return $('<div class="sub-comment"><p><a href="'+comment.blog+'" target="_blank"><img src="'+comment.avatar_url+'" /></a><a class="comment-author-name">'+comment.name+'</a>:<a class="comment-author-name">@'+comment.toname+'</a>'+comment.content+'</p><div class="sub-reply"><span>'+comment.ctime+'</span><span class="sub-reply-btn" filter="reply" data-id="'+comment.id+'" data-name="'+comment.name+'" data-commentid="'+comment.commentid+'"><i class="byyicon icon-comment"></i>回复</span></div></div>')
+			return $('<div class="sub-comment"><p><a href="'+(comment.blog||'javascript:;')+'" ><img src="'+comment.avatar+'" /></a><a class="comment-author-name">'+comment.name+'</a>:<a class="comment-author-name">@'+comment.toname+'</a>'+comment.content+'</p><div class="sub-reply"><span>'+comment.ctime+'</span><span class="sub-reply-btn" filter="reply" data-id="'+comment.id+'" data-name="'+comment.name+'" data-commentid="'+comment.commentid+'"><i class="byyicon icon-comment"></i>回复</span></div></div>')
 		},
 		//返回评论控制区
 		getCommentControl :function(){

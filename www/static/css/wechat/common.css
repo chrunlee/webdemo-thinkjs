@@ -1,0 +1,108 @@
+@charset "utf8";
+.title{
+    font-size:2em;
+    text-align:center;
+    font-weight:600;
+}
+
+
+/**详情页面底部二维码**/
+  
+.detail-footer{
+    border-top:1px dashed #49e;
+    padding-top:1em;
+    color:#49e;
+}
+.detail-footer .left,
+.detail-footer .right{
+    text-align:center;
+}
+.detail-footer img{
+    max-width:10em;
+    display:inline-block;
+}
+
+/**music**/
+.music-page,
+.music-head h1,
+.music-head hr,
+.music-head p,
+.music-body i{
+    transition:all 1s linear;
+}
+.music-page{
+    background-color:#e2e9f1;
+}
+.music-head{
+    padding:10px;
+}
+.music-head h1{
+    color:#49e;
+    text-align:center;
+}
+.music-head hr{
+    border:1px dashed #49e;
+}
+.music-head p{
+    color:#49e;
+    text-align:center;
+}
+.music-body{
+    text-align:center;
+    position:relative;
+}
+.music-body img{
+    width:10em;
+    height:10em;
+    display:inline-block;
+    border-radius:50%;
+    border:0.5em solid #afcfef;
+    transition:border-color 1s linear;
+}
+
+.music-body i{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    font-size: 4em;
+    margin-left: -2em;
+    margin-top: -2em;
+    width: 4em;
+    height: 4em;
+    display: inline-block;
+    color:#49e;
+    cursor:pointer;
+    line-height:4em;
+    transition:all 1s linear;
+    z-index:100;
+}
+
+.music-page.go .music-body i{color:#f60;}
+.music-page.go .music-body img{
+    animation:round 5s linear infinite;
+    border-color:#f60;
+}
+.music-page.go h1{
+    color:#49e;
+}
+.music-page.go{
+    backgroud-color:#e6ccba;
+}
+.music-page.go .music-head p{
+    color:#f60;
+}
+.music-page.go .music-head hr{
+    border-color:#f60;
+}
+.music-page.go .music-head h1{
+    color:#f60;
+}
+
+@keyframes round{
+    from{
+        transform:rotate(0deg);
+    }
+    to{
+    transform:rotate(360deg);
+    }
+}

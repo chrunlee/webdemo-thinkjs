@@ -1,0 +1,24 @@
+{% extends "../tpl/layout.html" %}
+
+{% block title %}
+<title>故事系列 - 采然一刻</title>
+{% endblock %}
+{% block content %}
+<div class="page">
+    <!-- <div class="title">故事系列</div> -->
+    <div class="weui-cells">
+        {% for item in list %}
+        <a href="/weixin/story/list?type={{item.type}}" class="weui-cell weui-cell_access">
+            <p class="weui-cell__bd">{{item.type}}
+                <small>({{item.num}}个故事)</small>
+            </p>
+            <div class="weui-cell__ft"></div>
+        </a>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}
+{% block jsfile %}
+
+{% endblock %}

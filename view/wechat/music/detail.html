@@ -1,0 +1,52 @@
+{% extends "../tpl/layout.html" %}
+{% block title %}
+<title>{{data.title}} - 采然一刻</title>
+{% endblock %}
+{% block content %}
+<div class="page article music-page">
+    <div class="page__hd music-head">
+        <h1 class="page__title">{{data.title}}</h1>
+        <hr>
+        <p>{{data.artist}}</p>
+        <p>{{data.albumtitle}}</p>
+    </div>
+    <div class="page__bd">
+        <article class="weui-article music-body">
+            <i class="iconfont icon-play" id="play"></i>
+            <img src="data:image/jpeg;base64,{{picture}}" alt="">
+        </article>
+        <audio id="audio" preload src="{{data.url}}" loop></audio>
+    </div>
+    <div class="page__ft">
+        <div class="detail-footer">
+            <div class="left">
+                <img src="{{site.wxqrpath.value}}" alt="长按识别二维码">
+            </div>
+            <div class="right">
+                <p>长按图片识别二维码，关注公众号!</p>
+                <p>这里有大量的小故事/成语接龙/歇后语/诗词等你来拿!</p>
+                <p>还有更多隐藏福利哦!</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block jsfile %}
+<script type="text/javascript">
+document.getElementById('play').onclick = function() {
+    var play = document.getElementById('play');
+    var body = document.querySelector('.music-page');
+    var audio = document.getElementById('audio');
+    var c = play.getAttribute('class');
+    if(c.indexOf('play') > -1){
+        audio.play();
+        body.setAttribute('class','page article music-page go')
+        play.setAttribute('class','iconfont icon-pause');
+    }else{
+        audio.pause();
+        body.setAttribute('class','page article music-page')
+        play.setAttribute('class','iconfont icon-play');
+    }
+}
+</script>
+{% endblock %}

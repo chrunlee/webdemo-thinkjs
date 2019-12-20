@@ -15,8 +15,8 @@ module.exports = class extends Base {
     async indexAction() {
         let banner = await this.cache('user_banner',()=>{return this.model('user_banner').where({ type: '1', isenable: '1' }).select()});
         let articles = await this.cache('user_article_first',()=>{return this.model('user_article').where({ ispublish: '1', type: '0', recommend: 1 }).order('ctime desc').limit(8).select();});
-        let github = await this.session('github');
-        this.assign('github', github);
+        let user = await this.session('user');
+        this.assign('user', user);
         this.assign('banners', banner);
         this.assign('articles', articles);
         this.assign('site', this.config('site'));
@@ -63,7 +63,7 @@ module.exports = class extends Base {
                 try{
                     fs.unlinkSync(file.path);
                 }catch(e){}
-                return this.json({success : false,msg : '文件不符合规范，已经删除'});
+                return this.json({success : false,msg : '文件不符合规范，已经删除.'});
             }else{
                 await this.model('site_set').where({name : 'datcount'}).increment('intval',1);
                 let base64 = await datConvert(file.path);
@@ -78,11 +78,11 @@ module.exports = class extends Base {
      * 跳转关于
      ***/
     async aboutAction() {
-        let github = await this.session('github');
+        let user = await this.session('user');
         this.assign({
             site: this.config('site'),
             links: this.config('links'),
-            github: github,
+            user: user,
             d: {
                 header: 'about'
             }
@@ -93,7 +93,7 @@ module.exports = class extends Base {
      * 登录
      ***/
     async loginAction() {
-        let user = await this.session('user');
+        let user = await this.session('admin');
         if (user) {
             return this.redirect('/center/index');
         } else {
@@ -105,7 +105,7 @@ module.exports = class extends Base {
                 let pwd = data.pwd.trim();
                 if (this.config('site').superaccount.value === user && this.config('site').superpwd.value === pwd) {
                     //登录成功
-                    this.session('user', {
+                    this.session('admin', {
                         name: this.config('site').authorname.value,
                         email: this.config('site').email.value
                     });
@@ -128,8 +128,8 @@ module.exports = class extends Base {
      ***/
     async pdfAction() {
         //查询pdf
+        let user = await this.session('admin');
         let user = await this.session('user');
-        let github = await this.session('github');
         let cId = this.ctx.param('c');
         //根据第一个类别来处理
         let categoryList = await this.model().query('select t1.categoryid as id,t2.name,count(1) as num from user_pdf_pdf_category t1 left join user_pdf_category t2 on t1.categoryid = t2.id group by t1.categoryid order by t1.categoryid');
@@ -144,7 +144,7 @@ module.exports = class extends Base {
             optionList: optionList,
             site: this.config('site'),
             user: user,
-            github: github,
+            user: user,
             d: {
                 header: 'pdf'
             }
@@ -157,10 +157,10 @@ module.exports = class extends Base {
      ***/
     async demoAction() {
         let site = this.config('site');
-        let github = await this.session('github');
+        let user = await this.session('user');
         this.assign({
             site: site,
-            github: github,
+            user: user,
             d: {
                 header: 'demo'
             }
@@ -173,7 +173,7 @@ module.exports = class extends Base {
         let page = this.ctx.param('p'), //页码
             category = this.ctx.param('c'); //类别
 
-        let github = await this.session('github');
+        let user = await this.session('user');
         try {
             page = parseInt(page || '1', 10);
             page = Math.max(page, 1);
@@ -189,7 +189,7 @@ module.exports = class extends Base {
         }
         let articles = await this.cache(`user_article_${category}_${start}`,()=>{return this.model('user_article').where(articleWhere).order('ctime DESC').limit(start,20).select();});
         let counts = await this.cache(`user_article_${category}_${start}_count`,()=>{return this.model('user_article').where(articleWhere).count();});
-        this.assign({ page:page,banner: banner, category: categoryList, c: category, article: articles, total: counts, site: this.config('site'), github: github, d: { header: 'article' } });
+        this.assign({ page:page,banner: banner, category: categoryList, c: category, article: articles, total: counts, site: this.config('site'), user: user, d: { header: 'article' } });
 
         return this.display('home/article');
     }
@@ -200,7 +200,7 @@ module.exports = class extends Base {
         let id = this.ctx.post('id');
         if (id) {
             id = id.replace(/["'&;)(]/gi, '');
-            let sql = `select t1.*,t2.avatar_url,(case when(t2.blog = "" or t2.blog is null) then t2.html_url else t2.blog end) as blog from user_comment t1 left join sys_user t2 on t1.userid=t2.id where t1.articleid='${id}' order by ctime desc`;
+            let sql = `select t1.*,t2.avatar,t2.blog as blog from user_comment t1 left join sys_user t2 on t1.userid=t2.id where t1.articleid='${id}' order by t1.ctime desc`;
             let list = await this.model().query(sql);
             this.json(list);
         } else {
@@ -225,7 +225,7 @@ module.exports = class extends Base {
     async saveCommentAction() {
         let data = this.ctx.post();
         let site = await this.config('site');
-        let user = await this.session('github');
+        let user = await this.session('user');
         data.name = user.name;
         data.email = user.email || '';
         data.userid = user.id;
@@ -250,7 +250,7 @@ module.exports = class extends Base {
                 name: data.name,
                 content: data.content,
                 toid: data.toid,
-                ctime: moment(new Date()).format('YYYY-DD-MM HH:mm:ss'),
+                ctime: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
                 toname: data.toname,
                 email: data.email,
                 commentid: data.commentid,
@@ -281,7 +281,7 @@ module.exports = class extends Base {
     async searchAction() {
         let referer = this.header('referer');
         let q = this.ctx.param('q') || '';
-        let github = await this.session('github');
+        let user = await this.session('user');
         q = q.replace(/[";'&)(=%]/gi, '');
         if (q.trim() == '') {
             //重新返回来源网页
@@ -302,7 +302,7 @@ module.exports = class extends Base {
             let sql = 'select * from user_article where ispublish=1 and type=0 and (' + paramsSql + ')';
             let sqlOpt = this.model().parseSql({ sql }, ...params);
             let list = await this.model().query(sqlOpt);
-            this.assign({ site: this.config('site'), github: github, d: { q: q, header: 'article', data: list } });
+            this.assign({ site: this.config('site'), user: user, d: { q: q, header: 'article', data: list } });
             return this.display('home/search');
         }
     }

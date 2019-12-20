@@ -32,7 +32,7 @@ module.exports = class extends Base {
         // 其他额外的操作
     }
     async __before() {
-        let user = await this.session('user');
+        let user = await this.session('admin');
         if (!user) {
             return false;
         }
