@@ -4,6 +4,7 @@ const axios = require('axios');
 module.exports = class extends think.Service{
 
     constructor(opts){
+        super();
         //opts->
         /***
         {

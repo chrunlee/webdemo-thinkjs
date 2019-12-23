@@ -56,7 +56,10 @@ module.exports = class extends Base {
 
     //qq redirect uri
     async qqAction(){
-        let qq = think.service('qq');
+        let qq = think.service('qq',{
+            appId : this.config('site').qqappid.value,
+            appSecret : this.config('site').qqappkey.value
+        });
         let code = this.query('code');
         let redirect = this.config('site').domain.value;
         console.log('QQLogin:code value : '+code)

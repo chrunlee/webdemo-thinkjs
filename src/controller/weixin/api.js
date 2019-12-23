@@ -14,7 +14,6 @@ module.exports = class extends Base {
         if(this.isPost){
             let content = this.post();
             let domain = this.config('site').domain.value;
-            console.log(domain);
             //判断什么类型的消息
             let openId = content.FromUserName;
             if(content.MsgType === 'text'){
@@ -54,7 +53,6 @@ module.exports = class extends Base {
                     }
                 }else if(content.Content.indexOf('音乐') > -1){
                     let music = null;
-                    console.log(parr);
                     if(parr.length == 1){
                         let a = Math.round(Math.random()*1000)//1000以内三位数
                         let b = Math.round(Math.random()*1000)//1000以内三位数
