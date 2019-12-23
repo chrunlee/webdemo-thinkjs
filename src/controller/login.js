@@ -56,6 +56,12 @@ module.exports = class extends Base {
 
     //qq redirect uri
     async qqAction(){
+        let qq = think.service('qq');
+        let code = this.query('code');
+        let redirect = this.config('site').domain.value;
+        console.log('QQLogin:code value : '+code)
+        console.log('qqLogin : redirect :'+redirect);
+        let userInfo = await qq.login();
         return this.display('home/qqlogin')
     }
 };

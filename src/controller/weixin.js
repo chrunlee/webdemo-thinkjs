@@ -5,7 +5,6 @@
  3. 数据接口
 ****/
 const Base = require('./base');
-const Weixin = require('../util/WeixinUtil');
 const path = require('path');
 
 module.exports = class extends Base {
@@ -14,7 +13,7 @@ module.exports = class extends Base {
         let wxtoken = this.config('site').wxtoken.value;
         let wxappid = this.config('site').wxappid.value;
         let wxsecret = this.config('site').wxappsecret.value;
-        this.wx = new Weixin({
+        this.wx = this.service('weixin',{
             token : wxtoken,
             appid : wxappid,
             secret : wxsecret

@@ -106,3 +106,13 @@
     transform:rotate(360deg);
     }
 }
+
+.poem-body{
+    font-size:1em;
+    padding:20px 0px;
+    text-align:center;
+}
+.poem-des{
+    border-top:1px dashed #49e;
+    font-size:0.8em;
+}
