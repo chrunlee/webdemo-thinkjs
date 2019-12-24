@@ -32,6 +32,7 @@ module.exports = class extends Base {
         var type = this.query('type') || '1';//0 上一页，1 下一页
         name = name.trim();
         try{
+            think.logger.info(`[Magnet]-[检索]-${this.ip}检索关键字：${name}`)
             if(name.length ==0 ){
                 let list = await this.cache('demo_magnet_first',()=>{
                     return this.model('demo_magnet').order('createTime desc').limit(0,100).select();
@@ -65,7 +66,7 @@ module.exports = class extends Base {
                 return this.display('magnet/index');
             };  
         }catch(er){
-            console.log(er);
+            think.logger.error(er);
             return this.redirect('/magnet/index');
         }
     }

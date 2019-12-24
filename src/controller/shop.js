@@ -175,7 +175,7 @@ module.exports = class extends Base {
             });
             return this.display('shop/deal');
         } catch (e) {
-            console.log(e);
+            think.logger.error(e);
             //有出错，直接返回列表页面并进行提示。
             return this.redirect('/shop.html');
         }

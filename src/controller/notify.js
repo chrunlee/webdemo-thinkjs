@@ -4,7 +4,7 @@ let ding = require('../util/ding');
 let moment = require('moment');
 module.exports = class extends Base {
     async indexAction() {
-        console.log(this.post());
+        think.logger.info(JSON.stringify(this.post()));
         let data = this.post();
         if (!data.money || null == data.money || undefined == data.money || data.money == 'null') {
             res.json({ success: false, msg: '无效金额' });

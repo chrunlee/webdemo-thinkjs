@@ -21,7 +21,6 @@ module.exports = class extends Base {
 
         //description -replace a[href]
         data.description = data.description.replace(/href="[\s\S"]*?"/g,'href="javascript:;"');
-        console.log('标签:'+data.tags);
         if (think.isEmpty(data)) {
             this.assign({ title: '查询失败', msg: '地址输入错误，没有该诗词哦!<br /><a href="/weixin/story/index">回到首页</a>' })
             return this.display('wechat/tip');

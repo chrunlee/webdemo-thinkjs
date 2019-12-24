@@ -1,23 +1,48 @@
 <script type="text/javascript" src="/static/plugins/byy/byy.js"></script>
+<script type="text/javascript" src="http://lib.baomitu.com/socket.io/2.0.1/socket.io.js"></script>
 <!-- 用户信息 -->
 <script type="text/javascript">
-var LoginUser;
+var LoginUser; 
 {% if user %}
 LoginUser = {
-	id : '{{user.id}}',
-	name : '{{user.name}}',
-	avatar : '{{user.avatar}}'
-};
+    id: '{{user.id}}',
+    name: '{{user.name}}',
+    avatar: '{{user.avatar}}'
+}; 
 {% endif %}
 byy.setRequire({
-	basePath : '/static/js/common/',
-	modules : {
-		common : 'common',
-		easy : 'easy',
-		bball : 'bball'
-	}
+    basePath: '/static/js/common/',
+    modules: {
+        common: 'common',
+        easy: 'easy',
+        bball: 'bball'
+    }
+});
+</script>
+<script type="text/javascript">
+//socket.io broadcast
+var socket = io();
+socket.on('connect',function(){})
+socket.on('msged', function(data) {
+    var ct = document.title;
+    var nt = 'ヾ(=ﾟ･ﾟ=)ﾉ喵♪ 新消息...';
+    var tf = true;
+    var nett = setInterval(function(){
+        document.title = tf ? ct : nt;
+        tf = !tf;
+    },500);
+    byy.require('win',function(){
+        byy.win.open({
+            title : '新消息',
+            content : data,
+            end : function(){
+                document.title = ct;
+                clearInterval(nett);
+            }
+        });
+    })
 });
 </script>
 <script>
-{{site.tongjiscript.value | safe}}
+{{ site.tongjiscript.value | safe }}
 </script>

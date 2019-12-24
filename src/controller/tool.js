@@ -29,6 +29,7 @@ module.exports = class extends Base {
             let urlstr = this.post('url');
             try{
                 if(urlstr){
+                    think.logger.info(`[工具]-[网易云]-${this.ip}检索${urlstr}`)
                     //分析url
                     let type = -1;//0 单曲，1 歌单，2 MV
                     let urlObj = new URL(urlstr);
@@ -79,7 +80,7 @@ module.exports = class extends Base {
                     this.assign({success : true,msg : 'url不能为空'})
                 }
             }catch(e){
-                console.log(e);
+                think.logger.error(e);
                 this.assign({success : false,msg : '网易云API解析服务器无法链接!'})
             }
             this.assign('url',urlstr);

@@ -26,7 +26,7 @@ module.exports = class extends Base {
             let words = [];
             keywords.split(' ').forEach(item=>{
                 if(item.trim()!=''){
-                    words.push(`%${item}%`);
+                    words.push(`%${item.trim()}%`);
                 }
             })
             let where = {};

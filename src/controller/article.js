@@ -66,6 +66,7 @@ module.exports = class extends Base {
     article.html = marked(article.content,{renderer : renderer});
     article.tags = article.tags ? article.tags.split(',') : [];
     let links = await this.model('user_article').where({ispublish : 1,type : 0,enname : ['!=',id],category:article.category}).order(' rand() ').limit(0,8).select();
+    think.logger.info(`[文章]-[详情]-${article.title}`);
     this.assign({article : article,site : this.config('site'),user : user,link : links,d : {header : 'article'},links : this.config('links')});
     return this.display('home/detail');
     

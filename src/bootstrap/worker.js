@@ -5,7 +5,7 @@
 think.beforeStartServer(async () => {
     let list = await think.model('site_set').select();
     let links = await think.model('user_links').select();
-    console.log('系统设置：获得站点设置信息。')
+    think.logger.info('系统设置：获得站点设置信息。')
     //list -> object
     let obj = {};
     list.forEach(item=>{

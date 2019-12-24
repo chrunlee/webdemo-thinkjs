@@ -4,8 +4,9 @@ const path = require('path');
 module.exports = class extends Base {
 
     __before(){
-        console.log('进入wx.js controller')
+        think.logger.info('进入wx.js controller')
         //监测源，必须从微信端打开，打开的同时，必须关注公众号才可以打开。否则跳转到其他页面tip
+        //TODO : 从页面获取用户权限和信息
         let flag = false;
         if(flag){
             this.assign({title : '查看失败',msg : '请使用微信客户端登录查看'})
@@ -19,7 +20,7 @@ module.exports = class extends Base {
         });
         let pd = this.post();
         let data = this.wx.fixData(pd);
-        console.log(data);
+        think.logger.info(JSON.stringify(data));
         this.post(data);
     }
     tipAction(){

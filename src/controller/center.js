@@ -37,8 +37,10 @@ module.exports = class extends Base {
             return false;
         }
     }
+
     //========================首页===================
     indexAction() {
+        think.logger.info(`[后台]-[登录]-登录后台${this.ip}`);
         return this.display('center/home');
     }
 
@@ -567,5 +569,18 @@ module.exports = class extends Base {
         }else{
             return this.json({success : false})
         }
+    }
+
+
+    //全站广播
+    async broadAction(){
+        return this.display('center/broad/index');
+    }
+
+    async broadInfoAction(){
+        return this.json({
+            account : this.config('site').superaccount.value,
+            password : this.config('site').superpwd.value
+        });
     }
 };

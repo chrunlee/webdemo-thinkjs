@@ -32,6 +32,7 @@ module.exports = class extends Base {
             }
             await this.model('sys_user').add(user);
         }
+        think.logger.info(`[登录]-[github]${this.ip}登录github用户:${user.name}`)
         await this.session('user', user);
         return this.redirect(redirectURL);
 
@@ -50,6 +51,7 @@ module.exports = class extends Base {
     //用户退出
     async logoutAction(){
         await this.session('user',null);
+        await this.session('admin',null);
         return this.redirect('/');
     }
 
@@ -62,9 +64,10 @@ module.exports = class extends Base {
         });
         let code = this.query('code');
         let redirect = this.config('site').domain.value;
-        console.log('QQLogin:code value : '+code)
-        console.log('qqLogin : redirect :'+redirect);
+        think.logger.info('QQLogin:code value : '+code)
+        think.logger.info('qqLogin : redirect :'+redirect);
         let userInfo = await qq.login();
+        think.logger.info(JSON.stringify(userInfo));
         return this.display('home/qqlogin')
     }
 };

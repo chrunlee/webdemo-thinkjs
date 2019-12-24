@@ -151,22 +151,22 @@ module.exports = class extends Base {
 `);
                 }
             }else if(content.MsgType === 'image'){
-                console.log('图片消息')
+                think.logger.info('图片消息')
             }else if(content.MsgType === 'voice'){
-                console.log('语音消息')
+                think.logger.info('语音消息')
             }else if(content.MsgType === 'video'){
-                console.log('视频消息')
+                think.logger.info('视频消息')
             }else if(content.MsgType === 'shortvideo'){
-                console.log('小视频消息')
+                think.logger.info('小视频消息')
             }else if(content.MsgType === 'location'){
-                console.log('地理位置消息')
+                think.logger.info('地理位置消息')
             }else if(content.MsgType === 'link'){
-                console.log('链接消息')
+                think.logger.info('链接消息')
             }else if(content.MsgType === 'event'){
-                console.log('事件消息')
+                think.logger.info('事件消息')
                 let eventType = content.Event;
                 if(eventType === 'subscribe'){
-                    console.log('关注公众号')
+                    think.logger.info('关注公众号')
                     //业务:关注后获取信息，进行保存或更新用户记录
                     let data = await this.wx.getUserInfo(openId);
                     let user = await this.model('sys_user').where({id : openId}).find();
@@ -183,11 +183,11 @@ module.exports = class extends Base {
                     }
                     return this.body = this.wx.createText(content,'谢谢您的关注!\r\n回复:秘籍\r\n更多惊喜等你开启....')
                 }else if(eventType === 'unsubscribe'){
-                    console.log('取消关注')
+                    think.logger.info('取消关注')
                 }else if(eventType === 'TEMPLATESENDJOBFINISH'){
-                    console.log('模版消息发送后的反馈');
+                    think.logger.info('模版消息发送后的反馈');
                 }else if(eventType){
-                    console.log(eventType);
+                    think.logger.info(eventType);
                 }
             }
             return this.body =this.wx.createText(content,'谢谢关注哦，更多玩法请回复:秘籍');
@@ -250,7 +250,6 @@ module.exports = class extends Base {
             }
         };
         let msgid = await this.wx.sendTemplate(data);
-        console.log(msgid);
         return this.body = '发送成功'
     }
     //测试上传媒体素材

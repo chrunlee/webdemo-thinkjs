@@ -43,6 +43,7 @@ module.exports = class extends Base {
         if(!think.isEmpty(obj)){
             c = obj.intval;
         }
+        think.logger.info(`[DAT]-[页面]-${this.ip}`);
         return this.json({
             count : c,
             msg : '已为<span style="color:red;font-weigth:bold;">'+c+'</span>个dat文件提供转化服务'
@@ -94,6 +95,7 @@ module.exports = class extends Base {
      ***/
     async loginAction() {
         let user = await this.session('admin');
+        think.logger.info(`[登录]-${this.ip}进入登录页面`);
         if (user) {
             return this.redirect('/center/index');
         } else {
@@ -281,6 +283,7 @@ module.exports = class extends Base {
     async searchAction() {
         let referer = this.header('referer');
         let q = this.ctx.param('q') || '';
+        think.logger.info(`[检索]-[关键字]-${this.ip}检索关键字:${q}`);
         let user = await this.session('user');
         q = q.replace(/[";'&)(=%]/gi, '');
         if (q.trim() == '') {

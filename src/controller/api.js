@@ -122,6 +122,7 @@ module.exports = class extends Base {
         let data = this.post();
         data.send = 0;
         let iid = await this.model('user_task').add(data);
+        think.logger.info(`[接口]-[添加定时任务]-${data.content}`);
         return this.json({success : true,msg : '添加成功'});
     }
 }

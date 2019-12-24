@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+
+<body>
+    <h2>全站广播<small style="font-weight:normal;color:#aaa;">(发送后所有正在浏览网站的页面都会收到消息)</small></h2>
+    <br />
+    <textarea id="content" style="width:80%;height:200px;outline:none;border:1px solid #ccc;"></textarea>
+    <br />
+    <button id="send">点击发送广播</button>
+</body>
+
+</html>
+{% include '../hometpl/js.html' %}
+<script type="text/javascript" src="http://lib.baomitu.com/socket.io/2.0.1/socket.io.js"></script>
+<script type="text/javascript">
+var socket = io();
+socket.on('msged', function(data) {
+    var ct = document.title;
+    var nt = 'ヾ(=ﾟ･ﾟ=)ﾉ喵♪ 新消息...';
+    var tf = true;
+    var nett = setInterval(function() {
+        document.title = tf ? ct : nt;
+        tf = !tf;
+    }, 500);
+    byy.require('win', function() {
+        byy.win.open({
+            title: '新消息',
+            content: data,
+            end: function() {
+                document.title = ct;
+                clearInterval(nett);
+            }
+        });
+    })
+});
+document.getElementById('send').onclick = function() {
+    $.ajax({
+        url: '/center/broadInfo',
+        type: 'post',
+        data: {},
+        success: function(res) {
+            res.msg = document.getElementById('content').value;
+            socket.emit('msgAdd', res);
+        }
+    });
+}
+</script>

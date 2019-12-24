@@ -24,7 +24,6 @@ module.exports = class extends Base {
 
                 res2.on('end', function(err) {
                     var data = Buffer.concat(chunks, size); //Buffer.concat将chunks数组中的缓冲数据拼接起来，返回一个新的Buffer对象赋值给data
-                    console.log(Buffer.isBuffer(data)); //可通过Buffer.isBuffer()方法判断变量是否为一个Buffer对象
                     var base64Img = data.toString('base64'); //将Buffer对象转换为字符串并以base64编码格式显示
                     resolve(base64Img);
                 });
@@ -43,7 +42,6 @@ module.exports = class extends Base {
         //picture 转 base64
         this.assign("data", data);
         // let st = await axios.get(data.picture,{responseType : 'stream'}).then(rs=>rs.data);
-        console.log(data.picture);
         let baseimg = await this.getPicBase(data.picture);
         this.assign('picture',baseimg);
         return this.display('wechat/music/detail')
