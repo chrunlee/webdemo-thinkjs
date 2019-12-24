@@ -328,4 +328,10 @@ module.exports = class extends Base {
             }
         }
     }
+
+    /**统计在线人数**/
+    async onlineAction(){
+        await this.model('site_set').where({name : 'online'}).increment('strval');
+        return this.body = '';
+    }
 };

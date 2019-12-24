@@ -42,6 +42,13 @@ socket.on('msged', function(data) {
         });
     })
 });
+//get online user numbers
+socket.on('online',function(msg){
+    $.ajax({
+        url : '/index/online',type : 'post',data : {},
+        success : function(){}
+    });
+})
 </script>
 <script>
 {{ site.tongjiscript.value | safe }}

@@ -101,7 +101,7 @@ exports.logger = {
   type: isDev ? 'console' : 'dateFile',
   console: {
     handle: Console,
-    // level : 'INFO'
+    level : 'INFO'
   },
   file: {
     handle: File,
@@ -112,7 +112,7 @@ exports.logger = {
   },
   dateFile: {
     handle: DateFile,
-    level: 'ERROR',
+    level: 'INFO',
     absolute: true,
     pattern: '-yyyy-MM-dd',
     alwaysIncludePattern: true,
@@ -133,6 +133,7 @@ exports.websocket = {
     messages: {
       open  : '/websocket/open',
       msgAdd: '/websocket/msgAdd',
+      online : '/websocket/online',
       close : '/websocket/close'
     }
   }

@@ -40,7 +40,7 @@ module.exports = class extends Base {
 
     //========================首页===================
     indexAction() {
-        think.logger.info(`[后台]-[登录]-登录后台${this.ip}`);
+        think.logger.warn(`[后台]-[登录]-登录后台${this.ip}`);
         return this.display('center/home');
     }
 
@@ -582,5 +582,13 @@ module.exports = class extends Base {
             account : this.config('site').superaccount.value,
             password : this.config('site').superpwd.value
         });
+    }
+    async onlineAction(){
+        let d = await this.model('site_set').where({name : 'online'}).find();
+        return this.body = d.strval;
+    }
+    async clearOnlineAction(){
+        await this.model('site_set').where({name :'online'}).update({strval : '0'})
+        return this.body = '';
     }
 };

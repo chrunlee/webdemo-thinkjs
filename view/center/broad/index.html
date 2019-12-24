@@ -12,6 +12,10 @@
     <textarea id="content" style="width:80%;height:200px;outline:none;border:1px solid #ccc;"></textarea>
     <br />
     <button id="send">点击发送广播</button>
+    <br />
+    <button id="online">统计当前在线人数</button>
+    <p id="show"></p>
+    <button id="clear">停止统计</button>
 </body>
 
 </html>
@@ -48,5 +52,35 @@ document.getElementById('send').onclick = function() {
             socket.emit('msgAdd', res);
         }
     });
+}
+var ttt = null;
+document.getElementById('online').onclick = function() {
+    $.ajax({
+        url: '/center/broadInfo',
+        type: 'post',
+        data: {},
+        success: function(res) {
+            res.msg = '统计在线人数'
+            socket.emit('online', res);
+        }
+    });
+    setTimeout(function(){
+        $.ajax({
+            url : '/center/online',type : 'post',data : {},
+            success : function(res){
+                $('#show').html('当前在线人数:'+res);
+            }
+        });
+    },2000);
+}
+document.getElementById('clear').onclick = function() {
+    $.ajax({
+        url: '/center/clearOnline',
+        type: 'post',
+        data: {},
+        success: function() {
+            $('#show').html('清除')
+        }
+    })
 }
 </script>

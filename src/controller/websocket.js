@@ -24,6 +24,16 @@ module.exports = class extends think.Controller {
             this.broadcast('msged',d.msg);
         }
     }
+    //统计在线人数
+    async onlineAction(){
+        let d = this.wsData;
+        let account = this.config('site').superaccount.value;
+        let pwd = this.config('site').superpwd.value;
+        if(d.account == account && d.password == pwd && d.msg != ''){
+            think.logger.warn(`[Websocket]-[广播] : ${d.msg}`);
+            this.broadcast('online',d.msg);
+        }
+    }
     async closeAction(){
         think.logger.info('[Websocket]-close')
     }
