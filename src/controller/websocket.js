@@ -34,7 +34,5 @@ module.exports = class extends think.Controller {
             this.broadcast('online',d.msg);
         }
     }
-    async closeAction(){
-        think.logger.info('[Websocket]-close')
-    }
+    async closeAction(){}
 }
