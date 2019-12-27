@@ -36,6 +36,7 @@ module.exports = class extends Base {
         if (!user) {
             return false;
         }
+        this.assign('site',this.config('site'));
     }
 
     //========================首页===================

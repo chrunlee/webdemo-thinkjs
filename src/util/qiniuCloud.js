@@ -4,11 +4,11 @@
 let qiniu = require('qiniu');
 let path = require('path');
 //文件保存。
-function saveFile(ak,sk,scope,filePath,prefix,extname){
+function saveFile(ak,sk,scope,filePath,prefix,basename,extname){
     return new Promise(function(resolve,reject){
         let mac = new qiniu.auth.digest.Mac(ak, sk);
         let options = {
-          scope: scope
+          scope: scope+(basename ? (':'+basename) : '')
         };
         let putPolicy = new qiniu.rs.PutPolicy(options);
         let uploadToken=putPolicy.uploadToken(mac);
@@ -19,7 +19,9 @@ function saveFile(ak,sk,scope,filePath,prefix,extname){
         let formUploader = new qiniu.form_up.FormUploader(config);
         let putExtra = new qiniu.form_up.PutExtra();
         // 文件上传
-        let fileName = prefix+(+new Date())+'-'+(Math.floor(Math.random()*10000))+(extname||path.extname(filePath));
+        let fileName = basename || (prefix+(+new Date())+'-'+(Math.floor(Math.random()*10000))+(extname||path.extname(filePath)));
+        //上传之前先删除
+
         formUploader.putFile(uploadToken, fileName, filePath, putExtra, function(respErr,respBody, respInfo) {
             if(respErr){
                 reject(respErr);

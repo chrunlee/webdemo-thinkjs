@@ -6,10 +6,9 @@
 	<meta name="description" content="{{site.sitedes}}">
 	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
 	<title>文章检索 | {{site.sitename.value}}</title>
-	<link rel="stylesheet" href="/static/plugins/byy/css/default/byy.css">
-	<link rel="stylesheet" href="/static/css/index/index.css">
-	<link rel="stylesheet" href="/static/css/article/article.css">
-	<link rel="stylesheet" href="/static/css/article/detail.css">
+	{% include '../tpl/css.html' %}
+	<link rel="stylesheet" href="{{site.staticfiledomain.value}}/static/css/article/article.css">
+	<link rel="stylesheet" href="{{site.staticfiledomain.value}}/static/css/article/detail.css">
 </head>
 <body class="grey-bg fixed">
 	{% include '../tpl/header.html'%}
@@ -42,6 +41,6 @@
 </body>
 </html>
 {% include '../tpl/commonjs.html'%}
-<script type="text/javascript" src="/static/plugins/highlight/highlight.pack.js"></script>
-<script type="text/javascript" src="/static/js/article/detail.js"></script>
-<script type="text/javascript" src="/static/js/article/canvas.js"></script>
+<script type="text/javascript" src="{{site.staticfiledomain.value}}/static/plugins/highlight/highlight.pack.js"></script>
+<script type="text/javascript" src="{{site.staticfiledomain.value}}/static/js/article/detail.js"></script>
+<script type="text/javascript" src="{{site.staticfiledomain.value}}/static/js/article/canvas.js"></script>

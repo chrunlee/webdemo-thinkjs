@@ -8,7 +8,7 @@
     <meta http-equiv="Cache-Control" content="no-siteapp">
     <meta name="keywords" content="{{site.shopname.value}},网易云音乐VIP音乐下载,{{site.authorname.value}},{{site.sitename.value}},{{site.domain.value}}">
     <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
-    <link rel="stylesheet" href="/static/plugins/byy/css/default/byy.css">
+    {% include '../tpl/css.html' %}
     <style>
         header{
             font-size:38px;
@@ -51,7 +51,7 @@
 </head>
 <body>
     <header>
-        <img src="/static/images/netmusic-logo.jpg" alt="">网易云音乐VIP音乐下载    
+        <img src="{{site.staticfiledomain.value}}/static/images/netmusic-logo.jpg" alt="">网易云音乐VIP音乐下载    
     </header>
     <form action="/tool/music163" method="post">
         <input type="hidden" name="code" value="{{code}}">
@@ -100,7 +100,7 @@
 </body>
 </html>
 {%include '../tpl/commonjs.html'%}
-<script type="text/javascript" src="/static/plugins/thunder/thunder-link.js"></script>
+<script type="text/javascript" src="{{site.staticfiledomain.value}}/static/plugins/thunder/thunder-link.js"></script>
 <script type="text/javascript">
     byy.require(['jquery','win'],function(){
         

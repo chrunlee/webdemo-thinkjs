@@ -8,9 +8,8 @@
     <meta name="keywords" content="{{site.shopname.value}},{{site.authorname.value}},{{site.sitename.value}},{{site.domain.value}}">
     <meta name="description" content="{{site.shopname.value}},{{site.sitedes.value}}">
     <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
-    <link rel="stylesheet" href="/static/plugins/byy/css/default/byy.css">
-    <link rel="stylesheet" href="/static/css/index/index.css">
-    <link rel="stylesheet" href="/static/css/shop/index.css">
+    {% include '../tpl/css.html' %}
+    <link rel="stylesheet" href="{{site.staticfiledomain.value}}/static/css/shop/index.css">
 </head>
 <body>
     <header>

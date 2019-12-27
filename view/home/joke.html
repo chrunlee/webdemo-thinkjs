@@ -10,8 +10,7 @@
     <meta name="keywords" content="{{site.sitename.value}},{{site.authorname.value}},{{site.domain.value}}">
     <meta name="description" content="{{site.sitedes}}">
     <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
-    <link rel="stylesheet" href="/static/plugins/byy/css/default/byy.css">
-    <link rel="stylesheet" href="/static/css/index/index.css">
+    {% include '../tpl/css.html' %}
     <style>
     .joke-content{
         width:720px;
@@ -69,7 +68,7 @@
     {% include "../tpl/header.html" %}
     {% if empty %}
     <div class="empty-joke">
-        <img src="/static/images/search2.png" alt="">
+        <img src="{{site.staticfiledomain.value}}/static/images/search2.png" alt="">
         <p><small>你已经把采然所有的笑话看完啦...</small></p>
         <p>小采然同学正在积极抓取笑话... 请耐心等待哦，很快就来啦。</p>
         <p style="font-size:18px;color:#49e;"><a href="/joke/clear" style="color:#49e;text-decoration:underline;" target="_blank">清理历史记录，重看采然一刻</a></p>
@@ -99,4 +98,4 @@
 </body>
 </html>
 {% include '../tpl/commonjs.html' %}
-<script type="text/javascript" src="/static/js/index/joke.js"></script>
+<script type="text/javascript" src="{{site.staticfiledomain.value}}/static/js/index/joke.js"></script>

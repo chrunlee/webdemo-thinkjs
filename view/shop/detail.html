@@ -16,9 +16,8 @@
     <meta name="site" content="{{site.domain.value}}">
     <meta name="title" content="{{item.name}} | {{site.sitename.value}}">
     <title>{{item.name}} - {{site.shopname.value}}</title>
-    <link rel="stylesheet" href="/static/plugins/byy/css/default/byy.css">
-    <link rel="stylesheet" href="/static/css/index/index.css">
-    <link rel="stylesheet" href="/static/css/shop/index.css">
+    {% include '../tpl/css.html' %}
+    <link rel="stylesheet" href="{{site.staticfiledomain.value}}/static/css/shop/index.css">
 </head>
 <body>
     <input type="hidden" name="id" id="id" value="{{item.id}}">

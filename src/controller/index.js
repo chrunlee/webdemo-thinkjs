@@ -9,6 +9,10 @@ let dingding = require('../util/ding');
  * 前台展示
  **/
 module.exports = class extends Base {
+
+    __before(){
+        this.assign('site', this.config('site'));
+    }
     /***
      * 首页：获取对应的文章和banner
      **/
@@ -19,7 +23,6 @@ module.exports = class extends Base {
         this.assign('user', user);
         this.assign('banners', banner);
         this.assign('articles', articles);
-        this.assign('site', this.config('site'));
         this.assign('links', this.config('links'));
         this.assign('d', {
             header: 'home'
@@ -81,7 +84,6 @@ module.exports = class extends Base {
     async aboutAction() {
         let user = await this.session('user');
         this.assign({
-            site: this.config('site'),
             links: this.config('links'),
             user: user,
             d: {
@@ -144,7 +146,6 @@ module.exports = class extends Base {
             categoryId: firstCateId,
             categoryList: categoryList,
             optionList: optionList,
-            site: this.config('site'),
             user: user,
             user: user,
             d: {
@@ -161,7 +162,6 @@ module.exports = class extends Base {
         let site = this.config('site');
         let user = await this.session('user');
         this.assign({
-            site: site,
             user: user,
             d: {
                 header: 'demo'
