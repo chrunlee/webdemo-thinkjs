@@ -424,8 +424,11 @@ module.exports = class extends Base {
     //购买记录
     async shopSuccessAction() {
         if (this.isPost) {
-            let list = await this.model('order_user').alias('t1').join('order_goods t2 on t1.goodid = t2.id').field('t1.*,t2.name,t2.price as goodprice').order('t1.starttime desc').select();
-            this.json({ success: true, total: list.length, rows: list });
+            let page = this.post('page');
+            let limit = this.post('limit');
+            let list = await this.model('order_user').alias('t1').join('order_goods t2 on t1.goodid = t2.id').field('t1.*,t2.name,t2.price as goodprice').order('t1.starttime desc').page(page,limit).select();
+            let count = await this.model('order_user').count();
+            this.json({ success: true, total: count, rows: list });
         } else {
             return this.display('center/shop/success');
         }

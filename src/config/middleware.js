@@ -25,8 +25,9 @@ module.exports = [{
         options: {
             debug: isDev,
             error(err, ctx) {
-                think.logger.error(err);
                 let url = ctx.originalUrl;
+                think.logger.error(url);
+                think.logger.error(err);
                 if (ctx.isPost) { //
                     ctx.fail(10086, 'sorry,you found a big error box');
                 } else if (url.indexOf('.php') > -1) { //someone who want get somthing
