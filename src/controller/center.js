@@ -56,7 +56,7 @@ module.exports = class extends Base {
         let name = file.name;
         let realPath = "";
         if(qiniuenable){
-            let filePath = await qiniuCloud.saveFile(ak,sk,scope,file.path,'static_',path.extname(name));
+            let filePath = await qiniuCloud.saveFile(ak,sk,scope,file.path,'static_',null,path.extname(name));
             realPath = '/'+filePath;
             fs.unlinkSync(file.path);//删除源文件。
         }else{
