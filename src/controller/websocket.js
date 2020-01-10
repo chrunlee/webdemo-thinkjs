@@ -8,9 +8,7 @@ module.exports = class extends think.Controller {
 
     async openAction() {
         let id = await this.session();
-        console.log(id);
         let cid = this.cookie('thinkjs');
-        console.log(cid);
         this.emit('opend', 'This client opened successfully!')
         this.broadcast('joined', 'There is a new client joined successfully!')
     }
