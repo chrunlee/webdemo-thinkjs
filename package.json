@@ -15,6 +15,7 @@
     "cheerio": "^1.0.0-rc.3",
     "dirfile": "^1.0.2",
     "https": "^1.0.0",
+    "jimp": "^0.9.3",
     "marked": "^0.7.0",
     "moment": "^2.24.0",
     "nodemailer": "^6.3.1",
@@ -33,7 +34,8 @@
     "think-view-nunjucks": "^1.0.1",
     "think-websocket": "^1.0.7",
     "think-websocket-socket.io": "^1.0.10",
-    "thinkjs": "^3.0.0"
+    "thinkjs": "^3.0.0",
+    "webp-converter": "^2.2.3"
   },
   "devDependencies": {
     "think-watcher": "^3.0.0",
