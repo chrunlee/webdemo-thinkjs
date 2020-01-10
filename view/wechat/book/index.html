@@ -1,0 +1,26 @@
+{% extends "../tpl/layout.html" %}
+{% block title %}
+<title>古籍 - 采然一刻</title>
+<style>
+body,
+.weui-cell_access {
+    background-color: #cceae2;
+}
+</style>
+{% endblock %}
+{% block content %}
+<div class="page">
+    <div class="weui-grids">
+        {% for item in list %}
+        <a href="/weixin/book/list/{{item.id}}.html" class="weui-grid">
+            <div class="book_post">
+                <span>{{item.name}}</span>
+            </div>
+            <p class="weui-grid__label">{{item.author}} ● {{item.times}}</p>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+{% block jsfile %}
+{% endblock %}

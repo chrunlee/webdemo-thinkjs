@@ -1,0 +1,42 @@
+{% extends "../tpl/layout.html" %}
+{% block title %}
+<title>{{book.name}} - {{data.name}} - 采然一刻</title>
+<style>
+    .page{background-color:#cceae2;}
+</style>
+{% endblock %}
+{% block content %}
+<div class="page article">
+    <div class="page__hd">
+        <h1 class="page__title" style="text-align:center;">{{data.name}}</h1>
+    </div>
+    <div class="page__bd">
+        <article class="weui-article" style="white-space:pre-wrap;">
+            {{data.content|safe}}
+        </article>
+        <p class="page_footer">
+            {% if prev != null %}
+            <span class="left">
+                <a href="/weixin/book/chapter/{{prev}}.html">上一章</a>
+            </span>
+            {% endif %}
+            <span>
+                <a href="/weixin/book/list/{{book.id}}.html">返回目录</a>
+            </span>
+            {% if next != null %}
+            <span class="right">
+                <a href="/weixin/book/chapter/{{next}}.html">下一章</a>
+            </span>
+            {% endif %}
+            
+        </p>
+    </div>
+    {%include '../tpl/footer.html'%}
+</div>
+{% endblock %}
+{% block jsfile %}
+<script type="text/javascript">
+    
+
+</script>
+{% endblock %}

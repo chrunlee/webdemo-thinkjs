@@ -8,6 +8,8 @@ let qiniuCloud = require('../util/qiniuCloud');
 let path = require('path');
 let fs = require('fs');
 let dirfile = require('dirfile')
+const cheerio = require('cheerio');
+
 
 module.exports = class extends Base {
 
@@ -168,5 +170,109 @@ module.exports = class extends Base {
             str = '上传失败,'+e.message;
         }
         return this.body = str;
+    }
+
+    
+    /**创建自己站点的sitemap.xml 地图文件，并更新。**/
+    async createSitemapAction(){
+        //1.首页及顶部菜单
+
+        var getSite = function(url,po){
+            return `
+            <url>
+                <loc>${url}</loc>
+                <priority>${po}</priority>
+            </url>
+            `;
+        }
+
+        let filePath = path.join(think.ROOT_PATH,'www/sitemap.xml')
+        let domain = this.config('site').domain.value;
+        if(fs.existsSync(filePath)){
+            fs.unlinkSync(filePath);//删除重做
+        }
+        fs.appendFileSync(filePath,`<?xml version="1.0" encoding="utf-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:mobile="http://www.baidu.com/schemas/sitemap-mobile/1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">`);
+        fs.appendFileSync(filePath,getSite(domain,'1.00'));
+        fs.appendFileSync(filePath,getSite(domain+'/index.html','1.00'));
+        fs.appendFileSync(filePath,getSite(domain+'/index/article.html','1.00'));
+        fs.appendFileSync(filePath,getSite(domain+'/index/demo.html','1.00'));
+        fs.appendFileSync(filePath,getSite(domain+'/index/about.html','1.00'));
+        fs.appendFileSync(filePath,getSite(domain+'/index.html','1.00'));
+
+        //2.友链
+        let links = await this.model('user_links').select();
+        for(let i in links){
+            let link = links[i];
+            fs.appendFileSync(filePath,getSite(link.href,'0.90'));
+        }
+        //3.文章类型
+        // https://chrunlee.cn/index/article.html?c=2
+        let cateList = await this.model('user_category').select();
+        for(let i in cateList){
+            let obj = cateList[i];
+            fs.appendFileSync(filePath,getSite(domain+'/index/article.html?c='+obj.id,'0.90'));
+        }
+
+        //4.文章列表
+        let articleList = await this.model('user_article').order('readnum desc').select();
+        for(let i in articleList){
+            let article = articleList[i];
+            let tps = article.readnum >1000 ? '0.89' : (article.readnum > 500 ? '0.85' : '0.80');
+            fs.appendFileSync(filePath,getSite(domain+'/article/'+article.enname+'.html',tps));
+        }
+        //5.demo
+        let content = fs.readFileSync(path.join(think.ROOT_PATH,'view/home/demo.html'))
+        content = content.toString();
+        let $ = cheerio.load(content);
+        $('.demo-link').each(function(i,item){
+            let href = $(item).attr('href');
+            fs.appendFileSync(filePath,getSite(domain+href,'0.75'));   
+        })
+
+        //6.商店
+        fs.appendFileSync(filePath,getSite(domain+'/shop.html','1.00'));
+        let shopList = await this.model('order_goods').select();
+        for(let i in shopList){
+            let good = shopList[i];
+            fs.appendFileSync(filePath,getSite(domain+'/shop/'+good.id+'.html','0.90'));
+        }
+        //7.笑话--
+
+        //8.微信-故事
+        fs.appendFileSync(filePath,getSite(domain+'/weixin/story.html','0.90'));
+        let typeList = await this.model('wx_story').field('type').group('type').select();
+        for(let i in typeList){
+            let obj = typeList[i];
+            fs.appendFileSync(filePath,getSite(domain+'/weixin/story/list/'+obj.type+'.html','0.75'));
+        }
+
+        let storyList = await this.model('wx_story').field('id').select();
+        for(let i in storyList){
+            let story = storyList[i];
+            fs.appendFileSync(filePath,getSite(domain+'/weixin/story/detail/'+story.id+'.html','0.45'));
+        }
+        //9.微信-成语
+
+        //10.微信-古籍
+        fs.appendFileSync(filePath,getSite(domain+'/weixin/book','0.6'));
+        //书籍
+        let bookList = await this.model('wx_book').field('id').select();
+        for(let i in bookList){
+            let book = bookList[i];
+            fs.appendFileSync(filePath,getSite(domain+'/weixin/book/list/'+book.id+'.html','0.53'));
+        }
+        let chapterList = await this.model('wx_book_chapter').field('id').select();
+        for(let i in chapterList){
+            let chapter = chapterList[i];
+            fs.appendFileSync(filePath,getSite(domain+'/weixin/book/chapter/'+chapter.id+'.html','0.45'));
+        }
+        //11.微信-歇后语
+
+        //12.微信-诗词
+
+
+        fs.appendFileSync(filePath,'</urlset>');
+
+        return this.body = 'sitemap.xml create success'
     }
 }

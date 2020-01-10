@@ -1,0 +1,39 @@
+{% extends "../tpl/layout.html" %}
+
+{% block title %}
+<title>故事系列 - 采然一刻</title>
+<style>
+    body,.weui-cell_access{
+        background-color:#cceae2;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="page">
+    <div class="book-description">
+        <div class="book_post" style="width:30%;float:left;">
+            <span>{{book.name}}</span>
+        </div>
+        <div class="book-des">
+            <p style="font-size:1.5em;">{{book.author}}●{{book.times}}</p>
+            {% if book.tags != ''%}
+            <p class="book_tags">标签:{{book.tags}}</p>
+            {% endif %}
+            <p style="font-size:0.8em;">{{book.description|safe}}</p>
+        </div>
+    </div>
+    <div class="weui-cells">
+        {% for item in list %}
+        <a href="/weixin/book/chapter/{{item.id}}.html" class="weui-cell weui-cell_access">
+            <p class="weui-cell__bd">{{item.name}}
+            </p>
+            <div class="weui-cell__ft"></div>
+        </a>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}
+{% block jsfile %}
+
+{% endblock %}

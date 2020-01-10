@@ -7,10 +7,7 @@ const axios = require('axios');
 module.exports = class extends Base {
 
 
-    constructor(ctx) {
-        super(ctx);
-        this.assign('site', this.config('site'));
-    }
+
     async getPicBase(pic){        
         return new Promise((resolve,reject)=>{
             https.get(pic, function(res2) {

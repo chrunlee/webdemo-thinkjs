@@ -7,8 +7,7 @@ module.exports = class extends Base {
         think.logger.info(JSON.stringify(this.post()));
         let data = this.post();
         if (!data.money || null == data.money || undefined == data.money || data.money == 'null') {
-            res.json({ success: false, msg: '无效金额' });
-            return;
+            return this.json({ success: false, msg: '无效金额' });
         }
         let dingding = new ding(this.config('site').dingding.value)
         //根据deviceid 来进行校验设备
@@ -67,10 +66,10 @@ module.exports = class extends Base {
                     await dingding.sendText('','商品售卖:交易成功。(' + data.content + ')')
                 }
             }
-            this.json({ success: true, msg: '接受成功' });
+            return this.json({ success: true, msg: '接受成功' });
         } else {
             //当前数据无效
-            this.json({ success: false, msg: '无效数据' });
+            return this.json({ success: false, msg: '无效数据' });
         }
     }
 };

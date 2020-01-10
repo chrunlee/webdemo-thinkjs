@@ -22,6 +22,7 @@ module.exports = class extends Base {
         let data = this.wx.fixData(pd);
         think.logger.info(JSON.stringify(data));
         this.post(data);
+        this.assign('site',this.config('site'));
     }
     tipAction(){
         return this.display("wechat/tip");

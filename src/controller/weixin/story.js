@@ -5,10 +5,6 @@ const path = require('path');
 module.exports = class extends Base {
 
 
-    constructor(ctx){
-        super(ctx);
-        this.assign('site',this.config('site'));
-    }
     async indexAction(){
         let data = await this.cache('wx_story_group',()=>{return this.model('wx_story').field('type,count(1) as num').order('num desc').group('type').select();});
         this.assign('list',data);
@@ -47,11 +43,17 @@ module.exports = class extends Base {
     }
 
     async detailAction(){
+        console.log(this.url);
         let id = this.query('id');
+        console.log('id='+id);
+        if(!id){
+            this.assign({title : '查询失败',msg : '故事地址输入错误，没有该故事哦!<br /><a href="/weixin/story/index">回到首页</a>'})
+            return this.display('wechat/tip');
+        }
         let data = await this.model('wx_story').where({id : id}).find();
         if(think.isEmpty(data)){
             this.assign({title : '查询失败',msg : '故事地址输入错误，没有该故事哦!<br /><a href="/weixin/story/index">回到首页</a>'})
-            return super.tip();
+            return this.display('wechat/tip');
         }
         await this.model('wx_story').where({id : id}).increment('viewnum',1);
         this.assign("data",data);

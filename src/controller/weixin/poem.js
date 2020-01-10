@@ -4,11 +4,6 @@ const path = require('path');
 
 module.exports = class extends Base {
 
-
-    constructor(ctx) {
-        super(ctx);
-        this.assign('site', this.config('site'));
-    }
     
     async detailAction() {
         let id = this.query('id');

@@ -24,7 +24,7 @@
         <p class="weui-cell__bd">没有检索到符合条件的记录！请切换关键词查询.</p>
         {% endif %}
         {% for item in list %}
-        <a href="/weixin/story/detail?id={{item.id}}" class="weui-cell weui-cell_access">
+        <a href="/weixin/story/detail/{{item.id}}.html" class="weui-cell weui-cell_access">
             <p class="weui-cell__bd">{{item.name}}
                 <small>({{item.zannum}})</small>
             </p>
