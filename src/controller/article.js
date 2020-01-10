@@ -24,6 +24,7 @@ marked.setOptions({
 });
 
 module.exports = class extends Base {
+
   async indexAction() {
     let page = this.ctx.param('p'),//页码
         category = this.ctx.param('c');//类别

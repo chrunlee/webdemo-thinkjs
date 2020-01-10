@@ -9,11 +9,9 @@ const { compress,convertWebpJpg,getBaseStr } = require('../util/Image');
 const fs = require('fs');
 
 module.exports = class extends Base {
+
     //微信dat转码页面
     async wechatdatAction() {
-        this.assign({
-            site: this.config('site')
-        })
         return this.display('tool/wechatdat');
     }
     //跳转到网易云音乐

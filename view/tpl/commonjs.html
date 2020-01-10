@@ -1,4 +1,4 @@
-<script type="text/javascript" src="/static/plugins/byy/byy.js"></script>
+<script type="text/javascript" src="{{site.staticfiledomain.value}}/static/plugins/byy/byy.js"></script>
 <script type="text/javascript" src="https://static.chrunlee.cn/socket.io.js"></script>
 <!-- 用户信息 -->
 <script type="text/javascript">
@@ -11,7 +11,7 @@ LoginUser = {
 }; 
 {% endif %}
 byy.setRequire({
-    basePath: '/static/js/common/',
+    basePath: '{{site.staticfiledomain.value}}/static/js/common/',
     modules: {
         common: 'common',
         easy: 'easy',
