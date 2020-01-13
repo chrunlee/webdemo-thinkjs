@@ -70,9 +70,9 @@ module.exports = class extends Base {
                 return this.json({success : false,msg : '文件不符合规范，已经删除.'});
             }else{
                 await this.model('site_set').where({name : 'datcount'}).increment('intval',1);
-                let base64 = await datConvert(file.path);
+                // let base64 = await datConvert(file.path);
                 fs.unlinkSync(file.path);
-                return this.json({success : true,base64 : base64});
+                return this.json({success : true,msg : 'convert success'});
             }
         }catch(e){
             return this.json({success : false,msg : '数据不规范'});   

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>微信dat文件在线解码-解密为图片-如何打开微信dat文件 - {{site.sitename.value}}</title>
@@ -23,14 +24,14 @@
         }
     </style>
 </head>
+
 <body>
     <div style="display:none;">
-    如何为微信dat文件解密？<br />
-    微信dat解码软件从哪里下载？<br />
-    在线解码微信dat文件？<br />
-    dat图片文件怎么打开？<br />
-    微信打开dat文件？<br />
-
+        如何为微信dat文件解密？<br />
+        微信dat解码软件从哪里下载？<br />
+        在线解码微信dat文件？<br />
+        dat图片文件怎么打开？<br />
+        微信打开dat文件？<br />
     </div>
     <div id="tipss" style="font-weight:bold;font-size:30px;height:30px;text-align:center;"></div>
     <div class="byy-form-info" style="line-height:22px;">
@@ -47,7 +48,7 @@
             <i class="byyicon icon-close" title="点击关闭，不影响使用" style="position:absolute;left:-20px;top:0px;cursor:pointer;" filter="closeAd"></i>
             <img src="{{site.staticfiledomain.value}}/static/images/hongbao.jpg" alt="" style="width:200px;display:block;">
         </div>
-    </div>    
+    </div>
     <div class="text-center">
         <span class="byy-btn" id="upload">点击选择dat文件(可批量选择)</span>
     </div>
@@ -61,99 +62,143 @@
         </div>
         <div style="margin:20px auto;width:1000px;">
             <!--糊口区域-->
-            
         </div>
     </div>
 </body>
+
 </html>
 {%include '../tpl/commonjs.html'%}
 <script type="text/javascript">
-    var counter = 0;
-    function downloadFile(content, fileName) { //下载base64图片
-        var base64ToBlob = function(code) {
-            let parts = code.split(';base64,');
-            let contentType = parts[0].split(':')[1];
-            let raw = window.atob(parts[1]);
-            let rawLength = raw.length;
-            let uInt8Array = new Uint8Array(rawLength);
-            for(let i = 0; i < rawLength; ++i) {
-                uInt8Array[i] = raw.charCodeAt(i);
-            }
-            return new Blob([uInt8Array], {
-                type: contentType
+var counter = 0;
+
+function read(file) {
+    var reader = new FileReader();
+    reader.readAsArrayBuffer(file);
+    var base = 0xFF;
+    var jn = 0xD8;
+    var gifA = 0x47;
+    var gifB = 0x49;
+    var pngA = 0x89;
+    var pngB = 0x50;
+    reader.onload = function(bf) {
+        var content = new DataView(this.result);
+        var firstV = content.getInt8(0),
+            nextV = content.getInt8(1),
+            jT = firstV ^ base,
+            jB = nextV ^ jn,
+            gT = firstV ^ gifA,
+            gB = nextV ^ gifB,
+            pT = firstV ^ pngA,
+            pB = nextV ^ pngB;
+        var coder = firstV ^ base;
+        if (jT == jB) {
+            coder = jT;
+        } else if (gT == gB) {
+            coder = gT;
+        } else if (pT == pB) {
+            coder = pT;
+        }
+        // var bbb = '';
+        for (var i = 0; i < content.byteLength; i++) {
+            var br = content.getInt8(i) ^ coder;
+            content.setInt8(i, br);
+        }
+        var binary = '';
+        var bytes = new Uint8Array(content.buffer);
+        var len = bytes.byteLength;
+        for (var i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        var str = window.btoa(binary);
+        var img = new Image();
+        img.src = 'data:image/png;base64,' + str;
+        img.onload = function() {
+            var $img = $(this);
+            $img.css({
+                height: '200px',
+                width: 'auto',
+                display: 'block'
             });
-        };
-        let aLink = document.createElement('a');
-        let blob = base64ToBlob(content); //new Blob([content]);
-        let evt = document.createEvent("HTMLEvents");
-        evt.initEvent("click", true, true); //initEvent 不加后两个参数在FF下会报错  事件类型，是否冒泡，是否阻止浏览器的默认行为
-        aLink.download = fileName;
-        aLink.href = URL.createObjectURL(blob);
-        aLink.click();
+            var $span = $('<span style="height:230px;float:left;display:inline-block;text-align:center;"></span>');
+            $span.append($img);
+            $span.append('<span class="byy-btn mini" filter="download">点击下载</span>');
+            $('.content').append($span);
+        }
+    }
+}
+
+function downloadFile(content, fileName) { //下载base64图片
+    var base64ToBlob = function(code) {
+        var parts = code.split(';base64,');
+        var contentType = parts[0].split(':')[1];
+        var raw = window.atob(parts[1]);
+        var rawLength = raw.length;
+        var uInt8Array = new Uint8Array(rawLength);
+        for (var i = 0; i < rawLength; ++i) {
+            uInt8Array[i] = raw.charCodeAt(i);
+        }
+        return new Blob([uInt8Array], {
+            type: contentType
+        });
     };
-    byy.require(['jquery','uploader','win'],function(){
-        $.ajax({
-            url : '/index/datCount',
-            type : 'GET',
-            success : function(rs){
-                console.log(rs);
-                $('#tipss').html(rs.msg);
+    var aLink = document.createElement('a');
+    var blob = base64ToBlob(content); //new Blob([content]);
+    var evt = document.createEvent("HTMLEvents");
+    evt.initEvent("click", true, true); //initEvent 不加后两个参数在FF下会报错  事件类型，是否冒泡，是否阻止浏览器的默认行为
+    aLink.download = fileName;
+    aLink.href = URL.createObjectURL(blob);
+    aLink.click();
+};
+byy.require(['jquery', 'uploader', 'win'], function() {
+    $.ajax({
+        url: '/index/datCount',
+        type: 'GET',
+        success: function(rs) {
+            $('#tipss').html(rs.msg);
+        }
+    });
+    byy.bindEvents({
+        closeAd: function() {
+            $(this).parent().remove();
+        },
+        clear: function() {
+            $('.content').html('');
+        },
+        download: function() {
+            var $p = $(this).parent();
+            var $img = $p.find('img');
+            downloadFile($img.attr('src'), (counter++) + '.png');
+        },
+        downloadall: function() {
+            $imgs = $('.content').find('img');
+            $imgs.each(function(i, item) {
+                var $img = $(item);
+                downloadFile($img.attr('src'), (counter++) + '.png');
+            })
+        }
+    });
+    byy.uploader().multiFile({
+        selector: '#upload',
+        accept: {
+            title: 'dat文件',
+            extensions: 'dat',
+            mimeType: 'application/octet-stream'
+        },
+        server: '/index/uploadDat',
+        size: 1 * 1024 * 1024,
+        onBefore : function(file){
+        },
+        onSuccess: function(file, res) {
+            if (res.success) {
+                read(file.source.source)
             }
-        });
-        byy.bindEvents({
-            closeAd : function(){
-                $(this).parent().remove();
-            },
-            clear : function(){
-                $('.content').html('');
-            },
-            download : function(){
-                var $p = $(this).parent();
-                var $img = $p.find('img');
-                downloadFile($img.attr('src'),(counter++)+'.png');
-            },
-            downloadall : function(){
-                $imgs = $('.content').find('img');
-                $imgs.each(function(i,item){
-                    var $img = $(item);
-                    downloadFile($img.attr('src'),(counter++)+'.png');
-                })
-            }
-        });
-        byy.uploader().multiFile({
-            selector : '#upload',
-            accept : {
-                title : 'dat文件',
-                extensions : 'dat',
-                mimeType : 'application/octet-stream'
-            },
-            server : '/index/uploadDat',
-            size : 1 * 1024 * 1024,
-            onSuccess : function(file,res){
-                if(res.success){
-                    //添加图片
-                    var img = new Image();
-                    img.src = 'data:image/png;base64,'+res.base64;
-                    img.onload = function(){
-                        var $img = $(this);
-                        $img.css({
-                            height : '200px',
-                            width : 'auto',
-                            display:'block'
-                        });
-                        var $span = $('<span style="height:230px;float:left;display:inline-block;text-align:center;"></span>');
-                        $span.append($img);
-                        $span.append('<span class="byy-btn mini" filter="download">点击下载</span>');
-                        $('.content').append($span);
-                    }
-                }
-            },
-            onError : function(er,msg){
-               byy.win.msg(msg+',仅限dat文件(1M以内)!超出限制请购买软件，点击上方商店链接');
-            }
-        });
-    })
+        },
+        onError: function(er, msg) {
+            byy.win.msg(msg + ',仅限dat文件(1M以内)!超出限制请购买软件，点击上方商店链接!软件本地转码，不联网，速度可达到10S近千张图片转化!');
+        }
+    });
+})
 </script>
 <script>
-{{site.tongjiscript.value | safe }}
+{{ site.tongjiscript.value | safe }}
 </script>
