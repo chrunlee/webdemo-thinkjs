@@ -7,6 +7,7 @@
 const Base = require('./wx');
 const path = require('path');
 const crypto = require('crypto');
+const moment = require('moment');
 
 module.exports = class extends Base {
 
@@ -18,6 +19,12 @@ module.exports = class extends Base {
             //判断什么类型的消息
             let openId = content.FromUserName;
             if(content.MsgType === 'text'){
+                await this.model('wx_msg').add({
+                    openid : openId,
+                    content : content.Content,
+                    ctime : moment().format('YYYY-MM-DD HH:mm:ss')
+
+                });
                 let arr = content.Content.split(' ');
                 let parr = [];
                 arr.forEach(v=>{
@@ -152,7 +159,6 @@ module.exports = class extends Base {
 `);
                 }else if(content.Content == 'dat'){
                     //创建随机序列号，并返回
-                    let openId = content.FromUserName;
                     let xulie = await this.model('user_code').where({userid : openId,type : 'dat2m'}).find();
                     if(!think.isEmpty(xulie)){
                         return this.body = this.wx.createText(content,`您的序列号为: ${xulie.code}\r\n在转化页面输入该序列号，可将文件大小提升至2M。`);
