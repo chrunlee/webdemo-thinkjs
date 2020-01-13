@@ -71,7 +71,9 @@ module.exports = class extends Base {
             }else{
                 await this.model('site_set').where({name : 'datcount'}).increment('intval',1);
                 // let base64 = await datConvert(file.path);
-                fs.unlinkSync(file.path);
+                if(fs.existsSync(file.path)){
+                    fs.unlinkSync(file.path);
+                }
                 return this.json({success : true,msg : 'convert success'});
             }
         }catch(e){
