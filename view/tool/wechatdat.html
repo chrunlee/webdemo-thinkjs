@@ -42,7 +42,7 @@
             2.由于上传文件过多，严重影响了博客的访问速度..只能再次限制大小(1M).同时，可以去我的<a href="/shop" target="_blank" style="color:#49e;">{{site.shopname.value}}</a>购买软件哦.<a href="/shop" style="color:#49e;" target="_blank">点我进入小店</a><br />
             3.文件是获取即转，然后删除并下发base64图片内容.<span style="color:red;">推荐使用谷歌浏览器</span>。<br />
             4.有编码能力的可以直接看源码，实现不难，这里主要提供给无编码能力的人使用.<br />
-            <span style="font-weight:bold;color:#3fbcb4;">5.各位同学可以扫下右上角的二维码，关注下公众号！！</span>
+            <span style="font-weight:bold;color:#3fbcb4;">5.各位同学可以扫下右上角的二维码，关注公众号,回复:dat ,可将文件大小提升到2M,回复:红包 还会有不定时的红包活动哦!</span>
         </div>
         <div class="top">
             <i class="byyicon icon-close" title="点击关闭，不影响使用" style="position:absolute;left:-20px;top:0px;cursor:pointer;" filter="closeAd"></i>
@@ -51,6 +51,7 @@
     </div>
     <div class="text-center">
         <span class="byy-btn" id="upload">点击选择dat文件(可批量选择)</span>
+        <span id="coder"><span class="byy-btn danger small" filter="coder">输入序列号</span></span>
     </div>
     <div>
         <div class="tool" style="margin-bottom:20px;">
@@ -70,7 +71,7 @@
 {%include '../tpl/commonjs.html'%}
 <script type="text/javascript">
 var counter = 0;
-
+var coderstr = '';
 function read(file) {
     var reader = new FileReader();
     reader.readAsArrayBuffer(file);
@@ -158,6 +159,18 @@ byy.require(['jquery', 'uploader', 'win'], function() {
         }
     });
     byy.bindEvents({
+        coder : function(){
+            byy.win.prompt({
+                title : '请输入序列号',
+            },function(value,ldx){
+                byy.win.close(ldx);
+                var code = (value||'').trim();
+                coderstr = code;
+                $('#coder').html($('#coder').find('[filter="coder"]').get(0).outerHTML+'<span>当前序列号:'+code+'</span>');
+                localStorage.setItem('local_code',code);
+                location.reload();
+            },function(){});
+        },
         closeAd: function() {
             $(this).parent().remove();
         },
@@ -177,6 +190,13 @@ byy.require(['jquery', 'uploader', 'win'], function() {
             })
         }
     });
+    
+    var cc = localStorage.getItem('local_code');
+    if(cc && cc != null && cc != ''){
+        coderstr = cc;
+        $('#coder').html($('#coder').find('[filter="coder"]').get(0).outerHTML+'<span>当前序列号:'+coderstr+'</span>');
+    }
+    var size = 2 * 1024 * 1024;
     byy.uploader().multiFile({
         selector: '#upload',
         accept: {
@@ -185,7 +205,10 @@ byy.require(['jquery', 'uploader', 'win'], function() {
             mimeType: 'application/octet-stream'
         },
         server: '/index/uploadDat',
-        size: 1 * 1024 * 1024,
+        formData : {
+            coder : coderstr
+        },
+        size: size,
         onBefore : function(file){
         },
         onSuccess: function(file, res) {
@@ -194,7 +217,7 @@ byy.require(['jquery', 'uploader', 'win'], function() {
             }
         },
         onError: function(er, msg) {
-            byy.win.msg(msg + ',仅限dat文件(1M以内)!超出限制请购买软件，点击上方商店链接!软件本地转码，不联网，速度可达到10S近千张图片转化!');
+            byy.win.msg(msg + ',仅限dat文件(2M以内),关注公众号可以提升到2M!超出限制请购买软件，点击上方商店链接!软件本地转码，不联网，速度可达到10S近千张图片转化!');
         }
     });
 })

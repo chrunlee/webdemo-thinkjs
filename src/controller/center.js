@@ -595,4 +595,37 @@ module.exports = class extends Base {
         await this.model('site_set').where({name :'online'}).update({strval : '0'})
         return this.body = '';
     }
+
+
+    //***********口令红包
+    //==============口令红包====================
+    async koulingAction() {
+        if (this.isPost) {
+            let list = await this.model('user_kouling').order('id asc').select();
+            this.json({ rows: list.length, rows: list });
+        } else {
+            return this.display('center/hongbao/list')
+        }
+    }
+    //保存口令红包
+    async koulingSaveAction() {
+        let data = this.post();
+        if (data.id) {
+            //update
+            await this.model('user_kouling').where({ id: data.id }).update(data);
+        } else {
+            //insert
+            await this.model('user_kouling').add(data);
+        }
+        this.json({ success: true, msg: 'Save Success' });
+    }
+    //删除口令红包
+    async koulingDeleteAction() {
+        let id = this.post('id');
+        if (id) {
+            await this.model('user_kouling').where({ id: id }).update({status : '0'});
+        }
+        this.json({ success: true, msg: 'Delete Success' });
+    }
+
 };

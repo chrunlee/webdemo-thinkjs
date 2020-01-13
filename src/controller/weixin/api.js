@@ -6,6 +6,7 @@
 ****/
 const Base = require('./wx');
 const path = require('path');
+const crypto = require('crypto');
 
 module.exports = class extends Base {
 
@@ -149,6 +150,44 @@ module.exports = class extends Base {
  接龙系列:
    回复"接龙 一石二鸟":给您回复关于一石二鸟的成语接龙.
 `);
+                }else if(content.Content == 'dat'){
+                    //创建随机序列号，并返回
+                    let openId = content.FromUserName;
+                    console.log(openId);
+                    let xulie = await this.model('user_code').where({userid : openId,type : 'dat2m'}).find();
+                    if(!think.isEmpty(xulie)){
+                        return this.body = this.wx.createText(content,`您的序列号为: ${xulie.code}`);
+                    }else{
+                        //create
+                        let repeatflag = true;
+                        let currentcode = '';
+                        while(repeatflag){
+                            let time = (+new Date())+'';
+                            let timestr = crypto.createHash('md5').update(time).digest('hex');
+                            let code = timestr.substr(timestr.length-10);
+                            //判断是否重复
+                            let codedata = await this.model('user_code').where({type : 'dat2m',code : code}).find();
+                            if(think.isEmpty(codedata)){
+                                await this.model('user_code').add({
+                                    code : code,
+                                    type : 'dat2m',
+                                    enable : 1,
+                                    userid : openId
+                                });
+                                currentcode = code;
+                                repeatflag = false;
+                            }
+                        }
+                        return this.body = this.wx.createText(content,`您的序列号为:${currentcode}`);
+                    }
+                }else if(content.Content == '红包'){
+                    //检查当前的口令红包。
+                    let kouling = await this.model('user_kouling').where({status : '1'}).find();
+                    if(think.isEmpty(kouling)){
+                        return this.body = this.wx.createText(content,`您好，当前还没有红包活动哦`);
+                    }else{
+                        return this.body = this.wx.createText(content,`您好，红包口令为:${kouling.name}\r\n打开支付宝后，点击红包，输入口令即可，手慢无哦!`);
+                    }
                 }
             }else if(content.MsgType === 'image'){
                 think.logger.info('图片消息')
@@ -181,7 +220,7 @@ module.exports = class extends Base {
                         }
                         await this.model('sys_user').add(user);
                     }
-                    return this.body = this.wx.createText(content,'谢谢您的关注!\r\n回复:秘籍\r\n更多惊喜等你开启....')
+                    return this.body = this.wx.createText(content,'谢谢您的关注!\r\n小采然准备了大量精品内容哦，点击秘籍玩法玩转公众号！')
                 }else if(eventType === 'unsubscribe'){
                     think.logger.info('取消关注')
                 }else if(eventType === 'TEMPLATESENDJOBFINISH'){
@@ -190,7 +229,7 @@ module.exports = class extends Base {
                     think.logger.info(eventType);
                 }
             }
-            return this.body =this.wx.createText(content,'谢谢关注哦，更多玩法请回复:秘籍');
+            return this.body =this.wx.createText(content,'谢谢关注哦，小采然准备了大量精品内容哦，点击秘籍玩法玩转公众号！');
         }else{
             // let token = await this.wx.getToken(this);
             let signature = this.query('signature');
