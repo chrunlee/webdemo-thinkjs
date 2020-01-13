@@ -59,7 +59,6 @@ module.exports = class extends think.Service{
             current = data;
             fs.writeFileSync(filePath,JSON.stringify(current));
         }
-        console.log(current);
         return current;
     }
     //创建公众号菜单
@@ -268,7 +267,6 @@ module.exports = class extends think.Service{
         let token = await this.getToken();
         let url = this.url.user_info.replace('ACCESS_TOKEN',token.access_token).replace('OPENID',openId);
         let data = await axios.get(url).then(rs=>rs.data);
-        console.log(data);
         return data;
     }
 

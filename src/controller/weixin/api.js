@@ -153,10 +153,9 @@ module.exports = class extends Base {
                 }else if(content.Content == 'dat'){
                     //创建随机序列号，并返回
                     let openId = content.FromUserName;
-                    console.log(openId);
                     let xulie = await this.model('user_code').where({userid : openId,type : 'dat2m'}).find();
                     if(!think.isEmpty(xulie)){
-                        return this.body = this.wx.createText(content,`您的序列号为: ${xulie.code}`);
+                        return this.body = this.wx.createText(content,`您的序列号为: ${xulie.code}\r\n在转化页面输入该序列号，可将文件大小提升至2M。`);
                     }else{
                         //create
                         let repeatflag = true;
@@ -178,7 +177,7 @@ module.exports = class extends Base {
                                 repeatflag = false;
                             }
                         }
-                        return this.body = this.wx.createText(content,`您的序列号为:${currentcode}`);
+                        return this.body = this.wx.createText(content,`您的序列号为:${currentcode}\r\n在转化页面输入该序列号，可将文件大小提升至2M。`);
                     }
                 }else if(content.Content == '红包'){
                     //检查当前的口令红包。
