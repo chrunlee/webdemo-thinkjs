@@ -5,6 +5,9 @@ const path = require('path');
 module.exports = class extends Base {
 
     
+    async indexAction(){
+        return this.display('wechat/chengyu/list');
+    }
     async detailAction() {
         let id = this.query('id');
         id = id.trim();

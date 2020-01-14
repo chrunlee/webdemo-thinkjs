@@ -161,7 +161,7 @@ module.exports = class extends Base {
                     //创建随机序列号，并返回
                     let xulie = await this.model('user_code').where({userid : openId,type : 'dat2m'}).find();
                     if(!think.isEmpty(xulie)){
-                        return this.body = this.wx.createText(content,`您的序列号为: ${xulie.code}\r\n在转化页面输入该序列号，可将文件大小提升至2M。`);
+                        return this.body = this.wx.createText(content,`您的序列号为: \r\n${xulie.code}\r\n在转化页面输入该序列号，可将文件大小提升至2M。`);
                     }else{
                         //create
                         let repeatflag = true;
@@ -183,7 +183,32 @@ module.exports = class extends Base {
                                 repeatflag = false;
                             }
                         }
-                        return this.body = this.wx.createText(content,`您的序列号为:${currentcode}\r\n在转化页面输入该序列号，可将文件大小提升至2M。`);
+                        return this.body = this.wx.createText(content,`您的序列号为:\r\n${currentcode}\r\n在转化页面输入该序列号，可将文件大小提升至2M。`);
+                    }
+                }else if(content.Content.indexOf('网易云') > -1 ){
+                    let xulie = await this.model('user_code').where({userid : openId,type : 'netmusic'}).find();
+                    if(!think.isEmpty(xulie)){
+                        return this.body = this.wx.createText(content,`您的注册码为:\r\n${xulie.code}\r\n在页面输入即可下载VIP音乐`)
+                    }else{
+                        let repeatflag = true;
+                        let currentcode = '';
+                        while(repeatflag){
+                            let time = (+new Date())+'';
+                            let timestr = crypto.createHash('md5').update(time).digest('hex');
+                            let code = timestr.substr(timestr.length -10);
+                            let codedata = await this.model('user_code').where({type : 'netmusic',code : code}).find();
+                            if(think.isEmpty(codedata)){
+                                await this.model('user_code').add({
+                                    code : code,
+                                    type : 'netmusic',
+                                    enable : 1,
+                                    userid : openId
+                                })
+                                currentcode = code;
+                                repeatflag = false;
+                            }
+                        }
+                        return this.body = this.wx.createText(content,`您的注册码为:\r\n${currentcode}\r\n在页面输入即可下载VIP音乐`)
                     }
                 }else if(content.Content == '红包'){
                     //检查当前的口令红包。
@@ -254,9 +279,22 @@ module.exports = class extends Base {
         let menu = {
             button : [
                 {
+                    name : '诗词故事',
+                    "sub_button":[
+                        {
+                            type : 'view',
+                            name : '小故事',
+                            url : 'https://chrunlee.cn/weixin/story.html'
+                        },{
+                            type : 'view',
+                            name : '古籍',
+                            url : 'https://chrunlee.cn/weixin/book.html'
+                        }
+                    ]
+                },{
+                    name : '秘籍玩法',
                     type : 'view',
-                    name : '故事系列',
-                    url : 'http://weixin.byyui.com/weixin/story/index'
+                    url : 'http://mp.weixin.qq.com/s?__biz=MzUyMzYzMzAzNw==&mid=100000014&idx=1&sn=8d366018268f1d903e57dada25b64458&chksm=7a38e9ec4d4f60faaa3bf7bb3f541583be26a062577891c285455b820dace2d3d12602ff3201&scene=18#wechat_redirect'
                 }
             ]
         };

@@ -47,14 +47,24 @@
         .music-block .name{width:100%;display:inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
         .music-block .size{width:50px;display:inline-block;position:absolute;right:130px;text-align:center;}
         .music-block .tool{width:100px;display:inline-block;position:absolute;right:5px;text-align:center;}
+        .top{
+            position:fixed;
+            right:0px;
+            top:0px;
+        }
     </style>
 </head>
 <body>
     <header>
         <img src="{{site.staticfiledomain.value}}/static/images/netmusic-logo.jpg" alt="">网易云音乐VIP音乐下载    
     </header>
+    <div class="top">
+        <i class="byyicon icon-close" title="点击关闭，不影响使用" style="position:absolute;left:-20px;top:0px;cursor:pointer;" filter="closeAd"></i>
+        <img src="{{site.staticfiledomain.value}}/static/images/gongzhonghao.jpg" alt="" style="width:200px;display:block;">
+    </div>
     <form action="/tool/music163" method="post">
         <input type="hidden" name="code" value="{{code}}">
+        <p>关注右上角公众号，回复:网易云,可得注册码。</p>
         <input type="text" placeholder="请输入复制的网易云音乐地址[单曲/歌单/视频]" name="url" value="{{url}}">
         <span class="byy-btn submit" filter="submit">提交链接</span>
         <span class="byy-btn mini" filter="code">修改注册码</span>
