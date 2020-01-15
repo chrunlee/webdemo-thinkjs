@@ -27,6 +27,7 @@ module.exports = class extends Base {
         think.logger.info(ip+'：'+JSON.stringify(data));
         let check = await this.model('wx_iprecord').where({ip : ip}).find();
         if(!think.isEmpty(check)){
+            think.logger.info('该IP被禁止!')
             this.assign({title : '查看失败',msg : '请使用微信客户端登录查看'})
             return this.display('wechat/tip');
         }
