@@ -19,7 +19,10 @@ module.exports = class extends Base {
         });
         let pd = this.post();
         let data = this.wx.fixData(pd);
-        think.logger.info(JSON.stringify(data));
+        //header查看下
+        let header = this.header();
+        think.logger.info(header);
+        think.logger.info(this.ip+'：'+JSON.stringify(data));
         this.post(data);
         this.assign('site',this.config('site'));
     }
