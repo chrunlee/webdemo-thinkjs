@@ -22,36 +22,7 @@ module.exports = class extends think.Controller {
         }
     }
     think.logger.info(`${ip} : ${pathurl}`);
-    let rules = this.config('rules');
-    //做遍历
-    let currentRule = null;
-    for(let i =0;i<rules.length;i++){
-        if(pathurl.startsWith(rules[i].path)){
-            currentRule = rules[i];
-            break;
-        }
-    }
-    if(currentRule){
-        //获得时间和次数
-        let count = await this.model('demo_logs').where({ip : ip,ctime : ['>',ctime - currentRule.time]}).count();
-        if(count > currentRule.limit){
-            let str = '您的请求过于频繁，请等待一会再进行访问!';
-            this.assign('msg',str);
-            this.display('error/400')
-            return false;
-        }
-    }
 
-    //检查当天总次数
-    let total = await this.model('demo_logs').where({ip : ip,ctime : ['>',ctime - (24*60*60*1000)]}).count();
-    if(total > 3){//当天同一个IP请求超过1000次，则加入黑名单。
-        //检查所有数量
-        let alltotal = await this.model('demo_logs').where({ip : ip}).count();
-        await this.model('wx_iprecord').add({
-            ip : ip,
-            expiretime : ctime + ((alltotal > 2000 ? 10 : 1) * 24*60*60*1000)
-        });
-    }
     let excludes = this.config('exclude');
     let nonelog = false;
     for(let i=0;i<excludes.length;i++){
@@ -69,6 +40,44 @@ module.exports = class extends think.Controller {
             ctime : ctime
         });
     }
+
+    let rules = this.config('rules');
+    //做遍历
+    let currentRule = null;
+    for(let i =0;i<rules.length;i++){
+        if(pathurl.startsWith(rules[i].path)){
+            currentRule = rules[i];
+            break;
+        }
+    }
+    if(currentRule){
+        //获得时间和次数
+        let count = await this.model('demo_logs').where({ip : ip,ctime : ['>',ctime - currentRule.time]}).count();
+        if(count > currentRule.max){
+            await this.model('wx_iprecord').add({
+                ip : ip,
+                expiretime : ctime + (24*60*60*1000)
+            });
+        }
+        if(count > currentRule.limit){
+            let str = '您的请求过于频繁，请等待一会再进行访问!';
+            this.assign('msg',str);
+            this.display('error/400')
+            return false;
+        }
+    }
+
+    //检查当天总次数
+    let total = await this.model('demo_logs').where({ip : ip,ctime : ['>',ctime - (24*60*60*1000)]}).count();
+    if(total > this.config('maxlimit')){//当天同一个IP请求超过1000次，则加入黑名单。
+        //检查所有数量
+        let alltotal = await this.model('demo_logs').where({ip : ip}).count();
+        await this.model('wx_iprecord').add({
+            ip : ip,
+            expiretime : ctime + ((alltotal > 2000 ? 10 : 1) * 24*60*60*1000)
+        });
+    }
+    
     
   }
 
