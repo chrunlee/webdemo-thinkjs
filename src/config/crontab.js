@@ -7,7 +7,7 @@ module.exports = [
     },{
         //每天定时清理日志
         cron : '0 0 * * *',
-        handle : 'index/dingding',
+        handle : 'index/clearLog',
         type : 'one',
         enable : true
     }

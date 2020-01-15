@@ -338,7 +338,7 @@ module.exports = class extends Base {
     /***
      * 日志定时清理
      ***/
-    async dingdingAction(){
+    async clearLogAction(){
         if(this.isCli){
             think.logger.info('日志清理------------')
             //清理7天前的日志
