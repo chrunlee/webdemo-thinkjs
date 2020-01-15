@@ -35,8 +35,7 @@ module.exports = class extends think.Controller {
                 //ip被封。
                 let msg = '您的IP地址:['+ip+']违反了本站反爬虫规则，已被封禁24小时!如需解禁，请发email至'+(this.config('site').email.value)+'!';
                 this.assign('msg',msg);
-                this.display('error/400');
-                return false;
+                return this.display('error/400');
             }
         }
         think.logger.info(`${ip} : ${pathurl}`);
@@ -64,8 +63,7 @@ module.exports = class extends think.Controller {
         if(count > currentRule.limit){
             let str = '您的请求过于频繁，请等待一会再进行访问!';
             this.assign('msg',str);
-            this.display('error/400')
-            return false;
+            return this.display('error/400')
         }
     }
 
