@@ -11,6 +11,16 @@ function format(  size, pointLength, units ){
 }
 
 module.exports = class extends Base {
+
+    async __before(){
+        //通过ip白名单的可以访问，否则拒绝访问。
+        let ip = this.ip;
+        let thr = await this.model('user_whiteip').where({ip :ip}).find();
+        if(think.isEmpty(thr)){
+            this.body = '当前IP:'+ip+' 未在白名单内，如需访问，请邮件开通!';
+            return false;
+        }
+    }
     async indexAction() {
         let list = await this.cache('demo_magnet_first',()=>{
             return this.model('demo_magnet').order('createTime desc').limit(0,100).select();

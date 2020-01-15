@@ -3,11 +3,12 @@ const moment = require('moment');
 module.exports = class extends think.Controller {
   async __before() {
     //日志功能
-    let ip = this.ip;
-    let userAgent = this.userAgent || '';
-    let pathurl = this.ctx.path;
-    let ctime = (+new Date());
-    this.assign('site',this.config('site'));
+    try{
+        let ip = this.ip;
+        let userAgent = this.userAgent || '';
+        let pathurl = this.ctx.path;
+        let ctime = (+new Date());
+        this.assign('site',this.config('site'));
 
     let excludes = this.config('exclude');
     let nonelog = false;
@@ -77,6 +78,11 @@ module.exports = class extends think.Controller {
             expiretime : ctime + ((alltotal > 2000 ? 10 : 1) * 24*60*60*1000)
         });
     }
+    }catch(e){
+        console.log(e);
+    }
+    
+    
     
     
   }
