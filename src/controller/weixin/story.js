@@ -43,9 +43,7 @@ module.exports = class extends Base {
     }
 
     async detailAction(){
-        console.log(this.url);
         let id = this.query('id');
-        console.log('id='+id);
         if(!id){
             this.assign({title : '查询失败',msg : '故事地址输入错误，没有该故事哦!<br /><a href="/weixin/story/index">回到首页</a>'})
             return this.display('wechat/tip');

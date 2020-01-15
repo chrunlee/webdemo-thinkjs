@@ -11,7 +11,6 @@ module.exports = class extends Base {
         //获取首字母
         //获得数据
         let key = this.post('keywords');
-        console.log(key);
         let where = {
             szm : szm
         };
@@ -30,7 +29,6 @@ module.exports = class extends Base {
         szm = szm || 'a';
         this.assign('szm',szm);
         let keywords = this.post('keywords');
-        console.log(keywords);
         this.assign('keywords',keywords);
         let page = this.post('page') || 1;
         let limit = this.post('limit') || 50;
