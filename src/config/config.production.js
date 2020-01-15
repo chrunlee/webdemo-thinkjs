@@ -22,5 +22,7 @@ module.exports = {
         path: '/index/clearLog'
     },{
         path : '/static_'
+    },{
+        path : '/error'
     }]
 };
