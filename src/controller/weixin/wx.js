@@ -3,7 +3,7 @@ const path = require('path');
 
 module.exports = class extends Base {
 
-    __before(){
+    async __before(){
         //监测源，必须从微信端打开，打开的同时，必须关注公众号才可以打开。否则跳转到其他页面tip
         //TODO : 从页面获取用户权限和信息
         let flag = false;
