@@ -39,9 +39,9 @@ module.exports = class extends think.Controller {
                 return false;
             }
         }
+        think.logger.info(`${ip} : ${pathurl}`);
     }
-
-    think.logger.info(`${ip} : ${pathurl}`);
+    
 
     let rules = this.config('rules');
     //做遍历
