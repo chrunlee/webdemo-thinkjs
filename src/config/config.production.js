@@ -20,5 +20,7 @@ module.exports = {
         path: '/index/dingding'
     }, {
         path: '/index/clearLog'
+    },{
+        path : '/static_'
     }]
 };
