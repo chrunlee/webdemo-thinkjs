@@ -120,6 +120,10 @@ module.exports = class extends Base {
                     if(parr.length > 1){
                         let key = parr[1];
                         chengyu = await this.model('wx_chengyu').where({name : key}).find();
+                    }else{
+                        let a = Math.round(Math.random()*1000);
+                        let b = Math.round(Math.random()*1000);
+                        chengyu = await this.model('wx_chengyu').where({id : ['like',['%'+a+'%','%'+b+'%']]}).find();
                     }
                     if(think.isEmpty(chengyu)){
                         return this.body = this.wx.createText(content,`小采然没有检索到<${content.Content}>相关的成语!请尝试其他关键字....`)
@@ -253,6 +257,8 @@ module.exports = class extends Base {
                     return this.body = this.wx.createText(content,'谢谢您的关注!\r\n小采然准备了大量精品内容哦，点击秘籍玩法玩转公众号！')
                 }else if(eventType === 'unsubscribe'){
                     think.logger.info('取消关注')
+                    //取消关注后，将数据库的用户取消，用于检测前端注册码的有效性。
+                    await this.model('sys_user').where({id : openId}).delete();
                 }else if(eventType === 'TEMPLATESENDJOBFINISH'){
                     think.logger.info('模版消息发送后的反馈');
                 }else if(eventType){
@@ -283,7 +289,7 @@ module.exports = class extends Base {
                     "sub_button":[
                         {
                             type : 'view',
-                            name : '小故事',
+                            name : '故事成语',
                             url : 'https://chrunlee.cn/weixin/story.html'
                         },{
                             type : 'view',

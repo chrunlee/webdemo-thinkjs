@@ -164,3 +164,37 @@
     text-decoration: :none;
     color:#666;
 }
+
+
+.page-sidebar{
+    width:50px;
+    text-align:center;
+    position:fixed;
+    top:60px;
+    right:0px;
+    z-index:200;
+}
+.page-sidebar li{
+    list-style:none;
+    text-transform: uppercase;
+    text-align:center;
+    font-size:1em;
+    line-height:1.2em;
+    cursor:pointer;
+}
+.page-sidebar li a{
+    text-decoration:none;
+    color:#999;
+}
+.page-sidebar li.active a{
+    color:#49e;
+}
+
+.tabbar{
+    position:absolute;
+    left:0px;
+    top:0px;
+    right:0px;
+    bottom:0px;
+}
+.page-sidebar-cell{padding-right:50px;}

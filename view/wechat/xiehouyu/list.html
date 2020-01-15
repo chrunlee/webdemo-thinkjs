@@ -1,6 +1,6 @@
 {% extends "../tpl/layout.html" %}
 {% block title %}
-<title>成语 - 采然一刻</title>
+<title>歇后语 - 采然一刻</title>
 {% endblock %}
 {% block content %}
 
@@ -9,7 +9,7 @@
         <div class="weui-tab">
             <div class="weui-tab__panel" id="scrollcontent">
                 <div class="weui-search-bar" id="searchBar">
-                    <form class="weui-search-bar__form" id="form" action="/weixin/chengyu.html" method="post">
+                    <form class="weui-search-bar__form" id="form" action="/weixin/xiehouyu.html" method="post">
                         <input type="hidden" name="szm" value="{{szm}}">
                         <input type="hidden" name="page" value="{{page}}">
                         <input type="hidden" name="limit" value="{{limit}}">
@@ -38,7 +38,7 @@
                     <p class="weui-cell__bd">没有检索到符合条件的记录！请切换关键词查询.</p>
                     {% endif %}
                     {% for item in list %}
-                    <a href="/weixin/story/detail/{{item.id}}.html" class="weui-cell weui-cell_access">
+                    <a href="/weixin/xiehouyu/detail/{{item.id}}.html" class="weui-cell weui-cell_access">
                         <p class="weui-cell__bd">{{item.name}}</p>
                         <div class="weui-cell__ft"></div>
                     </a>
@@ -50,11 +50,11 @@
                     <img src="{{site.staticfiledomain.value}}/static/images/wechat/story.png" alt="" class="weui-tabbar__icon">
                     <p class="weui-tabbar__label">小故事</p>
                 </a>
-                <a href="/weixin/chengyu.html" class="weui-tabbar__item weui-bar__item_on">
+                <a href="/weixin/chengyu.html" class="weui-tabbar__item ">
                     <img src="{{site.staticfiledomain.value}}/static/images/wechat/chengyu.png" alt="" class="weui-tabbar__icon">
                     <p class="weui-tabbar__label">成语</p>
                 </a>
-                <a href="/weixin/xiehouyu.html" class="weui-tabbar__item">
+                <a href="/weixin/xiehouyu.html" class="weui-tabbar__item weui-bar__item_on">
                     <img src="{{site.staticfiledomain.value}}/static/images/wechat/xiehouyu.png" alt="" class="weui-tabbar__icon">
                     <p class="weui-tabbar__label">歇后语</p>
                 </a>
@@ -96,7 +96,7 @@
 
         function getData(i){
             $.ajax({
-                url : '/weixin/chengyu/list',
+                url : '/weixin/xiehouyu/list',
                 type : 'post',
                 data : {
                     page : i,
@@ -109,7 +109,7 @@
                     var list = res.list;
                     for(var n=0;n<list.length;n++){
                         var obj = list[n];
-                        $('#listcontent').append('<a href="/weixin/chengyu/detail/'+obj.id+'.html" class="weui-cell weui-cell_access"><p class="weui-cell__bd">'+obj.name+'</p><div class="weui-cell__ft"></div></a>');
+                        $('#listcontent').append('<a href="/weixin/xiehouyu/detail/'+obj.id+'.html" class="weui-cell weui-cell_access"><p class="weui-cell__bd">'+obj.name+'</p><div class="weui-cell__ft"></div></a>');
                     }
                     if(list.length > 0){
                         isfinished = true;

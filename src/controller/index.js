@@ -66,7 +66,9 @@ module.exports = class extends Base {
             var coder = this.post('coder');
             //检查是否可用
             let xulie = await this.model('user_code').where({type : 'dat2m',code : coder}).find();
-            if(!think.isEmpty(xulie)){
+            let userId = xulie.userid || '';
+            let user = await this.model('sys_user').where({id : userId}).find();
+            if(!think.isEmpty(user)){
                 maxSize = 2 * 1024 * 1024;
             }
             if(file.size == 0 || file.size > maxSize || path.extname(file.name).toLowerCase() != extName){

@@ -11,7 +11,6 @@ module.exports = class extends Base {
         //获取首字母
         //获得数据
         let key = this.post('keywords');
-        console.log(key);
         let where = {
             szm : szm
         };
@@ -20,7 +19,7 @@ module.exports = class extends Base {
         if(key){
             where['name'] = ['like','%'+key+'%'];
         }
-        let list = await this.model('wx_chengyu').field('id,name').page(page,limit).where(where).select();
+        let list = await this.model('wx_xiehouyu').field('id,name').page(page,limit).where(where).select();
         return this.json({
             list : list
         });
@@ -30,7 +29,6 @@ module.exports = class extends Base {
         szm = szm || 'a';
         this.assign('szm',szm);
         let keywords = this.post('keywords');
-        console.log(keywords);
         this.assign('keywords',keywords);
         let page = this.post('page') || 1;
         let limit = this.post('limit') || 50;
@@ -38,23 +36,21 @@ module.exports = class extends Base {
             page : page,
             limit : limit
         })
-        let szmList = await this.model('wx_chengyu').group('szm').field('szm').order('szm asc').select();
+        let szmList = await this.model('wx_xiehouyu').group('szm').field('szm').order('szm asc').select();
         this.assign('szmList',szmList);
-        return this.display('wechat/chengyu/list');
+        return this.display('wechat/xiehouyu/list');
     }
     async detailAction() {
         let id = this.query('id');
         id = id.trim();
-        let data = await this.model('wx_chengyu').where({ id: id }).find();
+        let data = await this.model('wx_xiehouyu').where({ id: id }).find();
         if (think.isEmpty(data)) {
             this.assign({ title: '查询失败', msg: '地址输入错误，没有该成语哦!<br /><a href="/weixin/story/index">回到首页</a>' })
             return this.display('wechat/tip');
         }
         this.assign("data", data);
         //检查是否存在成语小故事
-        let story = await this.model('wx_story').field('id,name').where({name : data.name}).find();
-        this.assign('story',story);
-        return this.display('wechat/chengyu/detail')
+        return this.display('wechat/xiehouyu/detail')
     }
 
 }

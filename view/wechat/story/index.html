@@ -1,29 +1,40 @@
 {% extends "../tpl/layout.html" %}
-
 {% block title %}
 <title>故事系列 - 采然一刻</title>
-<style>
-    body,.weui-cell_access{
-        background-color:#cceae2;
-    }
-</style>
 {% endblock %}
 {% block content %}
-<div class="page">
-    <!-- <div class="title">故事系列</div> -->
-    <div class="weui-cells">
-        {% for item in list %}
-        <a href="/weixin/story/list/{{item.type}}.html" class="weui-cell weui-cell_access">
-            <p class="weui-cell__bd">{{item.type}}
-                <small>({{item.num}}个故事)</small>
-            </p>
-            <div class="weui-cell__ft"></div>
-        </a>
-        {% endfor %}
+<div class="page tabbar js_show">
+    <div class="page__bd" style="height: 100%;">
+        <div class="weui-tab">
+            <div class="weui-tab__panel" id="scrollcontent">
+                <div class="weui-cells">
+                    {% for item in list %}
+                    <a href="/weixin/story/list/{{item.type}}.html" class="weui-cell weui-cell_access">
+                        <p class="weui-cell__bd">{{item.type}}
+                            <small>({{item.num}}个故事)</small>
+                        </p>
+                        <div class="weui-cell__ft"></div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="weui-tabbar">
+                <a href="/weixin/story.html" class="weui-tabbar__item weui-bar__item_on">
+                    <img src="{{site.staticfiledomain.value}}/static/images/wechat/story.png" alt="" class="weui-tabbar__icon">
+                    <p class="weui-tabbar__label">小故事</p>
+                </a>
+                <a href="/weixin/chengyu.html" class="weui-tabbar__item ">
+                    <img src="{{site.staticfiledomain.value}}/static/images/wechat/chengyu.png" alt="" class="weui-tabbar__icon">
+                    <p class="weui-tabbar__label">成语</p>
+                </a>
+                <a href="/weixin/xiehouyu.html" class="weui-tabbar__item">
+                    <img src="{{site.staticfiledomain.value}}/static/images/wechat/xiehouyu.png" alt="" class="weui-tabbar__icon">
+                    <p class="weui-tabbar__label">歇后语</p>
+                </a>
+            </div>
+        </div>
     </div>
-
 </div>
 {% endblock %}
 {% block jsfile %}
-
 {% endblock %}

@@ -10,6 +10,10 @@ module.exports = [
 
     [/^\/weixin\/book\/list\/(.*)$/,'/weixin/book/list?id=:1'],
     [/^\/weixin\/book\/chapter\/(.*)$/,'/weixin/book/detail?id=:1'],
+
+    [/^\/weixin\/chengyu\/detail\/(.*)$/,'/weixin/chengyu/detail?id=:1'],
+    [/^\/weixin\/xiehouyu\/detail\/(.*)$/,'/weixin/xiehouyu/detail?id=:1'],
+
     //oss
     [/^\/static_(.*)$/,'/index/static?id=:1'],
     [/^\/joke\/(\d*)$/,'/joke/index?id=:1'],
