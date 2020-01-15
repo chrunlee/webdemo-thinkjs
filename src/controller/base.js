@@ -25,14 +25,13 @@ module.exports = class extends think.Controller {
             browser : userAgent,
             ctime : ctime
         });
-        think.logger.info(`${ip} : ${pathurl}`);
+        
         //首先是黑名单
         let recorder = await this.model('wx_iprecord').where({ip : ip}).find();
         if(!think.isEmpty(recorder)){
             if(recorder.expiretime < ctime){//超时24小时
                 await this.model('wx_iprecord').where({ip : ip}).delete();
             }else{
-                think.logger.info(`该IP：${ip}已被阻止请求.`);
                 //ip被封。
                 let msg = '您的IP地址:['+ip+']违反了本站反爬虫规则，已被封禁24小时!如需解禁，请发email至'+(this.config('site').email.value)+'!';
                 this.assign('msg',msg);
@@ -41,6 +40,8 @@ module.exports = class extends think.Controller {
             }
         }
     }
+
+    think.logger.info(`${ip} : ${pathurl}`);
 
     let rules = this.config('rules');
     //做遍历
