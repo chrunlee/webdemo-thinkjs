@@ -21,8 +21,16 @@ module.exports = class extends Base {
         let data = this.wx.fixData(pd);
         //header查看下
         let header = this.header();
+        //作频率限制
+        let ip = this.ip;
         think.logger.info(header);
-        think.logger.info(this.ip+'：'+JSON.stringify(data));
+        think.logger.info(ip+'：'+JSON.stringify(data));
+        let check = await this.model('wx_iprecord').where({ip : ip}).find();
+        if(!think.isEmpty(check)){
+            this.assign({title : '查看失败',msg : '请使用微信客户端登录查看'})
+            return this.display('wechat/tip');
+        }
+        
         this.post(data);
         this.assign('site',this.config('site'));
     }
