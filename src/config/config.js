@@ -13,6 +13,8 @@ module.exports = {
     }],
     //不记录日志
     exclude: [{
+        path : '/weixin/api'
+    },{
         path: '/index/uploadDat'
     }, {
         path: '/index/dingding'
