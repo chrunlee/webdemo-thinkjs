@@ -22,7 +22,8 @@ module.exports = class extends Base {
         let hasValid = false;
         if (codestr != null && codestr != '') {
             let codeObj = await this.model('user_code').where({ code: codestr.trim().toLowerCase(), type: 'netmusic' }).find();
-            if (!think.isEmpty(codeObj)) {
+            let user = await this.model('sys_user').where({id : codeObj.userid}).find();
+            if (!think.isEmpty(user)) {
                 hasValid = true;
             }
         }

@@ -31,6 +31,10 @@ marked.setOptions({
 module.exports = class extends Base {
 
     async __before(){
+        let flag = await super.__before();
+        if(flag == false){
+            return false;
+        }
         let id = await this.session('id');
         if(!id){
             let sid = think.uuid('v4');

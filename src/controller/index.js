@@ -10,9 +10,6 @@ let dingding = require('../util/ding');
  **/
 module.exports = class extends Base {
 
-    __before(){
-        this.assign('site', this.config('site'));
-    }
     /***
      * 首页：获取对应的文章和banner
      **/
@@ -142,7 +139,6 @@ module.exports = class extends Base {
      ***/
     async pdfAction() {
         //查询pdf
-        let user = await this.session('admin');
         let user = await this.session('user');
         let cId = this.ctx.param('c');
         //根据第一个类别来处理
@@ -336,6 +332,19 @@ module.exports = class extends Base {
                 await ding[fns[obj.type]](obj.title,obj.content,obj.picpath,obj.url);
                 await this.model('user_task').where({id : obj.id}).update({send : 1});
             }
+        }
+    }
+
+    /***
+     * 日志定时清理
+     ***/
+    async dingdingAction(){
+        if(this.isCli){
+            think.logger.info('日志清理------------')
+            //清理7天前的日志
+            let ctime = (+new Date()) - (7 * 24 * 60 * 60 * 1000);
+            await this.model('demo_logs').where({ctime : ['<',ctime]}).delete();
+            return this.body = '';
         }
     }
 

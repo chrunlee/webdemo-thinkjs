@@ -4,13 +4,16 @@ const path = require('path');
 module.exports = class extends Base {
 
     async __before(){
+        const flag = await super.__before();
+        if(flag == false){
+            return false;
+        }
         //监测源，必须从微信端打开，打开的同时，必须关注公众号才可以打开。否则跳转到其他页面tip
         //TODO : 从页面获取用户权限和信息
-        let flag = false;
-        if(flag){
-            this.assign({title : '查看失败',msg : '请使用微信客户端登录查看'})
-            return this.display("wechat/tip");
-        }
+        // if(flag){
+        //     this.assign({title : '查看失败',msg : '请使用微信客户端登录查看'})
+        //     return this.display("wechat/tip");
+        // }
         let site = this.config('site');
         this.wx = this.service('weixin',{
             token : site.wxtoken.value,
@@ -19,18 +22,6 @@ module.exports = class extends Base {
         });
         let pd = this.post();
         let data = this.wx.fixData(pd);
-        //header查看下
-        let header = this.header();
-        //作频率限制
-        let ip = this.ip;
-        think.logger.info(header);
-        think.logger.info(ip+'：'+JSON.stringify(data));
-        let check = await this.model('wx_iprecord').where({ip : ip}).find();
-        if(!think.isEmpty(check)){
-            think.logger.info('该IP被禁止!')
-            this.assign({title : '查看失败',msg : '请使用微信客户端登录查看'})
-            return this.display('wechat/tip');
-        }
         
         this.post(data);
         this.assign('site',this.config('site'));
