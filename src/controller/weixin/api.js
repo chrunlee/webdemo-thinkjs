@@ -19,6 +19,7 @@ module.exports = class extends Base {
             //判断什么类型的消息
             let openId = content.FromUserName;
             if(content.MsgType === 'text'){
+                content.Content = (content.Content||'').toLowerCase();
                 await this.model('wx_msg').add({
                     openid : openId,
                     content : content.Content,

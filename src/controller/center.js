@@ -207,6 +207,9 @@ module.exports = class extends Base {
             //insert
             await this.model('user_links').add(data);
         }
+        //更新全局设置
+        let links = await think.model('user_links').select();
+        think.config('links',links);
         this.json({ success: true, msg: 'Save Success' });
     }
     //删除友情链接
@@ -277,6 +280,8 @@ module.exports = class extends Base {
         let id = this.post('id');
         if (id) {
             await this.model('user_article').where({ id: id }).update({ ispublish: '1', ctime: moment(new Date()).format('YYYY-MM-DD HH:mm') });
+            //更新cache
+            await this.cache('user_article_first',null);
         }
         this.json({ success: true })
     }

@@ -5,7 +5,6 @@ module.exports = class extends Base {
 
     async __before(){
         const flag = await super.__before();
-        console.log(flag);
         if(flag == false){
             return false;
         }

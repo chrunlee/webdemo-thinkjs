@@ -14,7 +14,7 @@ module.exports = class extends Base {
      * 首页：获取对应的文章和banner
      **/
     async indexAction() {
-        let banner = await this.cache('user_banner',()=>{return this.model('user_banner').where({ type: '1', isenable: '1' }).select()});
+        let banner = await this.cache('user_banner_a',()=>{return this.model('user_banner').where({ type: '1', isenable: '1' }).select()});
         let articles = await this.cache('user_article_first',()=>{return this.model('user_article').where({ ispublish: '1', type: '0', recommend: 1 }).order('ctime desc').limit(8).select();});
         let user = await this.session('user');
         this.assign('user', user);
