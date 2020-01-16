@@ -17,9 +17,9 @@ module.exports = {
     },{
         path: '/index/uploadDat'
     }, {
-        path: '/index/dingding'
+        path: 'index/dingding'
     }, {
-        path: '/index/clearLog'
+        path: 'index/clearLog'
     },{
         path : '/static_'
     },{
