@@ -143,20 +143,32 @@ module.exports = class extends Base {
         //1.以数据库为基础进行处理。 
         let baseFolder = path.join(think.ROOT_PATH, 'www');
         let realFolder = path.join(baseFolder,dir);
-        let folders = [];
-        let fileList = dirfile(realFolder,false,true,function(filePath,stat){
-            return filePath.indexOf('static\\upload\\') < 0 ;//不包含upload文件夹
-        },function(filePath,stat){
-            let name = filePath.replace(baseFolder,'');
-            name = name.replace(/\\/g,'/')
-            name = name.substr(1,name.length);
-            return {
+        let status = fs.statSync(realFolder);
+        let fileList = [];
+        if(status.isDirectory()){
+            let folders = [];
+            fileList = dirfile(realFolder,false,true,function(filePath,stat){
+                return filePath.indexOf('static\\upload\\') < 0 ;//不包含upload文件夹
+            },function(filePath,stat){
+                let name = filePath.replace(baseFolder,'');
+                name = name.replace(/\\/g,'/')
+                name = name.substr(1,name.length);
+                return {
+                    idx : Math.random() * 1000,
+                    filePath : filePath,
+                    name : name
+                }
+            });
+            fileList.sort((a,b)=>a.idx-b.idx);
+        }else{
+            fileList = [{
                 idx : Math.random() * 1000,
-                filePath : filePath,
-                name : name
-            }
-        });
-        fileList.sort((a,b)=>a.idx-b.idx);
+                filePath : realFolder,
+                name : dir.startsWith('/') ? dir.substr(1,dir.length) : dir
+            }]
+            console.log(fileList);
+        }
+        
         let str = '';
         try{
             for(let ldx in fileList){
