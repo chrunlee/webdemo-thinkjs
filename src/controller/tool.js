@@ -150,4 +150,8 @@ module.exports = class extends Base {
         }
         
     }
+
+    jsonAction(){
+        return this.display('tool/json');
+    }
 }

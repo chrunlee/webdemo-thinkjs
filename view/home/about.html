@@ -23,12 +23,25 @@
 				<li class="info">友情链接请发我邮箱 {{site.email.value}}</li>
 			</ul>
 		</div>
-		<div class="about-content">
+		<div class="about-content byy-clear">
 			<h1>朋友们</h1>
 			<ul>
 				{% for value in links%}
 				<li class="about-link"><a href="{{value.href}}" target="_blank"><img src="{{value.iconpath}}" />{{value.name}}</a></li>
 				{%endfor%}
+			</ul>
+		</div>
+		<div class="about-content byy-clear">
+			<h1>请作者喝一杯冰阔落</h1>
+			<ul>
+				<li style="margin-bottom:30px;">
+					<img src="{{site.staticfiledomain.value}}/static/images/zhifubao.jpg" alt="">
+					<p style="font-size:14px;line-height:20px;">推荐使用支付宝昂</p>
+				</li>
+				<li style="margin-bottom:30px;">
+					<img src="{{site.staticfiledomain.value}}/static/images/weixin.jpg" alt="">
+					<p style="font-size:14px;line-height:20px;">喜欢用微信也木问题哦</p>
+				</li>
 			</ul>
 		</div>
 		{%include '../tpl/footer.html'%}
