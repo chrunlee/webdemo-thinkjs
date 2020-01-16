@@ -37,7 +37,7 @@ module.exports = class extends Base {
         page = 1;
     }
     var start = (page-1)*20;
-    let banner = await this.cache('user_banner',()=>{return this.model('user_banner').where({type : '1',isenable : '1'}).select();});
+    let banner = await this.cache('user_banner',()=>{return this.model('user_banner').where({type : '2',isenable : '1'}).select();});
     let categoryList = await this.cache('user_category',()=>{return this.model('user_category').select();});
     let articleWhere = {ispublish : 1,type : 0};
     if(category){
