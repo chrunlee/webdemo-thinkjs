@@ -299,6 +299,10 @@ module.exports = class extends Base {
                         }
                     ]
                 },{
+                    name : '最新肺炎情况',
+                    type : 'view',
+                    url : 'https://chrunlee.cn/weixin/feiyan.html'
+                },{
                     name : '秘籍玩法',
                     type : 'view',
                     url : 'http://mp.weixin.qq.com/s?__biz=MzUyMzYzMzAzNw==&mid=100000014&idx=1&sn=8d366018268f1d903e57dada25b64458&chksm=7a38e9ec4d4f60faaa3bf7bb3f541583be26a062577891c285455b820dace2d3d12602ff3201&scene=18#wechat_redirect'

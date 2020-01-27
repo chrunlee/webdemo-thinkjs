@@ -154,4 +154,10 @@ module.exports = class extends Base {
     jsonAction(){
         return this.display('tool/json');
     }
+
+    //生成一个图片
+    imageAction(){
+        //width=200,height=300,background-color=#ccc,content=123321123321,contentcolor=#fff
+        return this.display('tool/image');
+    }
 }

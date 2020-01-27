@@ -8,6 +8,7 @@ const mailer = require('../util/mailer');
 let qiniuCloud = require('../util/qiniuCloud');
 let {downloadPicture} = require('../util/downloader');
 let marked = require('marked');
+const {compress} = require('../util/Image');
 //markdown 解析器
 var renderer = new marked.Renderer();
 //重写解析规则
@@ -107,18 +108,26 @@ module.exports = class extends Base {
         let imgData = this.post('imgData');
         var base64Data = imgData.replace(/^data:image\/\w+;base64,/, "");
         var dataBuffer = new Buffer(base64Data, 'base64');
-        let fileName = (+new Date()) + '-' + Math.floor(Math.random() * 1000) + '.png';
+        let fileName = (+new Date()) + '-' + Math.floor(Math.random() * 1000) + '.jpg';
         let absPath = '/static/upload/user/' + fileName;
         let filePath = path.join(think.ROOT_PATH, 'www', absPath);
         fs.writeFileSync(filePath, dataBuffer);
         let finalPath = "";
-        if(qiniuenable){
-            let staticPath = await qiniuCloud.saveFile(ak,sk,scope,filePath,'static_');
-            fs.unlinkSync(filePath);//删除源文件。
-            finalPath = '/'+staticPath;
-        }else{
-            finalPath = absPath;
+        try{
+            //做一个图片压缩处理
+            await compress(filePath,60);//60足够了吧 
+            if(qiniuenable){
+                let staticPath = await qiniuCloud.saveFile(ak,sk,scope,filePath,'static_');
+                fs.unlinkSync(filePath);//删除源文件。
+                finalPath = '/'+staticPath;
+            }else{
+                finalPath = absPath;
+            }
+        }catch(e){
+            console.log(e);
         }
+
+        
         this.body = finalPath;
     }
     //====================站点属性设置--edi==========================t
@@ -217,6 +226,9 @@ module.exports = class extends Base {
         let id = this.post('id');
         if (id) {
             await this.model('user_links').where({ id: id }).delete();
+            //更新全局设置
+            let links = await think.model('user_links').select();
+            think.config('links',links);
         }
         this.json({ success: true, msg: 'Delete Success' });
     }

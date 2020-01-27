@@ -1,0 +1,37 @@
+.tool-container,
+.tool-container.big {
+  padding-right: 100px;
+  padding-left: 100px;
+  padding-top: 20px;
+  padding-bottom: 30px;
+  margin-right: auto;
+  margin-left: auto;
+}
+.tool-container.full {
+  padding: 0px;
+}
+.tool-title {
+  padding: 15px 0px;
+}
+.tool-title a {
+  font-size: 16px;
+}
+.tool-title.line {
+  border-bottom: 1px dashed #aaa;
+}
+.tool-title.line + .tool-content {
+  padding-top: 15px;
+}
+@media screen and (max-width: 1920px) {
+  .tool-container {
+    padding-right: 350px;
+    padding-left: 350px;
+  }
+  .tool-container.big {
+    padding-right: 100px;
+    padding-left: 100px;
+  }
+  .tool-container.full {
+    padding: 0px;
+  }
+}

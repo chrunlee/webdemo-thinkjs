@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="applicable-device" content="pc,mobile">
+    <meta name="MobileOptimized" content="width">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="mobile-agent" content="format=html5;url={{site.domain.value}}{{article.link}}">
+    <meta name="description" content="{{article.zhaiyao}}">
+    <meta name="keywords" content="{{article.tags}}">
+    <meta name="author" content="{{site.sitename}}">
+    <meta name="site" content="{{site.domain.value}}">
+    <meta name="title" content="{{article.title}} | {{site.sitename}}">
+    <title>占位图在线生成 | {{site.sitename.value}}</title>
+    {% include '../tpl/css.html' %}
+    <script type="text/javascript" src="https://cdn.bootcss.com/holder/2.9.4/holder.min.js"></script>
+    <link rel="stylesheet" href="/static/css/tool/tool.css">
+</head>
+<body class="grey-bg fixed">
+    {% include '../tpl/header.html'%}
+    <div class="tool-container">
+        <div class="tool-title line">
+            <span class="byy-breadcrumb" separator=">" style="visibility: visible;">
+                <a href="">首页<span class="byy-box">&gt;</span></a>
+                <a href="">Demo<span class="byy-box">&gt;</span></a>
+                <a><cite>占位图在线生成工具</cite></a>
+            </span>
+        </div>
+        <div class="tool-content">
+            <img src="holder.js/500x100?bg=f60&fg=25ca92&text=BUG集散地 \n https://chrunlee.cn&size=24&align=left" alt="">    
+        </div>
+    </div>
+    {% include '../tpl/footer.html' %}
+</body>
+</html>
+{% include '../tpl/commonjs.html'%}
+<script type="text/javascript">
+    console.log('abc');
+</script>

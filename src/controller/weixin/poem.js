@@ -4,7 +4,21 @@ const path = require('path');
 
 module.exports = class extends Base {
 
-    
+    //诗词首页-作者分类+年代
+    async indexAction(){
+
+    }
+
+    //诗词分类
+
+
+    //诗词检索
+
+
+    //
+
+
+    //诗词详情
     async detailAction() {
         let id = this.query('id');
         id = id.trim();

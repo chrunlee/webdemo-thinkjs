@@ -1,0 +1,54 @@
+{% extends "../tpl/layout.html" %}
+{% block title %}
+<title>全国新型冠状病毒肺炎疫情最新动态 [持续更新] - 采然一刻</title>
+<style>
+    .page{background-color:#f2f2f2;color:#1a1a1a;}
+    ul{
+        padding:0px 5px;
+        font-size:14px;
+    }
+    ul>ul{
+        margin:5px;
+    }
+    ul>ul>li{
+        list-style:inside;
+    }
+    a{
+        color:#333;
+        font-weight:bold;
+        text-decoration:underline;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="page tabbar js_show">
+    <div class="page__bd" style="height: 100%;">
+        <div class="weui-tab">
+            <div class="weui-tab__panel article" id="scrollcontent">
+                <div class="page__hd">
+                    <h1 class="page__title" style="text-align:center;">2020年新型肺炎最新情况</h1>
+                    <p class="page__desc" style="text-align:center;color:#aaa;">5分钟推送更新一次，来源于知乎科学</p>
+                </div>
+                <div class="page__bd">
+                    <article class="weui-article" style="white-space:pre-wrap;">
+                        {{data.content|safe}}
+                    </article>
+                    <p class="page__desc" style="color:#333;">来自<a href="https://zhuanlan.zhihu.com/p/103691078" target="_blank">全国新型冠状病毒肺炎疫情最新动态 [持续更新]</a></p>
+                </div>
+                {%include '../tpl/footer.html'%}
+            </div>
+            
+        </div>
+    </div>
+</div>
+<div class="page article">
+</div>
+{% endblock %}
+{% block jsfile %}
+<script type="text/javascript">
+    $(function(){
+        $('figure').remove();
+        $('.LinkCard').remove();
+    });
+</script>
+{% endblock %}

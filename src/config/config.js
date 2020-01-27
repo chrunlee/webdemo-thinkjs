@@ -5,6 +5,7 @@ module.exports = {
     stickyCluster: true,
     //请求规则
     maxlimit : 1000,
+    spider : '',
     rules: [{
         path: '/weixin', //路径开头
         time: 10 * 1000, //限制时间，10s 内 不能超过10次

@@ -1,0 +1,163 @@
+{% extends "../tpl/layout.html" %}
+{% block title %}
+<title>成语 - 采然一刻</title>
+{% endblock %}
+{% block content %}
+
+<div class="page tabbar js_show">
+    <div class="page__bd" style="height: 100%;">
+        <div class="weui-tab">
+            <div class="weui-tab__panel" id="scrollcontent">
+                <div class="weui-search-bar" id="searchBar">
+                    <form class="weui-search-bar__form" id="form" action="/weixin/chengyu.html" method="post">
+                        <input type="hidden" name="szm" value="{{szm}}">
+                        <input type="hidden" name="page" value="{{page}}">
+                        <input type="hidden" name="limit" value="{{limit}}">
+                        <div class="weui-search-bar__box">
+                            <i class="weui-icon-search"></i>
+                            <input type="search" class="weui-search-bar__input" id="searchInput" placeholder="搜索" name="keywords" value="{{keywords}}" required="">
+                            <a href="javascript:" class="weui-icon-clear" id="searchClear"></a>
+                        </div>
+                        <label class="weui-search-bar__label" id="searchText">
+                            <i class="weui-icon-search"></i>
+                            <span>搜索</span>
+                        </label>
+                    </form>
+                </div>
+
+                <div class="page-sidebar">
+                    <ul>
+                        {% for item in szmList %}
+                        <li class="{{ 'active' if szm == item.szm else ''}}">
+                            <a href="javascript:;" class="anchor" data-szm="{{item.szm}}">{{item.szm}}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="weui-cells page-sidebar-cell" id="listcontent">
+                    {% if list.length == 0%}
+                    <p class="weui-cell__bd">没有检索到符合条件的记录！请切换关键词查询.</p>
+                    {% endif %}
+                    {% for item in list %}
+                    <a href="/weixin/story/detail/{{item.id}}.html" class="weui-cell weui-cell_access">
+                        <p class="weui-cell__bd">{{item.name}}</p>
+                        <div class="weui-cell__ft"></div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="weui-tabbar">
+                <a href="/weixin/story.html" class="weui-tabbar__item ">
+                    <img src="{{site.staticfiledomain.value}}/static/images/wechat/story.png" alt="" class="weui-tabbar__icon">
+                    <p class="weui-tabbar__label">小故事</p>
+                </a>
+                <a href="/weixin/chengyu.html" class="weui-tabbar__item weui-bar__item_on">
+                    <img src="{{site.staticfiledomain.value}}/static/images/wechat/chengyu.png" alt="" class="weui-tabbar__icon">
+                    <p class="weui-tabbar__label">成语</p>
+                </a>
+                <a href="/weixin/xiehouyu.html" class="weui-tabbar__item">
+                    <img src="{{site.staticfiledomain.value}}/static/images/wechat/xiehouyu.png" alt="" class="weui-tabbar__icon">
+                    <p class="weui-tabbar__label">歇后语</p>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+{% block jsfile %}
+<script type="text/javascript">
+    var page = '{{page}}';
+    var limit = '{{limit}}';
+    var szm = '{{szm}}';
+    var keywords = '{{keywords}}';
+    page = parseInt(page,10);
+    $(function(){
+        var $searchBar = $('#searchBar'),
+            $searchResult = $('#searchResult'),
+            $searchText = $('#searchText'),
+            $searchInput = $('#searchInput'),
+            $searchClear = $('#searchClear'),
+            $searchCancel = $('#searchCancel');
+
+        var isfinished = true;
+        var scrollHandler = function(){
+            var height = $('#listcontent').height();
+            var throheight = $('#scrollcontent').get(0).scrollTop;
+            var windowheight = $(window).height();
+            var a = (height - windowheight - throheight) / windowheight;
+            if(isfinished && a < 0.2){
+                isfinished = false;
+                page ++ ;
+                getData(page);
+            }
+        }
+        $('#scrollcontent').scroll(scrollHandler);
+
+        function getData(i){
+            $.ajax({
+                url : '/weixin/chengyu/list',
+                type : 'post',
+                data : {
+                    page : i,
+                    limit : limit,
+                    szm : szm,
+                    keywords : keywords
+                },
+                success : function(res){
+                    res = JSON.parse(res);
+                    var list = res.list;
+                    for(var n=0;n<list.length;n++){
+                        var obj = list[n];
+                        $('#listcontent').append('<a href="/weixin/chengyu/detail/'+obj.id+'.html" class="weui-cell weui-cell_access"><p class="weui-cell__bd">'+obj.name+'</p><div class="weui-cell__ft"></div></a>');
+                    }
+                    if(list.length > 0){
+                        isfinished = true;
+                    }
+                }
+            });
+        }
+        getData(page);
+        $('.anchor').on('click',function(){
+            var szms = $(this).data('szm');
+            $('[name="szm"]').val(szms);
+            $('#form').submit();
+        })
+        function hideSearchResult(){
+            $searchResult.hide();
+            $searchInput.val('');
+        }
+        function cancelSearch(){
+            hideSearchResult();
+            $searchBar.removeClass('weui-search-bar_focusing');
+            $searchText.show();
+        }
+
+        $searchText.on('click', function(){
+            $searchBar.addClass('weui-search-bar_focusing');
+            $searchInput.focus();
+        });
+        $searchInput
+            .on('blur', function () {
+                if(!this.value.length) cancelSearch();
+            })
+            .on('input', function(){
+                if(this.value.length) {
+                    $searchResult.show();
+                } else {
+                    $searchResult.hide();
+                }
+            })
+        ;
+        $searchClear.on('click', function(){
+            hideSearchResult();
+            $searchInput.focus();
+        });
+        $searchCancel.on('click', function(){
+            cancelSearch();
+            $searchInput.blur();
+        });
+    });
+
+</script>
+{% endblock %}

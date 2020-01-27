@@ -9,7 +9,8 @@ module.exports = class extends think.Controller {
             let pathurl = this.ctx.path;
             let ctime = (+new Date());
             this.assign('site', this.config('site'));
-
+            this.assign('links',this.config('links'));
+            
             let excludes = this.config('exclude');
             let nonelog = false;
             for (let i = 0; i < excludes.length; i++) {
