@@ -285,7 +285,7 @@ module.exports = class extends Base {
     async menuAction(){
         let menu = await this.model('site_set').where({name : 'wxappmenu'}).find();
         let json = JSON.parse((menu.strval||'{}'));
-        let rs = await this.wx.createMenu(menu)
+        let rs = await this.wx.createMenu(json)
         return this.body = rs ? '菜单创建成功' : '菜单创建失败,请检查配置!';
     }
 
