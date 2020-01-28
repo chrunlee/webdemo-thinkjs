@@ -283,32 +283,8 @@ module.exports = class extends Base {
 
     //创建菜单
     async menuAction(){
-        let menu = {
-            button : [
-                {
-                    name : '诗词故事',
-                    "sub_button":[
-                        {
-                            type : 'view',
-                            name : '故事成语',
-                            url : 'https://chrunlee.cn/weixin/story.html'
-                        },{
-                            type : 'view',
-                            name : '古籍',
-                            url : 'https://chrunlee.cn/weixin/book.html'
-                        }
-                    ]
-                },{
-                    name : '最新肺炎情况',
-                    type : 'view',
-                    url : 'https://chrunlee.cn/weixin/feiyan.html'
-                },{
-                    name : '秘籍玩法',
-                    type : 'view',
-                    url : 'http://mp.weixin.qq.com/s?__biz=MzUyMzYzMzAzNw==&mid=100000014&idx=1&sn=8d366018268f1d903e57dada25b64458&chksm=7a38e9ec4d4f60faaa3bf7bb3f541583be26a062577891c285455b820dace2d3d12602ff3201&scene=18#wechat_redirect'
-                }
-            ]
-        };
+        let menu = await this.model('site_set').where({name : 'wxappmenu'}).find();
+        let json = JSON.parse((menu.strval||'{}'));
         let rs = await this.wx.createMenu(menu)
         return this.body = rs ? '菜单创建成功' : '菜单创建失败,请检查配置!';
     }
