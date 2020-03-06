@@ -23,13 +23,14 @@
 						<div style="font-weight:bold;font-size:16px;">{{value.description}}</div>
 						{% if value.intval!=null %}
 						<input type="text" name="{{value.name}}" type="0" value="{{value.intval}}" > 
-						{% endif %}
+						{% else %}
 						{% if value.strval.length > 50 %}
 						<textarea name="{{value.name}}" type="1">{{value.strval}}</textarea>
 						{% elif value.strval.length > 0 %}
 						<input type="text" name="{{value.name}}" type="1" value="{{value.strval}}" >
 						{% else %}
 						<input type="text" name="{{value.name}}" type="1" value="{{value.strval}}" placeholder="{{value.description}}" >
+						{% endif %}
 						{% endif %}
 					</div>
 					<span class="byy-btn small pull-left" filter="update">更新</span>

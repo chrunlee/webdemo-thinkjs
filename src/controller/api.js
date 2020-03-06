@@ -9,6 +9,7 @@ let path = require('path');
 let fs = require('fs');
 let dirfile = require('dirfile')
 const cheerio = require('cheerio');
+let dingding = require('../util/ding');
 
 
 module.exports = class extends Base {
@@ -19,6 +20,14 @@ module.exports = class extends Base {
         if (code != this.config('site').apicode.value) {
             return this.fail(10086, 'sorry ,wrong code!');
         }
+    }
+
+    //向我自己的钉钉发一条消息，消息来源于请求
+    async dingAction(){
+        let ding = new dingding(this.config('site').dingding.value);
+        let msg = this.post('msg')||this.query('msg');
+        ding.sendText('',msg)
+        return this.json({success : true})
     }
     /***
      * 每次获取一个IP，不论是否可用，IP是从齐云代理获取的免费IP

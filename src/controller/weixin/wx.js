@@ -22,9 +22,38 @@ module.exports = class extends Base {
         });
         let pd = this.post();
         let data = this.wx.fixData(pd);
-        
         this.post(data);
         this.assign('site',this.config('site'));
+        let user = await this.session('user');
+        if(think.isEmpty(user)  && !this.ctx.url.startsWith('/weixin/api')){
+            //跳转到授权页面
+            let code = this.query('code');//获取code ,from weixin.qq.com
+            let state = this.query('state');
+            if(code){
+                let userData = await this.wx.getWebToken(code);
+                console.log(userData);
+                if(userData.openid){
+                    //获得openId
+                    let openId = userData.openid;
+                    //根据openId获取用户信息
+                    let user = await this.model('sys_user').where({id : openId}).find();
+                    if(think.isEmpty(user)){
+                        //用户未关注
+                        //跳转到tip
+                        this.assign({title : '温馨提示',msg : '请关注公众号后，再查看该页面!'})
+                        return this.display('wechat/tip');
+                    }else{
+                        console.log(user);
+                        await this.session('user',user);
+                    }
+                }else{
+                    this.assign({title : '温馨提示',msg : '请关注公众号后，再查看该页面!'})
+                    return this.display('wechat/tip');  
+                }
+            }else{
+                return this.redirect(this.wx.getPageAuthUrl(this.config('site').domain.value+this.ctx.url));    
+            }
+        }
     }
     tipAction(){
         return this.display("wechat/tip");

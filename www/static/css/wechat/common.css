@@ -198,3 +198,10 @@
     bottom:0px;
 }
 .page-sidebar-cell{padding-right:50px;}
+
+.tippd .weui-msg__text-area:first-child{
+    padding-top:20px;
+}
+.tippd .weui-msg{
+    padding-top:0px;
+}

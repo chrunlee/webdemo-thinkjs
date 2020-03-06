@@ -1,5 +1,5 @@
 /****
- 微信开发相关的工具类;通用;thinkjs框架;
+ 微信开发相关的工具类;通用;thinkjs3.0框架;
  @author chrunlee
  @create 2019年11月19日 16:30:59
 *****/
@@ -8,6 +8,7 @@ const axios = require('axios');
 const fs = require('fs');//token 文件存储
 const path = require('path');
 const filePath = path.join(__dirname,'../../runtime/config/wx.json');
+const ticketPath = path.join(__dirname,'../../runtime/config/ticket.json');
 const Promise = require('bluebird');
 const request = Promise.promisify(require('request'));
 const wsf = require('../util/wsf');
@@ -33,7 +34,13 @@ module.exports = class extends think.Service{
             upload_media : `https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=TYPE`,
             download_media : `https://api.weixin.qq.com/cgi-bin/media/get?access_token=ACCESS_TOKEN&media_id=MEDIA_ID`,
             user_info : `https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN`,
-            short_url : `https://api.weixin.qq.com/cgi-bin/shorturl?access_token=ACCESS_TOKEN`
+            short_url : `https://api.weixin.qq.com/cgi-bin/shorturl?access_token=ACCESS_TOKEN`,
+            jsapi : `https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=ACCESS_TOKEN&type=jsapi`,
+
+            //微信网页授权页面地址
+            page_auth_url : `https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=REDIRECT_URI&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect`,
+            //微信网页授权获取token地址
+            page_token_url : `https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code`
         };
     }
 
@@ -61,6 +68,30 @@ module.exports = class extends think.Service{
         }
         return current;
     }
+
+    //获取网页token,然后将token存放在session中使用，每个用户一个，超时则刷新获取
+    async getWebToken(code){
+        let requestUrl = this.url.page_token_url.replace('APPID',this.opts.appid).replace('SECRET',this.opts.secret).replace('CODE',code);
+        let data = await axios.get(requestUrl).then(rs=>rs.data);
+        return data;
+    }
+    //获取网页jsticket
+    async getTicket(token){
+        if(!fs.existsSync(ticketPath)){
+            fs.writeFileSync(ticketPath,'{}');
+        }
+        let current = fs.readFileSync(ticketPath);
+        current = JSON.parse(current);
+        if(!current || !current.ticket || current.timestamp < +new Date()){
+            //refresh
+            let data = await axios.get(this.url.jsapi.replace('ACCESS_TOKEN',token)).then(rs=>rs.data);
+            data.timestamp = (+new Date() + data.expires_in*1000);
+            current = data;
+            fs.writeFileSync(ticketPath,JSON.stringify(current));
+        }
+        return current;
+    }
+
     //创建公众号菜单
     async createMenu(menuObj){
         let token = await this.getToken();
@@ -68,6 +99,12 @@ module.exports = class extends think.Service{
         return rst.errcode == 0;
     }
 
+    //获取公众号页面网页授权引导页面地址
+    getPageAuthUrl(url,state){
+        console.log(url);
+        state = state || 'chrunleecn';
+        return this.url.page_auth_url.replace('APPID',this.opts.appid).replace('REDIRECT_URI',url).replace('STATE',state);
+    }
     //===============================消息================================
 
 

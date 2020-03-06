@@ -25,6 +25,9 @@ module.exports = [{
         options: {
             debug: isDev,
             error(err, ctx) {
+                if(isDev){
+                    console.log(err);
+                }
                 let url = ctx.originalUrl;
                 if(ctx.status != '404'){
                     think.logger.error(url);

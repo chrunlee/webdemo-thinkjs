@@ -8,6 +8,7 @@ const Base = require('./wx');
 const path = require('path');
 const crypto = require('crypto');
 const moment = require('moment');
+const ding = require('../../util/ding');
 
 module.exports = class extends Base {
 
@@ -162,7 +163,7 @@ module.exports = class extends Base {
  接龙系列:
    回复"接龙 一石二鸟":给您回复关于一石二鸟的成语接龙.
 `);
-                }else if(content.Content == 'dat'){
+                }else if(content.Content.indexOf('dat') > -1 || content.Content.indexOf('DAT') >-1){
                     //创建随机序列号，并返回
                     let xulie = await this.model('user_code').where({userid : openId,type : 'dat2m'}).find();
                     if(!think.isEmpty(xulie)){
@@ -215,7 +216,7 @@ module.exports = class extends Base {
                         }
                         return this.body = this.wx.createText(content,`您的注册码为:\r\n${currentcode}\r\n在页面输入即可下载VIP音乐`)
                     }
-                }else if(content.Content == '红包'){
+                }else if(content.Content.indexOf('红包') > -1){
                     //检查当前的口令红包。
                     let kouling = await this.model('user_kouling').where({status : '1'}).find();
                     if(think.isEmpty(kouling)){
@@ -223,6 +224,11 @@ module.exports = class extends Base {
                     }else{
                         return this.body = this.wx.createText(content,`您好，红包口令为:${kouling.name}\r\n打开支付宝后，点击红包，输入口令即可，手慢无哦!`);
                     }
+                }else{
+                    //如果任何条件都没触发，此时请将内容发我钉钉，根据内容判断是否需要回复。
+                    let dingding = new ding(this.config('site').dingding.value);
+                    await dingding.sendText('微信公众号','来自微信公众号:\r\n'+content.Content);
+                    return this.body = this.wx.createText(content,`您好，您的反馈已经收到，小采然会尽快答复您的！`);
                 }
             }else if(content.MsgType === 'image'){
                 think.logger.info('图片消息')
@@ -266,7 +272,7 @@ module.exports = class extends Base {
                     think.logger.info(eventType);
                 }
             }
-            return this.body =this.wx.createText(content,'谢谢关注哦，小采然准备了大量精品内容哦，点击秘籍玩法玩转公众号！');
+            return this.body =this.wx.createText(content,'谢谢关注哦，您的反馈已经通知，小采然正在来的路上。小采然准备了大量精品内容哦，点击秘籍玩法玩转公众号！');
         }else{
             // let token = await this.wx.getToken(this);
             let signature = this.query('signature');

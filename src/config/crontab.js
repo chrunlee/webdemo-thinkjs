@@ -10,11 +10,15 @@ module.exports = [
         handle : 'crontab/clearLog',
         type : 'one',
         enable : true
-    },{
+    }
+    /***
+    取消肺炎自动数据更新
+    ,{
         //每隔5分钟推送下新型肺炎情况
-        cron : '*/5 * * * *',
+        // cron : '5 * * * *',
         handle : 'crontab/feiyan',
         type : 'one',
         enable : true
     }
+    **/
 ]
