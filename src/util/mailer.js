@@ -58,8 +58,6 @@ var tool = {
      **/
     sendOrderEmail : function(baseUser,basePass,email,name,html){
         var emailPath = __dirname+'/../../view/mail/order.html';
-        console.log(emailPath);
-        console.log(baseUser,basePass,email,name);
         var content = fs.readFileSync(emailPath,'utf-8');
         content = content.replace(/{{name}}/g,name);
         content = content.replace(/{{content}}/g,html);
