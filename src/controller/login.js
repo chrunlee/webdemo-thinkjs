@@ -64,10 +64,40 @@ module.exports = class extends Base {
         });
         let code = this.query('code');
         let redirect = this.config('site').domain.value;
-        think.logger.info('QQLogin:code value : '+code)
-        think.logger.info('qqLogin : redirect :'+redirect);
-        let userInfo = await qq.login();
-        think.logger.info(JSON.stringify(userInfo));
+        let redirectUrl = redirect+'/login/qq';
+        let userInfo = await qq.login(code,redirectUrl);
+        //如果获取信息正常则允许登录，否则登录失败
+        try{
+            if(userInfo && userInfo.ret > -1 && userInfo.nickname){
+                //检查
+                let qquser = await this.model('sys_user').where({id : userInfo.openId,from : 'qq'}).find();
+                if(think.isEmpty(qquser)){
+                    qquser = {
+                        id : userInfo.openId,
+                        name : userInfo.nickname,
+                        avatar : userInfo.figureurl_qq_1,
+                        from : 'qq',
+                        status : '1'
+                    }
+                    await this.model('sys_user').add(qquser);
+                }
+                //存储用户session
+                await this.session('user',qquser);
+                return this.redirect('/');
+            }
+        }catch(e){
+            console.log(e);
+            think.logger.error(e);
+        }
         return this.display('home/qqlogin')
+    }
+    async qqloginAction(){
+        //跳转
+        let qq = think.service('qq',{
+            appId : this.config('site').qqappid.value,
+            appSecret : this.config('site').qqappkey.value
+        });
+        let redirectUrl = qq.getAuthUrl();
+        return this.redirect(redirectUrl);
     }
 };

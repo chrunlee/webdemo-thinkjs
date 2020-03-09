@@ -3,6 +3,8 @@
 <!-- 用户信息 -->
 <script type="text/javascript">
 var LoginUser; 
+var baseUrl = '{{site.domain.value}}';
+var qqAppId= '{{site.qqappid.value}}';
 {% if user %}
 LoginUser = {
     id: '{{user.id}}',
