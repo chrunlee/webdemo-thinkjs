@@ -97,7 +97,7 @@ module.exports = class extends Base {
             appId : this.config('site').qqappid.value,
             appSecret : this.config('site').qqappkey.value
         });
-        let redirectUrl = qq.getAuthUrl();
+        let redirectUrl = qq.getAuthUrl(this.config('site').domain.value);
         return this.redirect(redirectUrl);
     }
 };

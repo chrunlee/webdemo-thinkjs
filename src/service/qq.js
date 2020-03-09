@@ -8,14 +8,14 @@ module.exports = class extends think.Service{
        
         this.opts = opts;
         this.url = {
-            codeUrl : `https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=${opts.appId}&redirect_uri=http://demo.byyui.com/login/qq&state=123&scope=get_user_info`,
+            codeUrl : `https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=${opts.appId}&redirect_uri=DOMAIN/login/qq&state=123&scope=get_user_info`,
             tokenUrl : `https://graph.qq.com/oauth2.0/token`,
             openUrl : `https://graph.qq.com/oauth2.0/me`,
             infoUrl : `https://graph.qq.com/user/get_user_info`
         };
     }
-    getAuthUrl(){
-        return this.url.codeUrl;
+    getAuthUrl(domain){
+        return this.url.codeUrl.replace('DOMAIN',domain);
     }
     tokenUrl(code,redirect){
         return this.url.tokenUrl+`?grant_type=authorization_code&client_id=${this.opts.appId}&client_secret=${this.opts.appSecret}&code=${code}&redirect_uri=${redirect}`;
