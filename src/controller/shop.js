@@ -25,6 +25,8 @@ marked.setOptions({
     smartypants: false
 
 });
+
+
 /***
  * 小店展示。
  **/

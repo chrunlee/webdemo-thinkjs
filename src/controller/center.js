@@ -9,6 +9,42 @@ let qiniuCloud = require('../util/qiniuCloud');
 let {downloadPicture} = require('../util/downloader');
 let marked = require('marked');
 const {compress} = require('../util/Image');
+const crypto = require('crypto');
+
+
+/*****
+
+脚本调用
+
+*****/
+
+async function createDatXulie(think,email){
+    //create
+    console.log(think);
+    let repeatflag = true;
+    let currentcode = '';
+    while(repeatflag){
+
+        let time = (+new Date())+'';
+        let timestr = crypto.createHash('md5').update(time).digest('hex');
+        let code = timestr.substr(timestr.length-10);
+        console.log(code);
+        //判断是否重复
+        let codedata = think.model('user_code').where({type : 'dat2m',code : code}).find();
+        if(codedata == null || !codedata.code){
+            await think.model('user_code').add({
+                code : code,
+                type : 'dat2m',
+                enable : 1,
+                userid : email
+            });
+            currentcode = code;
+            repeatflag = false;
+        }
+    }
+    return currentcode;
+}
+
 //markdown 解析器
 var renderer = new marked.Renderer();
 //重写解析规则
@@ -463,6 +499,13 @@ module.exports = class extends Base {
         let email = order.email;
         let goodName = goodItem.name;
         let sendContent = goodItem.content;
+        let model = this;
+        //在对内容发送前，先对shell进行核查
+        let shell = goodItem.shellscript;
+        if(shell != null && shell != ''){
+            let rststr = await eval(shell);
+            sendContent = sendContent.replace('SHELLSCRIPT',rststr);
+        }
         //对内容进行发送
         let html = marked(sendContent, { renderer: renderer });
         await mailer.sendOrderEmail(this.config('site').email.value, this.config('site').emailpwd.value, email, goodName, html);

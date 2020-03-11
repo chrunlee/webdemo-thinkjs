@@ -169,27 +169,7 @@ module.exports = class extends Base {
                     if(!think.isEmpty(xulie)){
                         return this.body = this.wx.createText(content,`您的序列号为: \r\n${xulie.code}\r\n在转化页面输入该序列号，可将文件大小提升至2M。`);
                     }else{
-                        //create
-                        let repeatflag = true;
-                        let currentcode = '';
-                        while(repeatflag){
-                            let time = (+new Date())+'';
-                            let timestr = crypto.createHash('md5').update(time).digest('hex');
-                            let code = timestr.substr(timestr.length-10);
-                            //判断是否重复
-                            let codedata = await this.model('user_code').where({type : 'dat2m',code : code}).find();
-                            if(think.isEmpty(codedata)){
-                                await this.model('user_code').add({
-                                    code : code,
-                                    type : 'dat2m',
-                                    enable : 1,
-                                    userid : openId
-                                });
-                                currentcode = code;
-                                repeatflag = false;
-                            }
-                        }
-                        return this.body = this.wx.createText(content,`您的序列号为:\r\n${currentcode}\r\n在转化页面输入该序列号，可将文件大小提升至2M。`);
+                        return this.body = this.wx.createText(content,`您好，序列号暂未找到，可以在采然小店购买后查询.`);
                     }
                 }else if(content.Content.indexOf('网易云') > -1 ){
                     let xulie = await this.model('user_code').where({userid : openId,type : 'netmusic'}).find();

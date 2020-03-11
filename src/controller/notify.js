@@ -2,6 +2,34 @@ const Base = require('./base.js');
 let mailer = require('../util/mailer');
 let ding = require('../util/ding');
 let moment = require('moment');
+const crypto = require('crypto');
+
+//进行脚本调用处理
+async function createDatXulie(think,email){
+    //create
+    let repeatflag = true;
+    let currentcode = '';
+    while(repeatflag){
+
+        let time = (+new Date())+'';
+        let timestr = crypto.createHash('md5').update(time).digest('hex');
+        let code = timestr.substr(timestr.length-10);
+        //判断是否重复
+        let codedata = think.model('user_code').where({type : 'dat2m',code : code}).find();
+        if(codedata == null || !codedata.code){
+            await think.model('user_code').add({
+                code : code,
+                type : 'dat2m',
+                enable : 1,
+                userid : email
+            });
+            currentcode = code;
+            repeatflag = false;
+        }
+    }
+    return currentcode;
+}
+
 module.exports = class extends Base {
     async indexAction() {
         think.logger.info(JSON.stringify(this.post()));
@@ -55,6 +83,12 @@ module.exports = class extends Base {
                     await dingding.sendText('','商品售卖:商品不存在，请检查.(' + goodId + ')')
                 } else {
                     let sendContent = goodItem.content;
+                    //处理发送内容
+                    let model = this;
+                    if(goodItem.shellscript){
+                        let rststr = await eval(goodItem.shellscript);
+                        sendContent = sendContent.replace('SHELLSCRIPT',rststr);
+                    }
                     let goodName = goodItem.name;
                     let sucnum = goodItem.sucnum || 0;
                     //发送邮件

@@ -57,16 +57,18 @@ module.exports = class extends Base {
         //2.转码完成后删除;
         //3.解码完成后生成base64,删除；
         var file = this.file('file');
-        var maxSize = 1 * 1024 * 1024;
+        var maxSize = 0.5 * 1024 * 1024;
         var extName = '.dat';
         try{
             var coder = this.post('coder');
             //检查是否可用
             let xulie = await this.model('user_code').where({type : 'dat2m',code : coder}).find();
-            let userId = xulie.userid || '';
-            let user = await this.model('sys_user').where({id : userId}).find();
-            if(!think.isEmpty(user)){
-                maxSize = 2 * 1024 * 1024;
+            //取消关注判定.
+            // let userId = xulie.userid || '';
+            // let user = await this.model('sys_user').where({id : userId}).find();
+            if(!think.isEmpty(xulie)){
+                //根据等级来制定大小，目前只有1M，后续退出1.5 2, 最大2M，再增加会严重影响访问。体验超级不好。
+                maxSize = 1 * 1024 * 1024;
             }
             if(file.size == 0 || file.size > maxSize || path.extname(file.name).toLowerCase() != extName){
                 try{
@@ -75,11 +77,11 @@ module.exports = class extends Base {
                 return this.json({success : false,msg : '文件不符合规范，已经删除.'});
             }else{
                 await this.model('site_set').where({name : 'datcount'}).increment('intval',1);
-                // let base64 = await datConvert(file.path);
+                let base64 = await datConvert(file.path);
                 if(fs.existsSync(file.path)){
                     fs.unlinkSync(file.path);
                 }
-                return this.json({success : true,msg : 'convert success'});
+                return this.json({success : true,msg : 'convert success',basestr : base64});
             }
         }catch(e){
             return this.json({success : false,msg : '数据不规范'});   

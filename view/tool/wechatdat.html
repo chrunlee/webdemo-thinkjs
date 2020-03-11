@@ -39,16 +39,13 @@
         <div class="left">
             说明：<br />
             1.微信dat文件默认在【 C:\Users\Administrator\Documents\WeChat Files 】下，找到FileStorage/Image 下的微信dat文件上传即可。<br />
-            <span style="text-decoration:line-through;">2.上传大小限制20M，实际上5M以上下载就会很慢了(服务器带宽1M,所以很慢).</span><br />
-            2.由于上传文件过多，严重影响了博客的访问速度..只能再次限制大小(1M).同时，可以去我的<a href="/shop" target="_blank" style="color:#49e;">{{site.shopname.value}}</a>购买软件哦.<a href="/shop" style="color:#49e;" target="_blank">点我进入小店</a><br />
+            2.由于上传文件过多，严重影响了博客的访问速度..只能限制大小(<b>0.5M</b>).同时，可以去我的<a href="/shop" target="_blank" style="color:#49e;">{{site.shopname.value}}</a>购买软件哦.<a href="/shop" style="color:#49e;" target="_blank">点我进入小店</a><br />
             3.微信dat文件是获取即转，然后删除并下发base64图片内容.<span style="color:red;">推荐使用谷歌浏览器</span>。<br />
             4.有编码能力的可以直接看源码，实现不难，这里主要提供给无编码能力的人使用.<br />
-            <span style="font-weight:bold;color:#3fbcb4;">5.各位同学可以扫下右上角的二维码，关注公众号,回复:dat ,可将文件大小提升到2M,还会有不定时的红包活动哦!要保持关注哦</span><br/>
             点击“全部下载”无法下载的同学，建议更换浏览器（谷歌 chrome）,然后进行尝试！
         </div>
         <div class="top">
             <i class="byyicon icon-close" title="点击关闭，不影响使用" style="position:absolute;left:-20px;top:0px;cursor:pointer;" filter="closeAd"></i>
-            <img src="{{site.staticfiledomain.value}}/static/images/gongzhonghao.jpg" alt="" style="width:200px;display:block;">
             <img src="{{site.staticfiledomain.value}}/static/images/weixinzanshang.jpg" style="width:200px;display:block;">
         </div>
     </div>
@@ -75,61 +72,6 @@
 <script type="text/javascript">
 var counter = 0;
 var coderstr = '';
-function read(file) {
-    var reader = new FileReader();
-    reader.readAsArrayBuffer(file);
-    var base = 0xFF;
-    var jn = 0xD8;
-    var gifA = 0x47;
-    var gifB = 0x49;
-    var pngA = 0x89;
-    var pngB = 0x50;
-    reader.onload = function(bf) {
-        var content = new DataView(this.result);
-        var firstV = content.getInt8(0),
-            nextV = content.getInt8(1),
-            jT = firstV ^ base,
-            jB = nextV ^ jn,
-            gT = firstV ^ gifA,
-            gB = nextV ^ gifB,
-            pT = firstV ^ pngA,
-            pB = nextV ^ pngB;
-        var coder = firstV ^ base;
-        if (jT == jB) {
-            coder = jT;
-        } else if (gT == gB) {
-            coder = gT;
-        } else if (pT == pB) {
-            coder = pT;
-        }
-        // var bbb = '';
-        for (var i = 0; i < content.byteLength; i++) {
-            var br = content.getInt8(i) ^ coder;
-            content.setInt8(i, br);
-        }
-        var binary = '';
-        var bytes = new Uint8Array(content.buffer);
-        var len = bytes.byteLength;
-        for (var i = 0; i < len; i++) {
-            binary += String.fromCharCode(bytes[i]);
-        }
-        var str = window.btoa(binary);
-        var img = new Image();
-        img.src = 'data:image/png;base64,' + str;
-        img.onload = function() {
-            var $img = $(this);
-            $img.css({
-                height: '200px',
-                width: 'auto',
-                display: 'block'
-            });
-            var $span = $('<span style="height:230px;float:left;display:inline-block;text-align:center;"></span>');
-            $span.append($img);
-            $span.append('<span class="byy-btn mini" filter="download">点击下载</span>');
-            $('.content').append($span);
-        }
-    }
-}
 
 function downloadFile(content, fileName) { //下载base64图片
     var base64ToBlob = function(code) {
@@ -162,6 +104,9 @@ byy.require(['jquery', 'uploader', 'win'], function() {
         }
     });
     byy.bindEvents({
+        openImg : function(){
+            downloadFile($(this).attr('src'), $(this).attr('name')+ '.png');
+        },
         coder : function(){
             byy.win.prompt({
                 title : '请输入序列号',
@@ -183,13 +128,13 @@ byy.require(['jquery', 'uploader', 'win'], function() {
         download: function() {
             var $p = $(this).parent();
             var $img = $p.find('img');
-            downloadFile($img.attr('src'), (counter++) + '.png');
+            downloadFile($img.attr('src'), $img.attr('name')+'.png');
         },
         downloadall: function() {
             $imgs = $('.content').find('img');
             $imgs.each(function(i, item) {
                 var $img = $(item);
-                downloadFile($img.attr('src'), (counter++) + '.png');
+                downloadFile($img.attr('src'), $img.attr('name')+'.png');
             })
         }
     });
@@ -199,7 +144,7 @@ byy.require(['jquery', 'uploader', 'win'], function() {
         coderstr = cc;
         $('#coder').html($('#coder').find('[filter="coder"]').get(0).outerHTML+'<span>当前序列号:'+coderstr+'</span>');
     }
-    var size = 2 * 1024 * 1024;
+    var size = 1 * 1024 * 1024;
     byy.uploader().multiFile({
         selector: '#upload',
         accept: {
@@ -216,11 +161,27 @@ byy.require(['jquery', 'uploader', 'win'], function() {
         },
         onSuccess: function(file, res) {
             if (res.success) {
-                read(file.source.source)
+                var img = new Image();
+                img.setAttribute('name',file.name)
+                img.setAttribute('filter','openImg')
+                var imageSrc = 'data:image/png;base64,' + res.basestr;
+                img.src = imageSrc;
+                img.onload = function() {
+                    var $img = $(this);
+                    $img.css({
+                        height: '200px',
+                        width: 'auto',
+                        display: 'block'
+                    });
+                    var $span = $('<span style="height:230px;float:left;display:inline-block;text-align:center;"></span>');
+                    $span.append($img);
+                    $span.append('<span class="byy-btn mini" filter="download">点击下载</span>');
+                    $('.content').append($span);
+                }
             }
         },
         onError: function(er, msg) {
-            byy.win.msg(msg + ',仅限dat文件(2M以内),关注公众号可以提升到2M!超出限制请购买软件，点击上方商店链接!软件本地转码，不联网，速度可达到10S近千张图片转化!');
+            byy.win.msg(msg + ',仅限dat文件(0.5M以内)!超出限制请购买软件，点击上方商店链接!软件本地转码，不联网，速度可达到10S近千张图片转化!也可购买序列号，提升网页转换大小!');
         }
     });
 })
